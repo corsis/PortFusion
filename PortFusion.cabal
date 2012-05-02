@@ -1,0 +1,36 @@
+name: PortFusion
+version: 1.0
+cabal-version: >=1.5
+build-type: Simple
+license: GPL-3
+license-file: LICENSE
+copyright: Copyright © 2012 Cetin Sert
+maintainer: Cetin Sert
+stability: Stable
+homepage: http://fusion.corsis.eu
+package-url: http://fusion.corsis.eu
+bug-reports: fusion@corsis.eu
+synopsis: CORSIS PortFusion : High-performance Distributed Proxy
+description: PortFusion F#/C# reimagined in Haskell.
+             .
+             This version offers incredible memory and speed benefits and works
+             equally well on all operating systems.
+category: network, system
+author: Cetin Sert
+tested-with: GHC >=7.0.4 GHC >=7.4.1
+data-dir: ""
+ 
+executable PortFusion
+    build-depends: base -any, bytestring -any, network -any,
+                   splice >=0.6, vector -any
+    main-is: Main.hs
+    buildable: True
+    extensions: ScopedTypeVariables CPP BangPatterns
+                TypeSynonymInstances TypeOperators OverloadedStrings
+                DeriveDataTypeable PostfixOperators TupleSections
+    include-dirs: res
+    hs-source-dirs: src
+    if os(linux)
+      ghc-options: -O2 -O3 -W -threaded -fspec-constr-count=16 -fllvm -optlo-O3 -msse4.2 -rtsopts
+    else
+      ghc-options: -O2 -O3 -W -threaded -fspec-constr-count=16
