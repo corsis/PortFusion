@@ -1,13 +1,17 @@
 # CORSIS PortFusion ]-[ayabusa
 
-## Requirements
+![logo](http://corsis.eu/i/icon/h.png)
+
+## Build
+
+### Requirements
 
 | OS           | Dependencies        |
 |:-------------|:--------------------|
 | Windows      | [Haskell Platform](http://hackage.haskell.org/platform/) >= 2011.4.0.0
 | Linux, Mac OS, BSD, Solaris, iOS and others | [GHC](http://www.haskell.org/ghc/) >= 7, [LLVM](http://llvm.org/) >= 3
 
-## Build
+### Instructions
 
 ```
 git clone git://github.com/corsis/PortFusion.git
@@ -16,12 +20,16 @@ cabal configure
 cabal build
 ```
 
-## License
+## Copyright
 
 ```
     CORSIS PortFusion ]-[ayabusa
     Copyright © 2012 Cetin Sert
+```
 
+## License
+
+```
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -32,4 +40,4 @@ cabal build
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 ```
-[Full License Text](http://beta.corsis.eu/license/)
+[![GPLv3](http://gplv3.fsf.org/gplv3-127x51.png) <br /> Full License Text](http://beta.corsis.eu/license/)
