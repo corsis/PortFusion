@@ -62,12 +62,12 @@ cabal build
 
 | Distributed Reverse Proxy Mode  | Distributed Forward Proxy Mode |
 |:-------------------------------:|:-------------------------------|
+| |
 | <p>You have a Linux PC at home `remote` and two Windows PCs at work behind a corporate firewall `local` and `server`.</p> <p>You open port `2000` on your home Linux PC `remote` and tunnel RDP at port `3389` from `remote` to `server` via `local` for being able to work from home.</p> | You have a Windows caching http(s) proxy server and anonymity clients that want to connect through your proxy to access websites blocked in their country. You open a port 2000 on your Windows PC to public internet and tell your contacts how to tunnel http connections to your http(s) proxy server.
 | |
 | <pre>@remote> PortFusion             ] 2000        [</pre> <pre>@local > PortFusion 3389 server - 2000 remote [ 3389</pre> | <pre>@remote> PortFusion      ]        2000 [</pre> <pre>@local > PortFusion 3128 ] remote 2000 - server 3128</pre>
 | |
 | Any remote desktop client that connects to proxy server `remote:3389` are served by remote desktop server `server:3389` via gateway `local:2000`. <br /> You only needed to configure the firewall on `remote` for port `2000`. | Any http client that connects to `local:3128` are served by `server:3128` via `remote`.
-| |
 | [<img src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/reverse-fusion-msc-5.png" alt="DR" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/reverse-fusion-msc-5.png)                            | [<img src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/forward-fusion-msc-4.png" alt="DR" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/forward-fusion-msc-4.png)
 
 
