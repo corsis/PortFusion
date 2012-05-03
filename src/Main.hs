@@ -100,7 +100,7 @@ a @>-<@ b =
   bindSocket      s $ SockAddrInet6 p 0 iN6ADDR_ANY 0
 #else
   s <- socket AF_INET  Stream 0 =>> opt              -- Windows XP does not have
-  setSocketOption s $ SockAddrInet  p   iNADDR_ANY   -- a dual-stack sockets API
+  bindSocket      s $ SockAddrInet  p   iNADDR_ANY   -- a dual-stack sockets API
 #endif
   listen          s maxListenQueue
   print $ Listen :^: p
