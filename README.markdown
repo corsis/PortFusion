@@ -1,17 +1,13 @@
 ## Requirements
 
-| Left align | Right align | Center align |
-|:-----------|------------:|:------------:|
-| This       |        This |     This     
-| column     |      column |    column    
-| will       |        will |     will     
-| be         |          be |      be      
-| left       |       right |    center    
-| aligned    |     aligned |   aligned
+| OS           | Compilers           |
+|:-------------|:--------------------|
+| Windows      | [Haskell Platform](http://hackage.haskell.org/platform/)
+| Linux        | [GHC](http://www.haskell.org/ghc/) >= 7, [LLVM](http://llvm.org/) >= 3
+| Mac          | "
+| BSD          | "
 
-```
-[GHC]() >= 7 || 
-```
+
 
 ## Build
 
