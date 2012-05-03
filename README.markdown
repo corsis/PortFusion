@@ -1,5 +1,3 @@
-# CORSIS PortFusion ]-[ayabusa
-
 ![logo](http://corsis.eu/i/icon/h.png)
 
 ## Build
