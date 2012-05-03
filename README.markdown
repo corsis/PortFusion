@@ -21,7 +21,7 @@ Memory at 1 Fusion  | ~30 MB (lots of jumps)          | **~1.0 MB** (constant)
 OS Support          | ![Windows]      | ![Windows], ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other]
 Language            | F# / C#                         | **Haskell (GHC / LLVM)**
 Dependencies        | .NET 4.0 + F# 2.0 Runtime       | **none**
-Source Code Size    | 778 lines (multiple files)      | **< 500 (1 file)**
+Source Code Size    | 778 lines (multiple files)      | **< 500 lines (1 file)**
 Concurrency Model   | 1 OS thread per connection      | **1 Haskell thread per connection**
 Distributed Proxy Modes | reverse                     | **reverse & forward**
 Local Proxy Modes   |                                 | **forward**
