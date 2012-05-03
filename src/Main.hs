@@ -1,26 +1,5 @@
-{-  CORSIS PortFusion    ( ]-[ayabusa 1.0.0 )
-    Copyright (C) 2012 Cetin Sert             -}
-#if   defined(   linux_HOST_OS )
-#define __OS__ "Linux"
-#elif defined( mingw32_HOST_OS )
-#define __OS__ "Windows"
-#elif defined( freebsd_HOST_OS )
-#define __OS__ "FreeBSD"
-#elif defined(  darwin_HOST_OS )
-#define __OS__ "Mac OS"
-#else
-#define __OS__ "Generic"
-#endif
-#if   defined(  i386_HOST_ARCH )
-#define __ARCH__ "x86"
-#elif defined(x86_64_HOST_ARCH )
-#define __ARCH__ "x86-64"
-#elif defined(   arm_HOST_ARCH )
-#define __ARCH__ "ARM"
-#else
-#define __ARCH__ "Unknown"
-#endif
-
+-- CORSIS PortFusion    ( ]-[ayabusa 1.0.0 )
+-- Copyright © 2012 Cetin Sert
 
 module Main where
 
@@ -111,7 +90,7 @@ instance X.Exception ProtocolException where
 
 (@>-<@) :: Socket -> Socket -> IO FusionLink
 a @>-<@ b =
- FusionLink <$> (att $ getPeerName a)<*>(att $ socketPort b)<*>(att $ getPeerName b)
+ FusionLink <$> (att $ getPeerName a) <*> (att $ socketPort b) <*> (att $ getPeerName b)
 
 (@<) :: Port -> IO Socket
 (@<) p = do
@@ -205,14 +184,14 @@ chunk = 8 * 1024
 
 -- CORE
 
-data Task =             (:>-<:)  Port
-          | (Port, Host)  :-<: ((Port, Host),        Port )
-          |  Port        :>-:  ((Host, Port), (Host, Port))
-          |  Port        :>=:                 (Host, Port)   deriving (Show,Read)
+data Task =             (:><:)  Port
+          | (Port, Host) :-<: ((Port, Host),        Port )
+          |  Port        :>-: ((Host, Port), (Host, Port))
+          |  Port        :>=:                (Host, Port)   deriving (Show,Read)
 
 data Request = (:-<-:)        Port
              | (:->-:)   Host Port
-             | (:?)    | Run  Task                           deriving (Show,Read)
+             | (:?)    | Run  Task                          deriving (Show,Read)
 
 -- CORE ^
 
@@ -223,18 +202,17 @@ build     = __OS__ ++ " - " ++ __ARCH__ ++  " [" ++ __TIMESTAMP__ ++ "]"
 
 main :: IO ()
 main = withSocketsDo $ tryWith (const . print $ LS "INVALID SYNTAX") $ do
-  mapM_ B.putStrLn [ b, name, copyright, "", build , b ]
+  mapM_ B.putStrLn [ "\n", name, copyright, "", build, "\n" ]
   tasks <- fmap i getArgs
-  mapM_ (forkIO . run) tasks
   unless (null tasks) $ do
     print (LS "zeroCopy", zeroCopy)
+    mapM_ (forkIO . run) tasks
     void Prelude.getChar
     where
-      b  = "\n"
       r  = read
       p  = B.pack
       i :: [String] -> [Task]
-      i [         "]", fp,     "[" ]     = [(:>-<:) $ r fp]
+      i [         "]", fp,     "[" ]     = [(:><:) $ r fp]
       i [ lp, lh, "-", fp, fh, "[", rp ] = [(r lp, p lh) :-<: ((r fp, p fh),r rp) ]
       i [ lp, "]", fh, fp, "-", rh, rp ] = [r lp :>-: ((p fh, r fp), (p rh, r rp))]
       i [ lp, "]",         "-", rh, rp ] = [r lp :>=:                (p rh, r rp) ]
@@ -314,7 +292,7 @@ run :: Task -> IO ()
 
 
 --- :: Task -> IO () -- serve
-run ((:>-<:) fp) = do
+run ((:><:) fp) = do
 
   f <- (fp @<)
 
@@ -328,13 +306,13 @@ run ((:>-<:) fp) = do
         q <- read . B.unpack <$> B.hGetLine h
         print . (:.:) (Receive q) =<< (s <@>)
         case q of
-          (:-<-:) rp    -> o -<= rp
-          (:->-:) rh rp -> o =>- rh $ rp
+          (:-<-:) rp    -> o -<- rp
+          (:->-:) rh rp -> o ->- rh $ rp
           (:?)          -> s <: LS build |> (o ✖)
           Run task      -> run task      |> (o ✖)
 
-    (-<=) :: Peer -> Port -> IO ()
-    o@(Peer !l _) -<= rp = do
+    (-<-) :: Peer -> Port -> IO ()
+    o@(Peer !l _) -<- rp = do
       initPortVectors
       r <- (rp -@<)                  -- retrieve listener for port
       o -✖- rp |<>| \t -> do         -- enable patience checks
@@ -343,8 +321,8 @@ run ((:>-<:) fp) = do
         l `sendAll` "+"              -- inform other end of flow start
         o >-< c $ (rp -✖)            -- start flows & reduce listener weight on exception
 
-    (=>-) :: Peer -> Host -> Port -> IO ()
-    (o@(Peer _ _) =>- rh) rp = do
+    (->-) :: Peer -> Host -> Port -> IO ()
+    (o@(Peer _ _) ->- rh) rp = do
       e <- rh ! rp
       o >-< e $ return ()                                -- any exception disposes o ^
 
@@ -394,7 +372,7 @@ run (lp :>=: (rh, rp)) = do
     r >-< c $ return ()
 
 
----- flow IO
+---- data stream IO
 (>-<) :: Peer -> Peer -> ErrorIO () -> IO ()
 (a@(Peer as _) >-< b@(Peer bs _)) h = do
   !t <- as @>-<@ bs

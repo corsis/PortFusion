@@ -1,36 +1,103 @@
-name: PortFusion
-version: 1.0
+name:          PortFusion
+version:       1.0
+stability:     stable on all operating systems
+synopsis:      CORSIS PortFusion : High-performance Distributed Proxy
+description:   PortFusion F#/C# reimagined in Haskell.
+               .
+               This version offers incredible memory and speed benefits and
+               works equally well on all operating systems.
+copyright:     Copyright © 2012 Cetin Sert
+license:       GPL-3
+license-file:  LICENSE
+author:        Cetin Sert <fusion@corsis.eu>
+maintainer:    Cetin Sert <fusion@corsis.eu>
+homepage:      http://fusion.corsis.eu
+package-url:   http://fusion.corsis.eu/download
+bug-reports:   http://github.com/corsis/PortFusion/issues
+category:      System, Network
+build-type:    Simple
 cabal-version: >=1.5
-build-type: Simple
-license: GPL-3
-license-file: LICENSE
-copyright: Copyright © 2012 Cetin Sert
-maintainer: Cetin Sert
-stability: Stable
-homepage: http://fusion.corsis.eu
-package-url: http://fusion.corsis.eu
-bug-reports: fusion@corsis.eu
-synopsis: CORSIS PortFusion : High-performance Distributed Proxy
-description: PortFusion F#/C# reimagined in Haskell.
-             .
-             This version offers incredible memory and speed benefits and works
-             equally well on all operating systems.
-category: network, system
-author: Cetin Sert
-tested-with: GHC >=7.0.4 GHC >=7.4.1
-data-dir: ""
+
+
+source-repository head
+    type:      git
+    location:  git://github.com/corsis/PortFusion.git
+
  
 executable PortFusion
-    build-depends: base -any, bytestring -any, network -any,
-                   splice >=0.6, vector -any
-    main-is: Main.hs
-    buildable: True
-    extensions: ScopedTypeVariables CPP BangPatterns
-                TypeSynonymInstances TypeOperators OverloadedStrings
-                DeriveDataTypeable PostfixOperators TupleSections
-    include-dirs: res
-    hs-source-dirs: src
+    include-dirs:    res
+    hs-source-dirs:  src
+    build-depends:   base       -any,
+                     bytestring -any,
+                     network    -any,
+                     vector     -any,
+                     splice     >= 0.6
+    main-is:         Main.hs
+    buildable:       True
+    extensions:      ScopedTypeVariables CPP BangPatterns
+                     TypeSynonymInstances TypeOperators OverloadedStrings
+                     DeriveDataTypeable PostfixOperators TupleSections
+
     if os(linux)
-      ghc-options: -O2 -O3 -W -threaded -fspec-constr-count=16 -fllvm -optlo-O3 -msse4.2 -rtsopts
+      ghc-options:   -W -O2 -O3 -threaded -fspec-constr-count=16 -fllvm -optlo-O3 -msse4.2
     else
-      ghc-options: -O2 -O3 -W -threaded -fspec-constr-count=16
+      ghc-options:   -W -O2 -O3 -threaded -fspec-constr-count=16
+
+
+   -- CORSIS Build Name Components
+   --
+   -- Below is only used to generate standard build names each time a PortFusion
+   -- is compiled using Cabal; can be simply replaced with:
+   --
+   --   cpp-options: -D__OS__="SOME OS" -D__ARCH__="SOME ARCH"
+   --
+
+    if os(linux)
+       cpp-options: -D__OS__="Linux"
+    else
+       if os(mingw32) || os(cygwin32)
+         cpp-options: -D__OS__="Windows"
+       else
+         if os(freebsd) || os(kfreebsdgnu)
+           cpp-options: -D__OS__="FreeBSD"
+         else
+           if os(openbsd) || os(netbsd) || os(dragonfly)
+             cpp-options: -D__OS__="BSD"
+           else
+             if os(darwin)
+               cpp-options: -D__OS__="Mac OS"
+             else
+               if os(solaris) || os(solaris2)
+                 cpp-options: -D__OS__="Solaris"
+               else
+                 if os(gnu) || os(hurd)
+                   cpp-options: -D__OS__="HURD"
+                 else
+                   cpp-options: -D__OS__="Generic"
+
+
+    if arch(i386)
+       cpp-options: -D__ARCH__="x86"
+    else
+       if arch(x86_64)
+         cpp-options: -D__ARCH__="x86-64"
+       else
+         if arch(arm)
+           cpp-options: -D__ARCH__="ARM"
+         else
+           if arch(powerpc)
+             cpp-options: -D__ARCH__="PowerPC"
+           else
+             if arch(powerpc64)
+               cpp-options: -D__ARCH__="PowerPC-64"
+             else
+               if arch(sparc)
+                 cpp-options: -D__ARCH__="SPARC"
+               else
+                 if arch(ia64)
+                   cpp-options: -D__ARCH__="Itanium-64"
+                 else
+                   if arch(mips)
+                     cpp-options: -D__ARCH__="MIPS"
+                   else
+                     cpp-options: -D__ARCH__="Unknown"
