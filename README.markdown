@@ -17,10 +17,10 @@ PortFusion          | 0.9.3 (old)                     | 1.0 \]-[ayabusa (this)
 --------------------|---------------------------------|-------------------------------
 Memory at Start-up  | ~14 MB                          | **~0.7 MB**
 Memory at 1 Fusion  | ~30 MB (lots of jumps)          | **~1.0 MB** (constant)
-OS Support          | Windows                         | **Windows, Linux, Mac OS X, BSDs** 
-Language            | F# / C#                         | **Haskell (GHC/LLVM)**
+OS Support          | ![Windows][] | ![Windows][], ![Linux][], ![OSX][], ![FreeBSD][], ![OpenBSD][], ![Solaris][]
+Language            | F# / C#                         | **Haskell (GHC / LLVM)**
 Dependencies        | .NET + F# Runtime               | **none**
-Source Code Size    | 778 lines (multiple files)      | **<500 (1 file)**
+Source Code Size    | 778 lines (multiple files)      | **< 500 (1 file)**
 Concurrency Model   | 1 OS thread per connection      | **1 Haskell thread per connection**
 Distributed Proxy Modes | reverse                     | **reverse & forward**
 Local Proxy Modes   |                                 | **forward**
@@ -29,6 +29,13 @@ Deployment          | 2 .NET 4.0 CIL-code binaries    | **1 unified, native code
 Binary Size         | **78.3 KB** (34.3 KB + 44 KB)   | 1-3 MB
 License             | ![GPLv3](http://gplv3.fsf.org/gplv3-127x51.png) | ![GPLv3](http://gplv3.fsf.org/gplv3-127x51.png) 
 Support             | SourceForge.net                 | SourceForge.net, **commercial**
+
+[Windows]: http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_win_other.png "Windows"
+[Linux]: http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_oracle.png      "Linux"
+[OSX]: http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_macosx.png        "Mac OS"
+[FreeBSD]: http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_freebsd.png   "FreeBSD"
+[OpenBSD]: http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_openbsd.png   "OpenBSD"
+[Solaris]: http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_solaris.png   "Solaris"
 
 ## Build
 
