@@ -27,7 +27,7 @@ Local Proxy Modes   |                                 | **forward**
 Distribution Technique | Windows Communication Foundation | **native sockets API and special system calls of each OS**
 Deployment          | 2 .NET 4.0 CIL-code binaries    | **1 unified, native code binary for each OS/CPU**
 Binary Size         | **78.3 KB** (34.3 KB + 44 KB)   | 1-3 MB
-License             | [![GPLv3](http://gplv3.fsf.org/gplv3-127x51.png) | [![GPLv3](http://gplv3.fsf.org/gplv3-127x51.png) 
+License             | ![GPLv3](http://gplv3.fsf.org/gplv3-127x51.png) | ![GPLv3](http://gplv3.fsf.org/gplv3-127x51.png) 
 Support             | SourceForge.net                 | SourceForge.net, **commercial**
 
 ## Build
