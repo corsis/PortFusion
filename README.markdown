@@ -1,6 +1,6 @@
 ![logo](http://corsis.eu/i/icon/h.png)
 
-PortFusion is a minimalistic, cross-platform, transport-layer distributed reverse / forward proxy for TCP traffic released under GPLv3.
+PortFusion is a minimalistic, cross-platform, transport-layer distributed reverse / forward proxy for TCP released under GPLv3.
 
 It is damn small, optimized for maximum throughput and ease of use.
 
