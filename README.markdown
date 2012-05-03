@@ -1,14 +1,11 @@
-# PortFusion `]-[`ayabusa
+# CORSIS PortFusion ]-[ayabusa
 
 ## Requirements
 
 | OS           | Dependencies        |
 |:-------------|:--------------------|
 | Windows      | [Haskell Platform](http://hackage.haskell.org/platform/) >= 2011.4.0.0
-| Linux        | [GHC](http://www.haskell.org/ghc/) >= 7, [LLVM](http://llvm.org/) >= 3
-| Mac          | [GHC](http://www.haskell.org/ghc/) >= 7, [LLVM](http://llvm.org/) >= 3
-| BSD          | [GHC](http://www.haskell.org/ghc/) >= 7, [LLVM](http://llvm.org/) >= 3
-| Solaris      | [GHC](http://www.haskell.org/ghc/) >= 7, [LLVM](http://llvm.org/) >= 3
+| Linux, Mac OS, BSD, Solaris, iOS and others | [GHC](http://www.haskell.org/ghc/) >= 7, [LLVM](http://llvm.org/) >= 3
 
 ## Build
 
