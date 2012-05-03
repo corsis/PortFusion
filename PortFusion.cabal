@@ -47,7 +47,7 @@ executable PortFusion
    -- CORSIS Build Name Components
    --
    -- Below is only used to generate standard build names each time a PortFusion
-   -- is compiled using Cabal; can be simply replaced with:
+   -- binary is compiled using Cabal; can be simply replaced with:
    --
    --   cpp-options: -D__OS__="SOME OS" -D__ARCH__="SOME ARCH"
    --
