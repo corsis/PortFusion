@@ -1,4 +1,5 @@
-![logo](http://corsis.eu/i/icon/h.png)
+![pf]
+[pf]: http://corsis.eu/i/icon/h.png "PortFusion"
 
 PortFusion is a minimalistic, cross-platform, transport-layer distributed reverse / forward proxy for TCP released under GPLv3.
 
@@ -13,38 +14,40 @@ This is the Haskell source code repository of the latest ]-[ayabusa version
 
 ### What is new in `]-[ayabusa`?
 
-PortFusion          | 0.9.3 (old)                     | 1.0 \]-[ayabusa (this)
+PortFusion          | 0.9.3 (old)                     | 1.0 \]-[ayabusa (new)
 --------------------|---------------------------------|-------------------------------
 Memory at Start-up  | ~14 MB                          | **~0.7 MB**
 Memory at 1 Fusion  | ~30 MB (lots of jumps)          | **~1.0 MB** (constant)
-OS Support          | ![Windows][] | ![Windows][], ![Linux][], ![OSX][], ![FreeBSD][], ![OpenBSD][], ![Solaris][]
+OS Support          | ![Windows]      | ![Windows], ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris]
 Language            | F# / C#                         | **Haskell (GHC / LLVM)**
-Dependencies        | .NET + F# Runtime               | **none**
+Dependencies        | .NET 4.0 + F# 2.0 Runtime       | **none**
 Source Code Size    | 778 lines (multiple files)      | **< 500 (1 file)**
 Concurrency Model   | 1 OS thread per connection      | **1 Haskell thread per connection**
 Distributed Proxy Modes | reverse                     | **reverse & forward**
 Local Proxy Modes   |                                 | **forward**
 Distribution Technique | Windows Communication Foundation | **native sockets API and special system calls of each OS**
-Deployment          | 2 .NET 4.0 CIL-code binaries    | **1 unified, native code binary for each OS/CPU**
+Deployment          | 2 .NET 4.0 managed binaries     | **1 unified, native code binary for each platform**
 Binary Size         | **78.3 KB** (34.3 KB + 44 KB)   | 1-3 MB
-License             | ![GPLv3](http://gplv3.fsf.org/gplv3-127x51.png) | ![GPLv3](http://gplv3.fsf.org/gplv3-127x51.png) 
-Support             | SourceForge.net                 | SourceForge.net, **commercial**
+License             | ![GPLv3]                        | ![GPLv3]
+Support             | SourceForge.net                 | **SourceForge.net (binary) <br /> GitHub (source) <br /> Corsis.eu (commercial)**
 
+[GPLv3]:   http://gplv3.fsf.org/gplv3-127x51.png                                           "GPLv3"
 [Windows]: http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_win_other.png "Windows"
-[Linux]: http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_oracle.png      "Linux"
-[OSX]: http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_macosx.png        "Mac OS"
+[Linux]:   http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_oracle.png    "Linux"
+[OSX]:     http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_macosx.png    "Mac OS"
 [FreeBSD]: http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_freebsd.png   "FreeBSD"
 [OpenBSD]: http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_openbsd.png   "OpenBSD"
 [Solaris]: http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_solaris.png   "Solaris"
+[Other]:   http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_other.png     "Other"
 
 ## Build
 
 ### Requirements
 
-| OS           | Dependencies        |
+| OS           | Compilers           |
 |:-------------|:--------------------|
-| Windows      | [Haskell Platform](http://hackage.haskell.org/platform/) >= 2011.4.0.0
-| Linux, Mac OS, BSD, Solaris, iOS and others | [GHC](http://www.haskell.org/ghc/) >= 7, [LLVM](http://llvm.org/) >= 3
+| ![Windows]   | [Haskell Platform](http://hackage.haskell.org/platform/) >= 2011.4.0.0
+| ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other] | [GHC](http://www.haskell.org/ghc/) >= 7 <br /> [LLVM](http://llvm.org/) >= 3
 
 ### Instructions
 
@@ -81,7 +84,7 @@ Any http client that connects to `local:3128` are served by `server:3128` via `r
 
 | Distributed Reverse Proxy Mode  | Distributed Forward Proxy Mode |
 |:--------------------------------|:-------------------------------|
-| [<img height='300px' src='https://sourceforge.net/p/portfusion/wiki/hayabusa-pics/attachment/reverse-fusion-msc-5.png' alt='dr' />](https://sourceforge.net/p/portfusion/wiki/hayabusa-pics/attachment/reverse-fusion-msc-5.png) | [<img height='300px' src='https://sourceforge.net/p/portfusion/wiki/hayabusa-pics/attachment/forward-fusion-msc-4.png' alt='dr' />](https://sourceforge.net/p/portfusion/wiki/hayabusa-pics/attachment/forward-fusion-msc-4.png)
+| [<img height='400px' src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/reverse-fusion-msc-5.png" alt="DR" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/reverse-fusion-msc-5.png)                            | [<img height='400px' src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/forward-fusion-msc-4.png" alt="DR" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/forward-fusion-msc-4.png)
 
 
 ## Download
@@ -90,25 +93,25 @@ No binaries are available until multi-platform build automation tools have been 
 
 Binaries will be made available for the following platforms.
 
-```
-+ :  immediate support
-N :  near future 
-F :  far  future
-```
-
 ### CORSIS-supported Platforms
 
 | OS           | x86    | x86-64 | ARM   | 
-|:-------------|:-------|:-------|:------|
-| Windows      | +      | +      | F
-| Linux        | N      | +      | F
-| FreeBSD      |        | +      |
+| :----------: | :----: | :----: | :---: |
+| ![Windows]   | ![YES] | ![YES] | F
+| ![Linux]     | N      | ![YES] | F
+| ![FreeBsd]   |        | ![YES] |
 
 ### Community-supported Platforms
 
 | OS           | x86    | x86-64 | ARM   | 
-|:-------------|:-------|:-------|:------|
-| Mac OS       |        | +      | F
+|:------------:|:------:|:------:|:-----:|
+| ![OSX]       |        | ![YES] | F
+
+[YES]: http://res2.windows.microsoft.com/resbox/en/Windows%207/main/bcb86e60-6169-4c6a-88b8-3a3cd4c64462_0.gif "Supported"
+```
+N :  near future 
+F :  far  future
+```
 
 
 ## Remember
@@ -157,12 +160,14 @@ In addition, a "Powered by PortFusion" logo will be made available.
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 ```
-[![GPLv3](http://gplv3.fsf.org/gplv3-127x51.png) <br /> Full License Text](http://beta.corsis.eu/license/)
+[![GPLv3] <br /> Full License Text](http://beta.corsis.eu/license/)
 
 
 ## Know
 
-### Core Principles
+### Principles
+
+Development strictly follows simple principles:
 
 1. Be concise: [PortFusion is a single-file with less than 500 lines of code](https://github.com/corsis/PortFusion/blob/master/src/Main.hs)
 2. Refactor as often and as heavily as possible
@@ -177,6 +182,8 @@ In addition, a "Powered by PortFusion" logo will be made available.
 
 ## Contact
 
-[![Corsis Research](http://portfusion.sourceforge.net/i/l100.png)](https://github.com/corsis/)
+[![corsis]](https://github.com/corsis/)
 
 [fusion@corsis.eu](mailto:fusion@corsis.eu)
+
+[corsis]: http://portfusion.sourceforge.net/i/l100.png "Corsis Research"
