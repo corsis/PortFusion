@@ -89,29 +89,26 @@ Any http client that connects to `local:3128` are served by `server:3128` via `r
 
 ## Download
 
-No binaries are available until multi-platform build automation tools have been set up.
+Official binaries will be made available for the following platforms once all build automation tools have been set up.
 
-Binaries will be made available for the following platforms.
+### Supported Platforms
 
-### CORSIS-supported Platforms
+|        | ![Windows] | ![Linux] | ![OSX] | ![FreeBSD] | ![OpenBSD] | ![Solaris] | ![Other]
+| ------ | ---------- | -------- | ------ | ---------- | ---------- | ---------- | --------
+| x86-64 | ![C]       | ![C]     | ![T]   | ![C]N      |            |
+| x86    | ![C]       | ![C]N    |        |            | 
+| ARM    | ![C]F      | ![C]F    | ![T]F  |            |
+| Other  |
 
-| OS           | x86    | x86-64 | ARM   | 
-| :----------: | :----: | :----: | :---: |
-| ![Windows]   | ![YES] | ![YES] | F
-| ![Linux]     | N      | ![YES] | F
-| ![FreeBsd]   |        | ![YES] |
+[C]: http://res2.windows.microsoft.com/resbox/en/Windows%207/main/33624ed4-7676-4be4-9f47-d77eab7ecd9c_0.gif "CORSIS-supported"
+[T]: http://res2.windows.microsoft.com/resbox/en/Windows%207/main/43fa1e85-5152-43ff-b0f7-63ae6520a88b_0.gif "Community-supported"
+![C]: CORSIS-supported, ![T]: Community-supported, N: near future, F: far  future
 
-### Community-supported Platforms
+### Community Support
 
-| OS           | x86    | x86-64 | ARM   | 
-|:------------:|:------:|:------:|:-----:|
-| ![OSX]       |        | ![YES] | F
+Anyone using an OS+CPU combination that is community-supported or missing in the above table is kindly asked to join our build team to provide manual or automated PortFusion builds.
 
-[YES]: http://res2.windows.microsoft.com/resbox/en/Windows%207/main/bcb86e60-6169-4c6a-88b8-3a3cd4c64462_0.gif "Supported"
-```
-N :  near future 
-F :  far  future
-```
+Please contact [fusion@corsis.eu](mailto:fusion@corsis.eu).
 
 
 ## Remember
