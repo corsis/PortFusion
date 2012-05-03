@@ -1,7 +1,34 @@
 ![logo](http://corsis.eu/i/icon/h.png)
 
-PortFusion ]-[ayabusa is a minimalistic, cross-platform, transport-layer distributed proxy for TCP traffic. It is damn small, optimized for maximum throughput and ease of use. PortFusion ]-[ayabusa is developed in Haskell and licensed under GPLv3.
+PortFusion is a minimalistic, cross-platform, transport-layer distributed reverse / forward proxy for TCP traffic released under GPLv3.
 
+It is damn small, optimized for maximum throughput and ease of use.
+
+## Notice
+
+```
+This is the Haskell source code repository of the latest `]-[ayabusa` version
+– a complete rewrite of the initial Windows-only versions developed in F# / C#.
+```
+
+### Differences
+
+PortFusion          | 0.9.3                           | \]-[ayabusa 1.0
+--------------------|---------------------------------|-------------------------------
+Memory at Start-up  | ~14 MB                          | **~0.7 MB**
+Memory at 1 Fusion  | ~30 MB (lots of jumps)          | **~1.0 MB** (constant)
+OS Support          | Windows                         | Windows, **Linux, Mac OS X, BSDs** 
+Language            | F# / C#                         | **Haskell (GHC/LLVM)**
+Dependencies        | .NET + F# Runtime               | **none**
+Source Code Size    | 778 lines (multiple files)      | **<500 (1 file)**
+Concurrency Model   | 1 OS thread per connection      | **transparent asynchrony**
+Distributed Proxy Modes | reverse                     | **reverse & forward**
+Local Proxy Modes   |                                 | **forward**
+Distribution Technique  | Windows Communication Foundation| **native sockets API and special system calls of each OS**
+Deployment          | 2 .NET 4.0 CIL-code binaries    | **1 unified, native code binary for each OS/CPU**
+Binary Size         | **78.3 KB** (34.3 KB + 44 KB)   | 1-3 MB
+License             | GPLv3                           | GPLv3
+Support             | SourceForge.net                 | SourceForge.net, **commercial**
 
 ## Build
 
