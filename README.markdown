@@ -1,3 +1,5 @@
+# PortFusion `]-[`ayabusa
+
 ## Requirements
 
 | OS           | Dependencies        |
@@ -20,7 +22,7 @@ cabal build
 ## License
 
 ```
-    CORSIS PortFusion    ( ]-[ayabusa 1.0.0 )
+    CORSIS PortFusion ]-[ayabusa
     Copyright © 2012 Cetin Sert
 
     This program is free software: you can redistribute it and/or modify
@@ -32,7 +34,5 @@ cabal build
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ```
+[Full License Text](http://beta.corsis.eu/license/)
