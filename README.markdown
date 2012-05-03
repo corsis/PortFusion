@@ -11,9 +11,9 @@ This is the Haskell source code repository of the latest ]-[ayabusa version
 – a complete rewrite of the initial Windows-only versions developed in F# / C#.
 ```
 
-### Differences
+### What is new in `]-[ayabusa`?
 
-PortFusion          | 0.9.3                           | \]-[ayabusa 1.0
+PortFusion          | 0.9.3 (old)                     | 1.0 \]-[ayabusa (this)
 --------------------|---------------------------------|-------------------------------
 Memory at Start-up  | ~14 MB                          | **~0.7 MB**
 Memory at 1 Fusion  | ~30 MB (lots of jumps)          | **~1.0 MB** (constant)
