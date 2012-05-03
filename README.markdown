@@ -7,7 +7,7 @@ It is damn small, optimized for maximum throughput and ease of use.
 ## Notice
 
 ```
-This is the Haskell source code repository of the latest `]-[ayabusa` version
+This is the Haskell source code repository of the latest ]-[ayabusa version
 – a complete rewrite of the initial Windows-only versions developed in F# / C#.
 ```
 
