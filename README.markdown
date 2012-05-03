@@ -51,9 +51,9 @@ Support             | SourceForge.net                 | **SourceForge.net (binar
 
 ### Instructions
 
-```
-git clone git://github.com/corsis/PortFusion.git
-cd PortFusion
+```bash
+git   clone      git://github.com/corsis/PortFusion.git
+cd    PortFusion
 cabal configure
 cabal build
 ```
