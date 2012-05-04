@@ -95,9 +95,7 @@ Official binaries will be made available for the following platforms once all bu
 
 ### Community Support
 
-We are seeking your support to provide up-to-date binaries for all platforms.
-
-If you are using an OS+CPU combination that is community-supported or missing support, please [contact us](#contact) to join our build team!
+We are seeking your support to provide up-to-date binaries for all platforms! If you are using an OS+CPU combination that is community-supported or missing support, please [contact us](#contact) to join our build team!
 
 
 ## Remember
