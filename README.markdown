@@ -19,11 +19,11 @@ PortFusion          | 0.9.3 (old)                     | 1.0 \]-[ayabusa (new)
 Memory at Start-up  | ~14 MB                          | **~0.7 MB**
 Memory at 1 Fusion  | ~30 MB (lots of jumps)          | **~1.0 MB** (constant)
 OS Support          | ![Windows]      | ![Windows], ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other]
-Language            | F# / C#                         | **Haskell (GHC / LLVM)**
+Language            | F# / C#                         | **[Haskell] ([GHC] / [LLVM])**
 Dependencies        | .NET 4.0 + F# 2.0 Runtime       | **none**
 Source Code Size    | 778 lines (multiple files)      | **< 500 lines (1 file)**
 Concurrency Model   | 1 OS thread per connection      | **1 Haskell thread per connection**
-Distributed Proxy Modes | reverse                     | **reverse & forward**
+Distributed Proxy Modes | reverse                     | **reverse, forward**
 Local Proxy Modes   |                                 | **forward**
 Distribution Technique | Windows Communication Foundation | **native sockets API and special system calls of each OS**
 Deployment          | 2 .NET 4.0 managed binaries     | **1 unified, native code binary for each platform**
@@ -39,6 +39,10 @@ Support             | SourceForge.net                 | **SourceForge.net (binar
 [OpenBSD]: http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_openbsd.png   "OpenBSD"
 [Solaris]: http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_solaris.png   "Solaris"
 [Other]:   http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_other.png     "Other"
+[Haskell]: http://www.haskell.org/                                                         "Haskell"
+[GHC]:     http://www.haskell.org/ghc/                                                     "GHC"
+[LLVM]:    http://llvm.org                                                                 "LLVM"
+[HaPl]:    http://hackage.haskell.org/platform/                                            "Haskell Platform"
 
 ## Build
 
@@ -46,8 +50,8 @@ Support             | SourceForge.net                 | **SourceForge.net (binar
 
 | OS           | Compilers           |
 |:-------------|:--------------------|
-| ![Windows]   | [Haskell Platform](http://hackage.haskell.org/platform/) >= 2011.4.0.0
-| ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other] | [GHC](http://www.haskell.org/ghc/) >= 7 <br /> [LLVM](http://llvm.org/) >= 3
+| ![Windows]   | [HaPl] >= 2011.4.0.0
+| ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other] | [GHC] >= 7 <br /> [LLVM] >= 3
 
 ### Instructions
 
@@ -67,7 +71,7 @@ cabal build
 | <pre>@re.> PortFusion             ] 2000        [</pre> <pre>@lo.> PortFusion 3389 server - 2000 remote [ 3389</pre> | <pre>@re.> PortFusion      ]        2000 [</pre> <pre>@lo.> PortFusion 3128 ] remote 2000 - server 3128</pre>
 | <p>RDP clients that connect to tunneled RDP server `remote:3389` are served by remote desktop server `server:3389` via gateway `local:2000`.</p> <p>You only need to configure the firewall on gateway `remote` for port `2000`.</p> | <p>`local` HTTP clients that connects to the tunneled proxy `local:3128` are served by your friend's http proxy `server:3128` via gateway`remote`.</p> <p>Your friend only needs to configure the firewall on gateway `remote` for port `2000`.</p>
 | |
-| [<img height='400px' src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/reverse-fusion-msc-5.png" alt="DR" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/reverse-fusion-msc-5.png) | [<img height='400px' src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/forward-fusion-msc-4.png" alt="DR" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/forward-fusion-msc-4.png)
+| [<img src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/reverse-fusion-msc-6.png" alt="DR" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/reverse-fusion-msc-6.png) | [<img src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/forward-fusion-msc-6.png" alt="DF" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/forward-fusion-msc-6.png)
 
 
 ## Download
@@ -123,22 +127,22 @@ In addition, a "Powered by PortFusion" logo will be made available.
 ### Copyright
 
 ```
-    CORSIS PortFusion ]-[ayabusa
-    Copyright © 2012  Cetin Sert
+CORSIS PortFusion ]-[ayabusa
+Copyright © 2012  Cetin Sert
 ```
 
 ### Copyright License
 
 ```
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 ```
 [![GPLv3] <br /> Full License Text](http://beta.corsis.eu/license/)
 

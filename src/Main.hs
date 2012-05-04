@@ -1,5 +1,5 @@
 -- CORSIS PortFusion ]-[ayabusa
--- Copyright © 2012 Cetin Sert
+-- Copyright © 2012  Cetin Sert
 
 module Main where
 
