@@ -95,9 +95,9 @@ Official binaries will be made available for the following platforms once all bu
 
 ### Community Support
 
-Anyone using an OS+CPU combination that is community-supported or missing in the above table is kindly asked to join our build team to provide manual or automated PortFusion builds.
+We are seeking your support to provide up-to-date binaries for all platforms.
 
-Please contact [fusion@corsis.eu](mailto:fusion@corsis.eu).
+If you are using an OS+CPU combination that is community-supported or missing support, please [contact us](#contact) to join our build team!
 
 
 ## Remember
@@ -133,7 +133,7 @@ CORSIS PortFusion ]-[ayabusa
 Copyright © 2012  Cetin Sert
 ```
 
-### Copyright License
+### License
 
 ```
 This program is free software: you can redistribute it and/or modify
