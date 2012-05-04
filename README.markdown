@@ -163,7 +163,7 @@ Development strictly follows simple principles:
  2. [Illustrate every step in detail](http://beta.corsis.eu/features/#tab-distributed-reverse-proxy-mode)
 5. [Provide excellent support](https://sourceforge.net/p/portfusion/discussion/general/thread/7ad0cb49/)
 
-## Special Thanks
+## Thanks
 
 For their support and inspiration, we extend our heart-felt thanks to:
 
