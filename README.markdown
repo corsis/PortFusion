@@ -42,7 +42,7 @@ Support             | SourceForge.net                 | **SourceForge.net (binar
 [Haskell]: http://www.haskell.org/                                                         "Haskell"
 [GHC]:     http://www.haskell.org/ghc/                                                     "GHC"
 [LLVM]:    http://llvm.org                                                                 "LLVM"
-[HaPl]:    http://hackage.haskell.org/platform/                                            "Haskell Platform"
+[Haskell Platform]: http://hackage.haskell.org/platform/                                   "Haskell Platform"
 
 ## Build
 
@@ -50,7 +50,7 @@ Support             | SourceForge.net                 | **SourceForge.net (binar
 
 | OS           | Compilers           |
 |:-------------|:--------------------|
-| ![Windows]   | [HaPl] >= 2011.4.0.0
+| ![Windows]   | [Haskell Platform] >= 2011.4.0.0
 | ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other] | [GHC] >= 7 <br /> [LLVM] >= 3
 
 ### Instructions
