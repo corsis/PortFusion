@@ -80,7 +80,7 @@ cabal install
 | Distributed Reverse Proxy Mode  | Distributed Forward Proxy Mode |
 |:-------------------------------:|:-------------------------------|
 | |
-| <p>You have a Linux PC at home `remote` and two Windows PCs behind a corporate firewall at work: the gateway `local` and your personal workstation `server`.</p> <p>You open port `2000` at `remote` and tunnel incoming RDP traffic at port `3389` on `remote` to your workstation `server` via gateway `local`.</p> | <p>A friend is operating an http proxy server `server:3128` and has a gateway PC `remote`.</p> <p>You `local` want to connect to the internet through your friend's http proxy `server:3128` to access websites blocked by your current internet service provider.</p>
+| <p>You have a Linux PC at home `remote` and two Windows PCs behind a corporate firewall at work: the gateway `local` and your personal workstation `server`.</p> <p>You open port `2000` at `remote` and tunnel incoming RDP traffic at port `3389` on `remote` to your workstation `server` via gateway `local`.</p> | <p>A friend is operating an http proxy server `server:3128` and has only one gateway PC in his network that accepts incoming connections `remote`.</p> <p>You `local` want to connect to the internet through your friend's http proxy `server:3128` to access websites blocked by your current internet service provider.</p>
 | |
 | `@remote>` <pre>PortFusion             ] 2000        [</pre> `@local>` <pre>PortFusion 3389 server - 2000 remote [ 3389</pre> | `@remote>` <pre>PortFusion      ]        2000 [</pre> `@local>` <pre>PortFusion 3128 ] remote 2000 - server 3128</pre>
 | |
