@@ -2,11 +2,12 @@
 [pf]: http://corsis.eu/i/icon/h.png "PortFusion"
 
 PortFusion is a minimalistic, cross-platform, transport-layer distributed
-reverse / forward proxy for TCP released under [GPLv3](#license) – a single
-package that makes the most of each platform by tapping into their unique
-capabilities, combining this power with an intuitive interface, beautiful
-design and [Haskell]'s excellent support for unprecedented levels of
-concurrency and parallelism.
+reverse / forward proxy for TCP released under [GPLv3](#license).
+
+A single package that makes the most of each platform by tapping into their
+unique capabilities, combining this power with an intuitive interface, beautiful
+design and [Haskell]'s excellent support for unprecedented levels of concurrency
+and parallelism.
 
 It strives for the smallest source code size while delivering maximum throughput
 with near zero overhead.
@@ -36,8 +37,8 @@ Binary Size         | **78.3 KB** (34.3 KB + 44 KB)   | 1-3 MB
 Concurrency Model   | 1 OS thread per connection      | **1 Haskell thread per connection**
 Distributed Proxy Modes | reverse                     | **reverse, forward**
 Local Proxy Modes   |                                 | **forward**
-Distribution Technique | Windows Communication Foundation | **native sockets API and special system calls of each OS**
-IPv6 support        | yes                             | yes
+Distribution Technique | Windows Communication Foundation | **native sockets API and system calls of each OS**
+Native IPv6 Support | **yes**                         | **yes**
 License             | ![GPLv3]                        | ![GPLv3]
 Availability        | SourceForge.net                 | **SourceForge.net (binary) <br /> GitHub (source) <br /> Corsis.eu (commercial)**
 
@@ -72,7 +73,6 @@ cd    PortFusion
 cabal configure
 cabal install
 ```
-
 
 
 ## Use
