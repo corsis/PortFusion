@@ -1,10 +1,16 @@
 ![pf]
 [pf]: http://corsis.eu/i/icon/h.png "PortFusion"
 
-PortFusion is a minimalistic, cross-platform, transport-layer distributed reverse / forward proxy for TCP released under GPLv3.
+PortFusion is a minimalistic, cross-platform, transport-layer distributed
+reverse / forward proxy for TCP released under GPLv3.
 
-It strives for the smallest source code size while delivering maximum throughput and near zero overhead. It makes the most of each
-platform by tapping into their unique capabilities and offers a new and intuitive interface.
+It strives for the smallest source code size while delivering maximum throughput
+with near zero overhead.
+
+A single package that makes the most of each platform by tapping into their
+unique capabilities, combining this power with an intuitive interface, beautiful
+design and [Haskell]'s excellent support for unprecedented levels of concurrency
+and parallelism.
 
 
 ## Notice
@@ -30,10 +36,11 @@ Concurrency Model   | 1 OS thread per connection      | **1 Haskell thread per c
 Distributed Proxy Modes | reverse                     | **reverse, forward**
 Local Proxy Modes   |                                 | **forward**
 Distribution Technique | Windows Communication Foundation | **native sockets API and special system calls of each OS**
+IPv6 support        | yes                             | yes
 Deployment          | 2 .NET 4.0 managed binaries     | **1 unified, native code binary for each platform**
 Binary Size         | **78.3 KB** (34.3 KB + 44 KB)   | 1-3 MB
 License             | ![GPLv3]                        | ![GPLv3]
-Support             | SourceForge.net                 | **SourceForge.net (binary) <br /> GitHub (source) <br /> Corsis.eu (commercial)**
+Availability        | SourceForge.net                 | **SourceForge.net (binary) <br /> GitHub (source) <br /> Corsis.eu (commercial)**
 
 [GPLv3]:   http://gplv3.fsf.org/gplv3-127x51.png                                           "GPLv3"
 [Windows]: http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_win_other.png "Windows"
@@ -64,8 +71,9 @@ Support             | SourceForge.net                 | **SourceForge.net (binar
 git   clone      git://github.com/corsis/PortFusion.git
 cd    PortFusion
 cabal configure
-cabal build
+cabal install
 ```
+
 
 
 ## Use
@@ -84,7 +92,8 @@ cabal build
 
 ## Download
 
-Official binaries will be made available for the following platforms once all build automation tools have been set up.
+Official binaries will be made available for the following platforms once all
+build automation tools have been set up.
 
 ### Supported Platforms
 
@@ -101,7 +110,9 @@ Official binaries will be made available for the following platforms once all bu
 
 ### Community Support
 
-We are seeking your support to provide up-to-date binaries for all platforms! If you are using an OS+CPU combination that is community-supported or missing support, please [contact us](#contact) to join our build team!
+We are seeking your support to provide up-to-date binaries for all platforms!
+If you are using an OS+CPU combination that is community-supported or missing
+support, please [contact us](#contact) to join our build team!
 
 
 ## Remember
@@ -162,15 +173,15 @@ For special licensing options, please [contact us](#contact).
 PortFusion development follows simple principles:
 
 1. Be concise: [PortFusion is a single-file with less than 500 lines of code](https://github.com/corsis/PortFusion/blob/master/src/Main.hs)
-2. Refactor as often and as heavily as possible
+2. Refactor and prune *constantly*
 3. Push and keep code where it belongs
  1. Create [fully documented reusable libraries](http://hackage.haskell.org/package/splice) that [cover common needs](http://stackoverflow.com/questions/10080670/using-gnu-linux-system-call-splice-for-zero-copy-socket-to-socket-data-transfe)
  2. [Report bugs and work on fixes](https://github.com/haskell/network/issues/31)
-4. Share *every*thing
+4. Share *everything*
  1. [Use the most permissive licenses possible](http://hackage.haskell.org/package/splice)
- 2. [Illustrate every concept in detail](#illustrate)
+ 2. [Illustrate every concept in detail worthy of books](#illustrate)
 5. [Provide excellent support](https://sourceforge.net/p/portfusion/discussion/general/thread/7ad0cb49/)
-6. Grow beautifully
+6. Grow true to your principles
 
 
 ## Thanks
