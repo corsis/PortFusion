@@ -185,8 +185,8 @@ Development follows simple principles:
 
 ### Family
 
-We hope to grow a whole family of Fusion-branded, extensible software-defined
-networking solutions reaching all network layers, technologies and devices.
+We hope to grow a whole family of software-defined networking solutions reaching
+all network layers, technologies and devices.
 
 
 ## Thanks
