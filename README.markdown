@@ -70,6 +70,7 @@ Availability        | SourceForge.net                 | **SourceForge.net (binar
 ```bash
 git   clone      git://github.com/corsis/PortFusion.git
 cd    PortFusion
+cabal update
 cabal configure
 cabal install
 ```
