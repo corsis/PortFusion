@@ -27,16 +27,20 @@ source-repository head
 executable PortFusion
     include-dirs:    res
     hs-source-dirs:  src
-    build-depends:   base       -any,
-                     bytestring -any,
-                     network    -any,
-                     vector     -any,
-                     splice     >= 0.6
     main-is:         Main.hs
     buildable:       True
     extensions:      ScopedTypeVariables CPP BangPatterns
                      TypeSynonymInstances TypeOperators OverloadedStrings
                      DeriveDataTypeable PostfixOperators TupleSections
+    build-depends:   base       -any,
+                     bytestring -any,
+                     vector     -any,
+                     splice     >= 0.6
+
+    if os(mingw32) || os(cygwin32)
+      build-depends: network    >= 2.3.0.13
+    else
+      build-depends: network    -any
 
     if os(linux)
       ghc-options:   -W -O2 -O3 -threaded -fspec-constr-count=16 -fllvm -optlo-O3 -msse4.2

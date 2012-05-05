@@ -3,7 +3,9 @@
 
 PortFusion is a minimalistic, cross-platform, transport-layer distributed reverse / forward proxy for TCP released under GPLv3.
 
-It is damn small, optimized for maximum throughput and ease of use.
+It strives for the smallest source code size while delivering maximum throughput and near zero overhead. It makes the most of each
+platform by tapping into their unique capabilities and offers a new and intuitive interface.
+
 
 ## Notice
 
@@ -20,7 +22,7 @@ PortFusion          | [0.9.3] – old                   | 1.0 – \]-[ayabusa
 --------------------|---------------------------------|-------------------------------
 Memory at Start-up  | ~14 MB                          | **~0.7 MB**
 Memory at 1 Fusion  | ~30 MB (lots of jumps)          | **~1.0 MB** (constant)
-OS Support          | ![Windows]      | ![Windows], ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other]
+OS Support          | ![Windows]                      | ![Windows], ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other]
 Language            | F# / C#                         | **[Haskell] \([GHC] / [LLVM]\)**
 Dependencies        | .NET 4.0 + F# 2.0 Runtime       | **none**
 Source Code Size    | 778 lines (multiple files)      | **< 500 lines (1 file)**
@@ -46,6 +48,7 @@ Support             | SourceForge.net                 | **SourceForge.net (binar
 [LLVM]:    http://llvm.org                                                                 "LLVM"
 [Haskell Platform]: http://hackage.haskell.org/platform/                                   "Haskell Platform"
 
+
 ## Build
 
 ### Requirements
@@ -63,6 +66,7 @@ cd    PortFusion
 cabal configure
 cabal build
 ```
+
 
 ## Use
 
@@ -166,6 +170,8 @@ PortFusion development follows simple principles:
  1. [Use the most permissive licenses possible](http://hackage.haskell.org/package/splice)
  2. [Illustrate every concept in detail](#illustrate)
 5. [Provide excellent support](https://sourceforge.net/p/portfusion/discussion/general/thread/7ad0cb49/)
+6. Grow beautifully
+
 
 ## Thanks
 
@@ -176,6 +182,7 @@ For their support and inspiration, we extend our heart-felt thanks to:
 <img alt='Commercial Users of Functional Programming' title='Commercial Users of Functional Programming' height='96px' src='http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/cufp.png' />
 <img alt='Japan Aerospace Exploration Agency'         title='Japan Aerospace Exploration Agency'                       src='http://upload.wikimedia.org/wikipedia/en/thumb/8/85/Jaxa_logo.svg/160px-Jaxa_logo.svg.png' />
 </div>
+
 
 ## Contact
 
