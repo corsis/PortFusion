@@ -170,7 +170,7 @@ For special licensing options, please [contact us](#contact).
 
 ### Principles
 
-PortFusion development follows simple principles:
+Development follows simple principles:
 
 1. Be concise: [PortFusion is a single-file with less than 500 lines of code](https://github.com/corsis/PortFusion/blob/master/src/Main.hs)
 2. Refactor and prune *constantly*
@@ -182,6 +182,13 @@ PortFusion development follows simple principles:
  2. [Illustrate every concept in detail worthy of books](#illustrate)
 5. [Provide excellent support](https://sourceforge.net/p/portfusion/discussion/general/thread/7ad0cb49/)
 6. Grow true to your principles
+
+### Family
+
+PortFusion is the first networking product by Corsis.
+
+We hope to grow a whole family of Fusion-branded, extensible software-defined
+networking solutions reaching all network layers, technologies and devices.
 
 
 ## Thanks
