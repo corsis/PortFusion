@@ -185,8 +185,6 @@ Development follows simple principles:
 
 ### Family
 
-PortFusion is the first networking product by Corsis.
-
 We hope to grow a whole family of Fusion-branded, extensible software-defined
 networking solutions reaching all network layers, technologies and devices.
 
