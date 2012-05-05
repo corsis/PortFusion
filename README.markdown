@@ -2,15 +2,14 @@
 [pf]: http://corsis.eu/i/icon/h.png "PortFusion"
 
 PortFusion is a minimalistic, cross-platform, transport-layer distributed
-reverse / forward proxy for TCP released under GPLv3.
+reverse / forward proxy for TCP released under [GPLv3](#license) – a single
+package that makes the most of each platform by tapping into their unique
+capabilities, combining this power with an intuitive interface, beautiful
+design and [Haskell]'s excellent support for unprecedented levels of
+concurrency and parallelism.
 
 It strives for the smallest source code size while delivering maximum throughput
 with near zero overhead.
-
-A single package that makes the most of each platform by tapping into their
-unique capabilities, combining this power with an intuitive interface, beautiful
-design and [Haskell]'s excellent support for unprecedented levels of concurrency
-and parallelism.
 
 
 ## Notice
@@ -29,16 +28,16 @@ PortFusion          | [0.9.3] – old                   | 1.0 – \]-[ayabusa
 Memory at Start-up  | ~14 MB                          | **~0.7 MB**
 Memory at 1 Fusion  | ~30 MB (lots of jumps)          | **~1.0 MB** (constant)
 OS Support          | ![Windows]                      | ![Windows], ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other]
-Language            | F# / C#                         | **[Haskell] \([GHC] / [LLVM]\)**
-Dependencies        | .NET 4.0 + F# 2.0 Runtime       | **none**
 Source Code Size    | 778 lines (multiple files)      | **< 500 lines (1 file)**
+Language            | F# / C#                         | **[Haskell] \([GHC] / [LLVM]\)**
+Dependencies        | .NET 4.0 + F# 2.0 Runtime       | **none** (binaries are statically linked)
+Deployment          | 2 .NET 4.0 managed binaries     | **1 unified, native code binary for each platform**
+Binary Size         | **78.3 KB** (34.3 KB + 44 KB)   | 1-3 MB
 Concurrency Model   | 1 OS thread per connection      | **1 Haskell thread per connection**
 Distributed Proxy Modes | reverse                     | **reverse, forward**
 Local Proxy Modes   |                                 | **forward**
 Distribution Technique | Windows Communication Foundation | **native sockets API and special system calls of each OS**
 IPv6 support        | yes                             | yes
-Deployment          | 2 .NET 4.0 managed binaries     | **1 unified, native code binary for each platform**
-Binary Size         | **78.3 KB** (34.3 KB + 44 KB)   | 1-3 MB
 License             | ![GPLv3]                        | ![GPLv3]
 Availability        | SourceForge.net                 | **SourceForge.net (binary) <br /> GitHub (source) <br /> Corsis.eu (commercial)**
 
