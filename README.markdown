@@ -8,13 +8,15 @@ It is damn small, optimized for maximum throughput and ease of use.
 ## Notice
 
 ```
-This is the Haskell source code repository of the latest ]-[ayabusa version
+This is the new Haskell source code repository of the latest ]-[ayabusa version
 – a complete rewrite of the initial Windows-only versions developed in F# / C#.
 ```
 
+[0.9.3]: http://sourceforge.net/p/portfusion/home/PortFusion/
+
 ### What is new in `]-[ayabusa`?
 
-PortFusion          | 0.9.3 (old)                     | 1.0 \]-[ayabusa (new)
+PortFusion          | [0.9.3] – old                   | 1.0 – \]-[ayabusa
 --------------------|---------------------------------|-------------------------------
 Memory at Start-up  | ~14 MB                          | **~0.7 MB**
 Memory at 1 Fusion  | ~30 MB (lots of jumps)          | **~1.0 MB** (constant)
@@ -73,7 +75,7 @@ cabal build
 | |
 | <p>RDP clients that connect to tunneled RDP server `remote:3389` are served by remote desktop server `server:3389` via gateway `local:2000`.</p> <p>You only need to configure the firewall on gateway `remote` for port `2000`.</p> | <p>`local` HTTP clients that connects to the tunneled proxy `local:3128` are served by your friend's http proxy `server:3128` via gateway`remote`.</p> <p>Your friend only needs to configure the firewall on gateway `remote` for port `2000`.</p>
 | |
-| [<img src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/reverse-fusion-msc-7.png" alt="DR" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/reverse-fusion-msc-7.png) | [<img src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/forward-fusion-msc-7.png" alt="DF" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/forward-fusion-msc-7.png)
+| <a id='illustrate' /> [<img src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/reverse-fusion-msc-7.png" alt="DR" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/reverse-fusion-msc-7.png) | [<img src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/forward-fusion-msc-7.png" alt="DF" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/forward-fusion-msc-7.png)
 
 
 ## Download
@@ -146,21 +148,23 @@ GNU General Public License for more details.
 ```
 [![GPLv3] <br /> Full License Text](http://beta.corsis.eu/license/)
 
+For special licensing options, please [contact us](#contact).
+
 
 ## Know
 
 ### Principles
 
-Development strictly follows simple principles:
+PortFusion development follows simple principles:
 
 1. Be concise: [PortFusion is a single-file with less than 500 lines of code](https://github.com/corsis/PortFusion/blob/master/src/Main.hs)
 2. Refactor as often and as heavily as possible
 3. Push and keep code where it belongs
  1. Create [fully documented reusable libraries](http://hackage.haskell.org/package/splice) that [cover common needs](http://stackoverflow.com/questions/10080670/using-gnu-linux-system-call-splice-for-zero-copy-socket-to-socket-data-transfe)
  2. [Report bugs and work on fixes](https://github.com/haskell/network/issues/31)
-4. Share everything
- 1. [Use more permissive licenses whenever possible](http://hackage.haskell.org/package/splice)
- 2. [Illustrate every step in detail](http://beta.corsis.eu/features/#tab-distributed-reverse-proxy-mode)
+4. Share *every*thing
+ 1. [Use the most permissive licenses possible](http://hackage.haskell.org/package/splice)
+ 2. [Illustrate every concept in detail](#illustrate)
 5. [Provide excellent support](https://sourceforge.net/p/portfusion/discussion/general/thread/7ad0cb49/)
 
 ## Thanks
@@ -168,9 +172,9 @@ Development strictly follows simple principles:
 For their support and inspiration, we extend our heart-felt thanks to:
 
 <div style='vertical-align: middle'>
-<img alt='Internet Initiative Japan'          title='Internet Initiative Japan'  src='http://www.iij.ad.jp/en/common/images/hd_logo01.png' />
+<img alt='Internet Initiative Japan'                  title='Internet Initiative Japan'                                src='http://www.iij.ad.jp/en/common/images/hd_logo01.png' />
 <img alt='Commercial Users of Functional Programming' title='Commercial Users of Functional Programming' height='96px' src='http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/cufp.png' />
-<img alt='Japan Aerospace Exploration Agency' title='Japan Aerospace Exploration Agency' src='http://upload.wikimedia.org/wikipedia/en/thumb/8/85/Jaxa_logo.svg/160px-Jaxa_logo.svg.png' />
+<img alt='Japan Aerospace Exploration Agency'         title='Japan Aerospace Exploration Agency'                       src='http://upload.wikimedia.org/wikipedia/en/thumb/8/85/Jaxa_logo.svg/160px-Jaxa_logo.svg.png' />
 </div>
 
 ## Contact
