@@ -156,10 +156,10 @@ instance Disposable Socket  where
         PeerLink _        (Just _) -> pc
         _                          -> return ()
     try_ $ shutdown s ShutdownBoth
-    try_ $ sClose s
-instance Disposable Peer    where (✖) (Peer s h) = do (s ✖); (h ✖)
-instance Disposable Handle  where (✖) = try_ . hClose
-instance Disposable (Ptr a) where (✖) = free
+    try_ $ sClose   s
+instance Disposable Peer          where (✖) (Peer s h) = do (s ✖); (h ✖)
+instance Disposable Handle        where (✖) = try_ . hClose
+instance Disposable (Ptr       a) where (✖) = free
 instance Disposable (StablePtr a) where (✖) = freeStablePtr
 
 
@@ -202,6 +202,7 @@ build     = __OS__ ++ " - " ++ __ARCH__ ++  " [" ++ __TIMESTAMP__ ++ "]"
 
 main :: IO ()
 main = withSocketsDo $ tryWith (const . print $ LS "INVALID SYNTAX") $ do
+
   mapM_ B.putStrLn [ "\n", name, copyright, "", build, "\n" ]
   tasks <- fmap i getArgs
   unless (null tasks) $ do
