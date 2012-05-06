@@ -1,6 +1,3 @@
----
-title: Brief
----
 
 ![pf]
 [pf]: http://corsis.eu/i/icon/h.png "PortFusion"
