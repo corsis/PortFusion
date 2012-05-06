@@ -39,6 +39,7 @@ executable PortFusion
 
     if os(mingw32) || os(cygwin32)
       build-depends: network    >= 2.3.0.13
+      ld-options:    res\win\PortFusion.res
     else
       build-depends: network    -any
 
