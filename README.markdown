@@ -97,7 +97,7 @@ build automation tools have been set up.
 
 ### Supported Platforms
 
-| <img height='32px' alt='CPU' title='CPU' src='http://a.fsdn.com/sd/topics/hardware_64.png' /> | ![Windows] | ![Linux] | ![OSX] | ![FreeBSD] | ![OpenBSD] | ![Solaris] | ![Other]
+| <img  alt='CPU' title='CPU' src='http://a.fsdn.com/sd/topics/hardware_64.png' /> | ![Windows] | ![Linux] | ![OSX] | ![FreeBSD] | ![OpenBSD] | ![Solaris] | ![Other]
 | ------ | ---------- | -------- | ------ | ---------- | ---------- | ---------- | --------
 | x86-64 | ![C]       | ![C]     | ![T]   | ![C]N      |            |
 | x86    | ![C]       | ![C]N    |        |            | 
