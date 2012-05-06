@@ -1,4 +1,5 @@
-<div style='vertical-align: middle'>
+
+<div name='go' style='vertical-align: middle'>
 <img alt='Logo + PortFusion'  title='Logo + PortFusion'  src='http://fusion.corsis.eu/i/h.png' />
 <img alt='Corsis Research'    title='Corsis Researcg'    src='http://fusion.corsis.eu/i/corsis.png' />
 </div>
