@@ -97,13 +97,14 @@ build automation tools have been set up.
 
 ### Supported Platforms
 
-|        | ![Windows] | ![Linux] | ![OSX] | ![FreeBSD] | ![OpenBSD] | ![Solaris] | ![Other]
+| ![CPU] | ![Windows] | ![Linux] | ![OSX] | ![FreeBSD] | ![OpenBSD] | ![Solaris] | ![Other]
 | ------ | ---------- | -------- | ------ | ---------- | ---------- | ---------- | --------
 | x86-64 | ![C]       | ![C]     | ![T]   | ![C]N      |            |
 | x86    | ![C]       | ![C]N    |        |            | 
 | ARM    | ![C]F      | ![C]F    | ![T]F  |            |
 | Other  |
 
+[CPU]: http://a.fsdn.com/sd/topics/hardware_64.png "CPU"
 [C]: http://res2.windows.microsoft.com/resbox/en/Windows%207/main/33624ed4-7676-4be4-9f47-d77eab7ecd9c_0.gif "CORSIS-supported"
 [T]: http://res2.windows.microsoft.com/resbox/en/Windows%207/main/43fa1e85-5152-43ff-b0f7-63ae6520a88b_0.gif "Community-supported"
 ![C]: CORSIS-supported, ![T]: Community-supported, N: near future, F: far  future
