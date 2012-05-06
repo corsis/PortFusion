@@ -1,15 +1,8 @@
-..
-
-<div name='go' style='vertical-align: middle'>
-<img alt='Logo + PortFusion'  title='Logo + PortFusion'  src='http://fusion.corsis.eu/i/h.png' />
-<img alt='Corsis Research'    title='Corsis Researcg'    src='http://fusion.corsis.eu/i/corsis.png' />
-</div>
+![pf]
+[pf]: http://corsis.eu/i/icon/h.png "PortFusion"
 
 PortFusion is a minimalistic, cross-platform, transport-layer distributed
 reverse / forward proxy for TCP released under [GPLv3](#license).
-
-![pf]
-[pf]: http://corsis.eu/i/icon/h.png "PortFusion"
 
 A single package that makes the most of each platform by tapping into their
 unique capabilities, combining this power with an intuitive interface, beautiful
