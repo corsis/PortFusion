@@ -98,12 +98,12 @@ Official binaries are being made available for several platforms.
 
 | <img height='48px' alt='CPU' title='CPU' src='http://a.fsdn.com/sd/topics/hardware_64.png' /> | ![Windows] | ![Linux] | ![OSX] | ![FreeBSD] | ![OpenBSD] | ![Solaris] | ![Other]
 | ------ | ---------- | ---------- | ------ | ---------- | ---------- | ---------- | --------
-| x86-64 | [Download] | [Download] | ![T]N  | ![C]N      | ![C]F      |
+| x86-64 | ![D]       | [Download] | ![T]N  | ![C]N      | ![C]F      |
 | x86    | [Download] | ![C]N      |        |            | 
 | ARM    | ![C]F      | ![C]F      | ![T]F  |            |
 | Other  |
 
-[Download]: http://fusion.corsis.eu
+![D]: http://fusion.corsis.eu/i/down.svg "Download"
 [C]: http://res2.windows.microsoft.com/resbox/en/Windows%207/main/33624ed4-7676-4be4-9f47-d77eab7ecd9c_0.gif "CORSIS-supported"
 [T]: http://res2.windows.microsoft.com/resbox/en/Windows%207/main/43fa1e85-5152-43ff-b0f7-63ae6520a88b_0.gif "Community-supported"
 ![C]: CORSIS-supported, ![T]: Community-supported, N: near future, F: far  future
