@@ -33,7 +33,7 @@ Source Code Size    | 778 lines (multiple files)      | **< 500 lines (1 file)**
 Language            | F# / C#                         | **[Haskell] \([GHC] / [LLVM]\)**
 Dependencies        | .NET 4.0 + F# 2.0 Runtime       | **none** (binaries are statically linked)
 Deployment          | 2 .NET 4.0 managed binaries     | **1 unified, native code binary for each platform**
-Binary Size         | **78.3 KB** (34.3 KB + 44 KB)   | 1-3 MB
+Binary Size         | **78.3 KB** (34.3 KB + 44 KB)   | 1-3 MB (~300 KB compressed)
 Concurrency Model   | 1 OS thread per connection      | **1 Haskell thread per connection**
 Distributed Proxy Modes | reverse                     | **reverse, forward**
 Local Proxy Modes   |                                 | **forward**
