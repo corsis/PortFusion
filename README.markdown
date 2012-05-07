@@ -115,8 +115,9 @@ far:  binaries will be made available at an unknown date
 ### Community Support
 
 We are seeking your support to provide up-to-date binaries for all platforms!
-If you are using an OS+CPU combination that is community-supported or missing
-support, please [contact us](#contact) to join our build team!
+If you have access to an OS+CPU combination that is missing support,
+community-supported or is scheduled for far future, please [contact us](#contact)
+to join our build team!
 
 
 ## Remember
