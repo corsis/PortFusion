@@ -98,7 +98,7 @@ Official binaries are being made available for several platforms.
 
 | <img height='48px' alt='CPU' title='CPU' src='http://a.fsdn.com/sd/topics/hardware_64.png' /> | ![Windows] | ![Linux] | ![OSX] | ![FreeBSD] | ![OpenBSD] | ![Solaris] | ![Other]
 | ------ | ---------- | ---------- | ------ | ---------- | ---------- | ---------- | --------
-| x86-64 | [Download] | [Download] | ![T]N  | ![C]N      |            |
+| x86-64 | [Download] | [Download] | ![T]N  | ![C]N      | ![C]F      |
 | x86    | [Download] | ![C]N      |        |            | 
 | ARM    | ![C]F      | ![C]F      | ![T]F  |            |
 | Other  |
