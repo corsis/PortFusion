@@ -103,8 +103,7 @@ Official binaries are being made available for several platforms.
 | ARM    | ![C] far   | ![C] far   | ![T] far |            |
 | Other  |
 
-![D]: CORSIS-supported <br />
-![C]: CORSIS-supported <br />
+![D], ![C]: CORSIS-supported <br />
 ![T]: Community-supported <br />
 near: binaries will be made available within 2012-05 <br />
 far:  binaries will be made available at an unknown date
