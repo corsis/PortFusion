@@ -1,30 +1,3 @@
-html, body { height: 100%; }
-
-body {
-    width: 100%; /* needed for FF */
-    margin: 0;
-    
-    /* Flexbox hawtness */
-    display: box; display: flexbox;
-    box-align: center; flex-align: center;
-    box-pack: center; flex-pack: center;
-}
-
-#cb {
-    padding: 1em 1.5em;
-    
-    /* Fallback to look decent w/out Flexbox */
-    max-width: 10em;
-    margin: 1em auto;
-    
-    /* Make it pretty */
-    background: slategray;
-    text-align: center;
-    border-radius: .3em;
-    color: #405060;
-    font: bold 150% sans-serif;
-    text-shadow: 0 2px 1px hsla(0,0%,100%,.2);
-}​
 
 
 #logo {
