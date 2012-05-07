@@ -92,14 +92,13 @@ cabal install
 
 ## Download
 
-Official binaries will be made available for the following platforms once all
-build automation tools have been set up.
+Official binaries are being made available for several platforms.
 
 ### Supported Platforms
 
 | <img height='48px' alt='CPU' title='CPU' src='http://a.fsdn.com/sd/topics/hardware_64.png' /> | ![Windows] | ![Linux] | ![OSX] | ![FreeBSD] | ![OpenBSD] | ![Solaris] | ![Other]
 | ------ | ---------- | ---------- | ------ | ---------- | ---------- | ---------- | --------
-| x86-64 | [Download] | [Download] | ![T]   | ![C]N      |            |
+| x86-64 | [Download] | [Download] | ![T]N  | ![C]N      |            |
 | x86    | [Download] | ![C]N      |        |            | 
 | ARM    | ![C]F      | ![C]F      | ![T]F  |            |
 | Other  |
