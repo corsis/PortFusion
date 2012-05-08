@@ -98,7 +98,7 @@ Official binaries are being made available for several platforms.
 
 | <img height='48px' alt='CPU' title='CPU' src='http://a.fsdn.com/sd/topics/hardware_64.png' /> | ![Windows] | ![Linux] | ![OSX] | ![FreeBSD] | ![OpenBSD] | ![Solaris] | ![Other]
 | ------ | ---------- | ---------- | ------ | ---------- | ---------- | ---------- | --------
-| x86-64 | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a>       | ![T] near  | ![C] near      | ![C] far      |
+| x86-64 | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a>       | ![C] near  | ![C] near      | ![C] far      |
 | x86    | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | ![C] near  |        |            | 
 | ARM    | ![C] far   | ![C] far   | ![T] far |            |
 | Other  |
