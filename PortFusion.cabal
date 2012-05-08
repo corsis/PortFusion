@@ -70,7 +70,7 @@ executable PortFusion
              cpp-options: -D__OS__="BSD"
            else
              if os(darwin)
-               cpp-options: -D__OS__="Mac OS"
+               cpp-options: -D__OS__="MacOS"
              else
                if os(solaris) || os(solaris2)
                  cpp-options: -D__OS__="Solaris"
