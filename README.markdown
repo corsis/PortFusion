@@ -60,7 +60,7 @@ Availability        | SourceForge.net                 | **SourceForge.net (binar
 
 ### Requirements
 
-You need only of the following rows for compilation.
+You need only *one* of the following rows for compilation.
 
 | Remarks | OS           | Compilers           | Remarks                                                                                     |
 |:--------|:-------------|:--------------------|:--------------------------------------------------------------------------------------------|
