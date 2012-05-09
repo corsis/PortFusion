@@ -71,9 +71,9 @@ You need only *one* of the following rows for compilation.
 
 ```bash
 cabal update
-cabal install splice
+cabal install    splice
 
-git   clone   git://github.com/corsis/PortFusion.git -b master
+git   clone      git://github.com/corsis/PortFusion.git -b master
 cd    PortFusion
 cabal configure
 cabal build
