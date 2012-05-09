@@ -62,10 +62,10 @@ Availability        | SourceForge.net                 | **SourceForge.net (binar
 
 You need only *one* of the following rows for compilation.
 
-| Remarks | OS           | Compilers           | Remarks                                                                                     |
-|:--------|:-------------|:--------------------|:--------------------------------------------------------------------------------------------|
+| Remarks | OS           | Compilers           |
+|:--------|:-------------|:--------------------|
 | recommended and <br /> used for official binaries | ![Windows], ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other] | [GHC] >= 7.4 <br /> [LLVM] >= 3
-| easy to install <br /> for newbies | ![Windows], ![OSX] | [Haskell Platform] >= 2011.4.0.0
+| easy to install for <br /> all Haskell newbies | ![Windows], ![OSX] | [Haskell Platform] >= 2011.4.0.0
 
 ### Instructions
 
