@@ -60,10 +60,12 @@ Availability        | SourceForge.net                 | **SourceForge.net (binar
 
 ### Requirements
 
-| OS           | Compilers           | Remarks                                                                                     |
-|:-------------|:--------------------|:--------------------------------------------------------------------------------------------|
-| ![Windows], ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other] | [GHC] >= 7.4 <br /> [LLVM] >= 3 | recommended and <br /> used for official binaries
-| ![Windows], ![OSX] | [Haskell Platform] >= 2011.4.0.0                                              | easy to install <br /> for newbies
+You need only of the following rows for compilation.
+
+| Remarks | OS           | Compilers           | Remarks                                                                                     |
+|:--------|:-------------|:--------------------|:--------------------------------------------------------------------------------------------|
+| recommended and <br /> used for official binaries | ![Windows], ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other] | [GHC] >= 7.4 <br /> [LLVM] >= 3
+| easy to install <br /> for newbies | ![Windows], ![OSX] | [Haskell Platform] >= 2011.4.0.0
 
 ### Instructions
 
