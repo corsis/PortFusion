@@ -81,7 +81,7 @@ cabal build
 
 ### Flags
 
-Following flags can be activated with `cabal configure`.
+Following flags can be activated with `cabal configure -f "static llvm"`.
 
 | Flag     | Effect                      | Default | Official Binaries  |
 |:---------|:----------------------------|:--------|:-------------------|
