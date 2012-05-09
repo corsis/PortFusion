@@ -62,27 +62,27 @@ Availability        | SourceForge.net                 | **SourceForge.net (binar
 
 | OS           | Compilers           |
 |:-------------|:--------------------|
-| ![Windows]   | [Haskell Platform] >= 2011.4.0.0
-| ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other] | [GHC] >= 7 <br /> [LLVM] >= 3
+| ![Windows], ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other] | [GHC] >= 7 <br /> [LLVM] >= 3
+| ![Windows], ![Linux], ![OSX] | [Haskell Platform] >= 2011.4.0.0
 
 ### Instructions
 
 ```bash
-cabal install splice
-git   clone      git://github.com/corsis/PortFusion.git
-cd    PortFusion
 cabal update
+cabal install splice
+
+git   clone   git://github.com/corsis/PortFusion.git -b master
+cd    PortFusion
 cabal configure
 cabal build
 ```
 
-### Result
+### Flags
 
-A single statically-compiled binary for your platform:
-
-```
-dist/build/PortFusion/PortFusion
-```
+| Flag   | Effect                      | Value in Official Binaries |
+|:-------|:----------------------------|:---------------------------|
+| static | link C libraries statically | true
+| llvm   | compile via LLVM            | true
 
 
 ## Use

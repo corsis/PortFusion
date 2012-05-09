@@ -23,6 +23,16 @@ source-repository head
     type:      git
     location:  git://github.com/corsis/PortFusion.git
 
+
+flag static
+    description: enable fullly static linking
+    default    : False
+
+
+flag llvm
+    description: compile via LLVM
+    default    : False
+
  
 executable PortFusion
     include-dirs:    res
@@ -37,16 +47,23 @@ executable PortFusion
                      vector     -any,
                      splice     >= 0.6
 
-    if os(mingw32) || os(cygwin32)
+    if os(mingw32)
       build-depends: network    >= 2.3.0.13
       ld-options:    res\win\PortFusion.res
     else
       build-depends: network    -any
 
-    if os(linux)
-      ghc-options:   -W -O2 -O3 -threaded -fspec-constr-count=16 -static -optl-static -fllvm -optlo-O3 -msse4.2
-    else
-      ghc-options:   -W -O2 -O3 -threaded -fspec-constr-count=16
+
+    ghc-options:     -W -O2 -O3 -threaded -fspec-constr-count=16
+
+    if flag(static)
+      ghc-options:   -static -optl-static
+
+    if flag(llvm)
+      ghc-options:   -fllvm -optlo-O3 -msse4.2
+
+
+--------------------------------------------------------------------------------
 
 
    -- CORSIS Build Name Components
