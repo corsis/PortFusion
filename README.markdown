@@ -81,10 +81,14 @@ cabal build
 
 ### Flags
 
-| Flag   | Effect                      | Value in Official Binaries |
-|:-------|:----------------------------|:---------------------------|
-| static | link C libraries statically | true
-| llvm   | compile via LLVM            | true
+Following flags can be activated with `cabal configure`.
+
+| Flag     | Effect                      | Default | Official Binaries  |
+|:---------|:----------------------------|:--------|:-------------------|
+| `static` | link C libraries statically | `false` | `true`
+| `llvm`   | compile via LLVM            | `false` | `true`
+
+These are by default not activated to make PortFusion easy to compile.
 
 
 ## Use
