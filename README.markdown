@@ -88,7 +88,7 @@ Following flags can be activated with `cabal configure -f "static llvm"`.
 | `static` | link C libraries statically | `false` | `true`
 | `llvm`   | compile via LLVM            | `false` | `true`
 
-These are by default not activated to make PortFusion easy to compile.
+These are by default not activated to make PortFusion easy to compile for everyone :).
 
 
 ## Use
