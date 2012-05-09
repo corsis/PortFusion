@@ -68,11 +68,20 @@ Availability        | SourceForge.net                 | **SourceForge.net (binar
 ### Instructions
 
 ```bash
+cabal install splice
 git   clone      git://github.com/corsis/PortFusion.git
 cd    PortFusion
 cabal update
 cabal configure
-cabal install
+cabal build
+```
+
+### Result
+
+A single statically-compiled binary for your platform:
+
+```
+dist/build/PortFusion/PortFusion
 ```
 
 
@@ -92,7 +101,8 @@ cabal install
 
 ## Download
 
-Official binaries are being made available for several platforms.
+Official statically-compiled binaries are being made available for several
+platforms.
 
 ### Supported Platforms
 

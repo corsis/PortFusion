@@ -44,7 +44,7 @@ executable PortFusion
       build-depends: network    -any
 
     if os(linux)
-      ghc-options:   -W -O2 -O3 -threaded -fspec-constr-count=16 -fllvm -optlo-O3 -msse4.2
+      ghc-options:   -W -O2 -O3 -threaded -fspec-constr-count=16 -static -optl-static -fllvm -optlo-O3 -msse4.2
     else
       ghc-options:   -W -O2 -O3 -threaded -fspec-constr-count=16
 
