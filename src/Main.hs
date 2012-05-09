@@ -96,7 +96,6 @@ a @>-<@ b =
 (@<) p = do
 #if !defined(IPV4ONLY)
   s <- socket AF_INET6 Stream 0 =>> opt
-  setSocketOption s IPv6Only  0 // try_
   bindSocket      s $ SockAddrInet6 p 0 iN6ADDR_ANY 0
 #else
   s <- socket AF_INET  Stream 0 =>> opt              -- Windows XP does not have
