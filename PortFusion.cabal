@@ -46,7 +46,6 @@ executable PortFusion
                      bytestring -any,
                      vector     -any,
                      splice     >= 0.6
-
     if os(mingw32)
       build-depends: network    >= 2.3.0.13
       ld-options:    res\win\PortFusion.res
@@ -54,10 +53,11 @@ executable PortFusion
       build-depends: network    -any
 
 
-    ghc-options:     -W -O2 -O3 -threaded -fspec-constr-count=16
+    ghc-options:     -lgmp -W -O2 -O3 -threaded -fspec-constr-count=16
 
     if flag(static)
-      ghc-options:   -static -optl-static
+      ghc-options:   -static
+      ld-options:    -static
 
     if flag(llvm)
       ghc-options:   -fllvm -optlo-O3 -msse4.2
