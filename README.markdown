@@ -129,6 +129,7 @@ Following flags can be activated with `cabal configure -f llvm`.
 
 | Flag     | Effect                      | Default | Official Binaries  |
 |:---------|:----------------------------|:--------|:-------------------|
+|          |                             |         |
 | `llvm`   | compile via LLVM            | `false` | `true`
 
 These are by default not activated to make PortFusion easy to compile for everyone :).
