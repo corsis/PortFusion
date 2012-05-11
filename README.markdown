@@ -58,8 +58,7 @@ Availability        | SourceForge.net                 | **SourceForge.net (binar
 
 ## Download
 
-Official statically-compiled binaries are being made available for several
-platforms.
+Official statically-compiled binaries are available for several platforms.
 
 ### Supported Platforms
 
