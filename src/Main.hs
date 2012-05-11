@@ -54,7 +54,7 @@ att :: IO a -> IO (Maybe a)
 att a = tryWith (const $ return Nothing) (Just <$> a)
 
 tryRun :: IO () -> IO ()
-tryRun a = tryWith (\x -> do print x; wait 1) a
+tryRun a = tryWith (\x -> do print x; wait 2) a
 
 {-# INLINE (=>>) #-}
 infixr 0 =>>
@@ -65,10 +65,9 @@ a =>> f = do r <- a; _ <- f r; return r
 (//) :: a -> (a -> b) -> b
 x // f = f x
 
-(???) :: [IO a] -> IO a
-(???) = foldr (?>) next
+(???) :: IO a -> [IO a] -> IO a
+e ??? as = foldr (?>) e as
   where x ?> y = x `X.catch` (\(_ :: X.SomeException) -> y)
-        next   = X.throwIO $ userError "-"
 
 newtype LiteralString = LS ByteString
 instance Show     LiteralString where show (LS x) = B.unpack x
@@ -81,9 +80,11 @@ data PeerLink   = PeerLink   (Maybe SockAddr) (Maybe SockAddr) deriving Show
 data FusionLink = FusionLink (Maybe SockAddr) (Maybe Port    ) (Maybe SockAddr)
   deriving Show
 
-data PeerFault         = Loss | Impatience        deriving (Show,Typeable)
-data ProtocolException = Error PeerFault PeerLink deriving (Show,Typeable)
-instance X.Exception ProtocolException where
+data PeerFault           = Loss | Impatience        deriving (Show,Typeable)
+data   ProtocolException = Error PeerFault PeerLink deriving (Show,Typeable)
+data ConnectionException = Refused                  deriving (Show,Typeable)
+instance X.Exception   ProtocolException where
+instance X.Exception ConnectionException where
 
 (<@>)   :: Socket ->           IO PeerLink
 (<@>)   s = PeerLink <$> (att $ getSocketName s) <*> (att $ getPeerName s)
@@ -110,7 +111,7 @@ a @>-<@ b =
 (<@) s = do (c,_) <- accept s; configure c; print . (:.:) Accept =<< (c <@>); return c
 
 (.@.) :: Host -> Port -> IO Socket
-h .@. p = (???) . map c =<< getAddrInfo hint host port
+h .@. p = (X.throwIO Refused ???) . map c =<< getAddrInfo hint host port
   where hint = Just $! defaultHints { addrSocketType = Stream }
         host = Just $! B.unpack h
         port = Just $! show     p
@@ -330,7 +331,7 @@ run ((:><:) fp) = do
 --- :: Task -> IO () - distributed reverse
 run ((lp,lh) :-<: ((fp,fh),rp)) = do
 
-  forever $ fh ! fp `X.bracketOnError` (✖) $ \f@(Peer s _) -> do
+  forever . tryRun $ fh ! fp `X.bracketOnError` (✖) $ \f@(Peer s _) -> do
 
     let m = (:-<-:) rp
     print . (:.:) (Send m) =<< (s <@>)

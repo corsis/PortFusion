@@ -53,7 +53,7 @@ executable PortFusion
       build-depends: network    -any
 
 
-    ghc-options:     -lgmp -W -O2 -O3 -threaded -fspec-constr-count=16
+    ghc-options:     -W -O2 -O3 -threaded -fspec-constr-count=16
 
     if flag(static)
       ghc-options:   -static
