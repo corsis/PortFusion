@@ -196,7 +196,7 @@ data Request = (:-<-:)        Port
 -- CORE ^
 
 name, copyright, build :: ByteString
-name      = "CORSIS PortFusion    ( ]-[ayabusa 1.0.0 )"
+name      = "CORSIS PortFusion    ( ]-[ayabusa 1.0.3 )"
 copyright = "(c) 2012 Cetin Sert. All rights reserved."
 build     = __OS__ ++ " - " ++ __ARCH__ ++  " [" ++ __TIMESTAMP__ ++ "]"
 

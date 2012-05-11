@@ -1,5 +1,5 @@
 name:          PortFusion
-version:       1.0
+version:       1.0.3
 stability:     stable on all operating systems
 synopsis:      CORSIS PortFusion : High-performance Distributed Proxy
 description:   PortFusion F#/C# reimagined in Haskell.
@@ -33,7 +33,7 @@ flag llvm
     description: compile via LLVM
     default    : False
 
- 
+
 executable PortFusion
     include-dirs:    res
     hs-source-dirs:  src
