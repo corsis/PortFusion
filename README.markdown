@@ -56,55 +56,6 @@ Availability        | SourceForge.net                 | **SourceForge.net (binar
 [Haskell Platform]: http://hackage.haskell.org/platform/                                   "Haskell Platform"
 
 
-## Build
-
-### Requirements
-
-You need only *one* of the following rows for compilation.
-
-| Remarks | OS           | Compilers           |
-|:--------|:-------------|:--------------------|
-| recommended and <br /> used for official binaries | ![Windows], ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other] | [GHC] >= 7.4 <br /> [LLVM] >= 3
-| easy to install for <br /> all Haskell newbies | ![Windows], ![OSX] | [Haskell Platform] >= 2011.4.0.0
-
-### Instructions
-
-```bash
-cabal update
-cabal install    splice
-
-git   clone      git://github.com/corsis/PortFusion.git -b master
-cd    PortFusion
-cabal configure
-cabal build
-```
-
-### Flags
-
-Following flags can be activated with `cabal configure -f "static llvm"`.
-
-| Flag     | Effect                      | Default | Official Binaries  |
-|:---------|:----------------------------|:--------|:-------------------|
-| `static` | link C libraries statically | `false` | `true`
-| `llvm`   | compile via LLVM            | `false` | `true`
-
-These are by default not activated to make PortFusion easy to compile for everyone :).
-
-
-## Use
-
-| Distributed Reverse Proxy Mode  | Distributed Forward Proxy Mode |
-|:-------------------------------:|:-------------------------------|
-| |
-| <p>You have a Linux PC at home `remote` and two Windows PCs behind a corporate firewall at work: the gateway `local` and your personal workstation `server`.</p> <p>You open port `2000` at `remote` and tunnel incoming RDP traffic at port `3389` on `remote` to your workstation `server` via gateway `local`.</p> | <p>A friend is operating an http proxy server `server:3128` and has only one gateway PC in his network that accepts incoming connections from the public internet `remote`.</p> <p>You `local` want to connect to the internet through your friend's http proxy `server:3128` to access websites blocked by your current internet service provider.</p>
-| |
-| `@remote>` <pre>PortFusion             ] 2000        [</pre> `@local>` <pre>PortFusion 3389 server - 2000 remote [ 3389</pre> | `@remote>` <pre>PortFusion      ]        2000 [</pre> `@local>` <pre>PortFusion 3128 ] remote 2000 - server 3128</pre>
-| |
-| <p>You can now connect to `remote:3389` with your favourite remote desktop client. All connections will be tunneled via gateway `local` to your workstation `server`.</p> <p>You only need to configure the firewall at your own home PC `remote` for port `2000`.</p> | <p>`local` HTTP clients that connects to the tunneled proxy `local:3128` are served by your friend's http proxy `server:3128` via gateway`remote`.</p> <p>Your friend only needs to configure the firewall on gateway `remote` for port `2000`.</p>
-| |
-| <a name='illustrate' class='anchor' href='#illustrate' /> [<img width='100%' src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/reverse-fusion-msc-7.png" alt="DR" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/reverse-fusion-msc-7.png) | [<img width='100%' src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/forward-fusion-msc-7.png" alt="DF" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/forward-fusion-msc-7.png)
-
-
 ## Download
 
 Official statically-compiled binaries are being made available for several
@@ -134,6 +85,54 @@ We are seeking your support to provide up-to-date binaries for all platforms!
 If you have access to an OS+CPU combination that is missing support,
 community-supported or is scheduled for far future, please [contact us](#contact)
 to join our build team!
+
+
+## Use
+
+| Distributed Reverse Proxy Mode  | Distributed Forward Proxy Mode |
+|:-------------------------------:|:-------------------------------|
+| |
+| <p>You have a Linux PC at home `remote` and two Windows PCs behind a corporate firewall at work: the gateway `local` and your personal workstation `server`.</p> <p>You open port `2000` at `remote` and tunnel incoming RDP traffic at port `3389` on `remote` to your workstation `server` via gateway `local`.</p> | <p>A friend is operating an http proxy server `server:3128` and has only one gateway PC in his network that accepts incoming connections from the public internet `remote`.</p> <p>You `local` want to connect to the internet through your friend's http proxy `server:3128` to access websites blocked by your current internet service provider.</p>
+| |
+| `@remote>` <pre>PortFusion             ] 2000        [</pre> `@local>` <pre>PortFusion 3389 server - 2000 remote [ 3389</pre> | `@remote>` <pre>PortFusion      ]        2000 [</pre> `@local>` <pre>PortFusion 3128 ] remote 2000 - server 3128</pre>
+| |
+| <p>You can now connect to `remote:3389` with your favourite remote desktop client. All connections will be tunneled via gateway `local` to your workstation `server`.</p> <p>You only need to configure the firewall at your own home PC `remote` for port `2000`.</p> | <p>`local` HTTP clients that connects to the tunneled proxy `local:3128` are served by your friend's http proxy `server:3128` via gateway`remote`.</p> <p>Your friend only needs to configure the firewall on gateway `remote` for port `2000`.</p>
+| |
+| <a name='illustrate' class='anchor' href='#illustrate' /> [<img width='100%' src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/reverse-fusion-msc-7.png" alt="DR" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/reverse-fusion-msc-7.png) | [<img width='100%' src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/forward-fusion-msc-7.png" alt="DF" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/forward-fusion-msc-7.png)
+
+
+## Build
+
+### Requirements
+
+You need only *one* of the following rows for compilation.
+
+| Remarks | OS           | Compilers           |
+|:--------|:-------------|:--------------------|
+| recommended and <br /> used for official binaries | ![Windows], ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other] | [GHC] >= 7.4 <br /> [LLVM] >= 3
+| easy to install for <br /> all Haskell newbies | ![Windows], ![OSX] | [Haskell Platform] >= 2011.4.0.0
+
+### Instructions
+
+```bash
+cabal update
+cabal install    splice
+
+git   clone      git://github.com/corsis/PortFusion.git -b master
+cd    PortFusion
+cabal configure
+cabal build
+```
+
+### Flags
+
+Following flags can be activated with `cabal configure -f llvm`.
+
+| Flag     | Effect                      | Default | Official Binaries  |
+|:---------|:----------------------------|:--------|:-------------------|
+| `llvm`   | compile via LLVM            | `false` | `true`
+
+These are by default not activated to make PortFusion easy to compile for everyone :).
 
 
 ## Remember
