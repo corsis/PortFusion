@@ -367,7 +367,7 @@ run (lp :>=: (rh, rp)) = do
 
   l <- (lp @<)
 
-  forever $ (l !<@) `X.bracketOnError` (✖) $ \c -> do
+  forever . tryRun $ (l !<@) `X.bracketOnError` (✖) $ \c -> do
 
     r <- rh ! rp
     r >-< c $ return ()
