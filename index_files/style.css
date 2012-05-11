@@ -95,4 +95,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00b7ea', end
 
 .button:active .top {
   margin: -70px 0 0 10px;
-}​
+}
+
+.bottom {
+  font-size: 8pt;
+}
