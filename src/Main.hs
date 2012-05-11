@@ -115,12 +115,11 @@ a @>-<@ b =
 (<@) s = do (c,_) <- accept s; configure c; print . (:.:) Accept =<< (c <@>); return c
 
 (.@.) :: Host -> Port -> IO Socket
-h .@. p = do -- (X.throwIO (e Nothing) ???) . map c =<< getAddrInfo hint host port
-  as <- getAddrInfo hint host port
-  X.throwIO (Silence $ map addrAddress as) ??? map c as
+h .@. p = getAddrInfo hint host port >>= \as -> e as ??? map c as
   where hint = Just $! defaultHints { addrSocketType = Stream }
         host = Just $! B.unpack h
         port = Just $! show     p
+        e as = X.throwIO . Silence $ map addrAddress as
         c a  = do s <-      socket (addrFamily  a) Stream 0x6 =>> configure
                   r <- s `connect`  addrAddress a // timeout (secs 3)
                   case r of
