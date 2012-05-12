@@ -29,11 +29,12 @@ PortFusion          | [0.9.3] – old                   | 1.0 – \]-[ayabusa
 Memory at Start-up  | ~14 MB                          | **~0.7 MB**
 Memory at 1 Fusion  | ~30 MB (lots of jumps)          | **~1.0 MB** (constant)
 OS Support          | ![Windows]                      | ![Windows], ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other]
+Corsis Binaries     | ![Windows]                      | ![Windows], ![Linux], ![OSX], ![FreeBSD]
 Source Code Size    | 778 lines (multiple files)      | **< 500 lines (1 file)**
 Language            | F# / C#                         | **[Haskell] \([GHC] / [LLVM]\)**
-Dependencies        | .NET 4.0 + F# 2.0 Runtime       | **none** (binaries are statically linked)
+Dependencies        | .NET 4.0 + F# 2.0 Runtime       | **none**
 Deployment          | 2 .NET 4.0 managed binaries     | **1 unified, native code binary for each platform**
-Binary Size         | **78.3 KB** (34.3 KB + 44 KB)   | 1-3 MB (~300 KB compressed)
+Binary Size         | **78.3 KB** (34.3 KB + 44 KB)   | 1-3 MB (~400 KB compressed)
 Concurrency Model   | 1 OS thread per connection      | **1 Haskell thread per connection**
 Distributed Proxy Modes | reverse                     | **reverse, forward**
 Local Proxy Modes   |                                 | **forward**
@@ -146,8 +147,8 @@ PortFusion™ is a trademark of Corsis (corsis.eu).
 ### Trademark Policy
 
 ```
-You may only distribute unchanged official binaries downloaded from
-corsis.eu using the PortFusion and Corsis Marks.
+You may only distribute unchanged official binaries using the
+PortFusion and Corsis Marks.
 
 If you're taking full advantage of the open-source nature of Corsis
 products and making significant functional changes, you may not
@@ -182,8 +183,6 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 ```
 [![GPLv3] <br /> Full License Text](http://beta.corsis.eu/license/)
-
-For special licensing options, please [contact us](#contact).
 
 
 ## Know
