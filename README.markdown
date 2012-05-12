@@ -35,9 +35,9 @@ Dependencies        | .NET 4.0 + F# 2.0 Runtime       | **none**
 Deployment          | 2 .NET 4.0 managed binaries     | **1 unified, native code binary for each platform**
 Binary Size         | **78.3 KB** (34.3 KB + 44 KB)   | 1-3 MB (~400 KB compressed)
 Concurrency Model   | 1 OS thread per connection      | **1 Haskell thread per connection**
+Distribution Technique | Windows Communication Foundation | **native sockets API and system calls of each OS**
 Distributed Proxy Modes | reverse                     | **reverse, forward**
 Local Proxy Modes   |                                 | **forward**
-Distribution Technique | Windows Communication Foundation | **native sockets API and system calls of each OS**
 Native IPv6 Support | **yes**                         | **yes**
 License             | ![GPLv3]                        | ![GPLv3]
 Availability        | SourceForge.net                 | **SourceForge.net (binary) <br /> GitHub (source) <br /> Corsis.eu (commercial)**
