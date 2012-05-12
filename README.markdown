@@ -70,7 +70,7 @@ Official statically-compiled binaries are available for several platforms.
 | ARM                                                                                           | ![B]                                                                                          | ![B]                                                                                          | ![C]                                                                                          | ![C]                                                                                          | ![C]       | ![C]       | ![C]
 | Other                                                                                         |                                                                                               | ![C]                                                                                          |                                                                                               | ![C]                                                                                          | ![C]       | ![C]       | ![C]
 
-CORSIS Research <br />
+CORSIS Research <br /> <br />
 ![D] builds official binaries <br />
 ![B] will build official binaries on demand  <br />
 ![C] can cooperate with community for builds <br />
