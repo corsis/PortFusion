@@ -1,7 +1,7 @@
 name:          PortFusion
 version:       1.0.3
 stability:     stable on all operating systems
-synopsis:      CORSIS PortFusion : High-performance Distributed Proxy
+synopsis:      CORSIS PortFusion : high-performance distributed reverse / forward proxy and tunneling solution for TCP
 description:   PortFusion is a minimalistic, cross-platform, transport-layer distributed reverse / forward proxy for TCP released under GPLv3.
                .
                A single package that makes the most of each platform by tapping into their unique capabilities, combining this power with an intuitive interface, beautiful design and Haskell's excellent support for unprecedented levels of concurrency and parallelism.
