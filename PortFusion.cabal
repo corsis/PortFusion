@@ -7,8 +7,9 @@ description:   PortFusion is a minimalistic, cross-platform, transport-layer dis
                A single package that makes the most of each platform by tapping into their unique capabilities, combining this power with an intuitive interface, beautiful design and Haskell's excellent support for unprecedented levels of concurrency and parallelism.
                .
                It strives for the smallest source code size while delivering maximum throughput with near zero overhead.
+               .
                [Official Binaries]
-               <http://fusion.corsis.eu> offers official binaries for Windows, Linux, OS X and FreeBSD.
+               are available for download from <http://fusion.corsis.eu> for Windows, Linux, OS X and FreeBSD.
 copyright:     Copyright © 2012 Cetin Sert
 license:       GPL-3
 license-file:  LICENSE
@@ -19,7 +20,18 @@ package-url:   http://fusion.corsis.eu
 bug-reports:   http://github.com/corsis/PortFusion/issues
 category:      System, Network
 build-type:    Simple
-cabal-version: >=1.5
+cabal-version: >=1.6
+
+
+
+extra-source-files: res/*.svg
+                    res/osx/*.icns
+                    res/osx/*.hqx
+                    res/win/*.rc
+                    res/win/*.bat
+                    res/win/*.ico
+                    res/win/*.res
+
 
 
 source-repository head
@@ -37,18 +49,18 @@ flag llvm
     default    : False
 
 
+
 executable PortFusion
-    include-dirs:    res
     hs-source-dirs:  src
     main-is:         Main.hs
     buildable:       True
     extensions:      ScopedTypeVariables CPP BangPatterns
                      TypeSynonymInstances TypeOperators OverloadedStrings
                      DeriveDataTypeable PostfixOperators TupleSections
-    build-depends:   base       -any,
-                     bytestring -any,
-                     vector     -any,
-                     splice     >= 0.6
+    build-depends:   base       >= 4     && <= 5,
+                     bytestring >= 0.9   && <= 1,
+                     vector     >= 0.9.1 && <= 1,
+                     splice     >= 0.6   && <= 1
     if os(mingw32)
       build-depends: network    >= 2.3.0.13
       ld-options:    res\win\PortFusion.res
@@ -80,24 +92,24 @@ executable PortFusion
     if os(linux)
        cpp-options: -D__OS__="Linux"
     else
-       if os(mingw32) || os(cygwin32)
+       if os(mingw32)
          cpp-options: -D__OS__="Windows"
        else
-         if os(freebsd) || os(kfreebsdgnu)
+         if os(freebsd)
            cpp-options: -D__OS__="FreeBSD"
          else
-           if os(openbsd) || os(netbsd) || os(dragonfly)
+           if os(openbsd) || os(netbsd)
              cpp-options: -D__OS__="BSD"
            else
              if os(darwin)
                cpp-options: -D__OS__="MacOS"
              else
-               if os(solaris) || os(solaris2)
+               if os(solaris)
                  cpp-options: -D__OS__="Solaris"
                else
-                 if os(gnu) || os(hurd)
-                   cpp-options: -D__OS__="HURD"
-                 else
+--                 if os(gnu) || os(hurd)
+--                   cpp-options: -D__OS__="HURD"
+--                 else
                    cpp-options: -D__OS__="Generic"
 
 
@@ -110,12 +122,12 @@ executable PortFusion
          if arch(arm)
            cpp-options: -D__ARCH__="ARM"
          else
-           if arch(powerpc)
-             cpp-options: -D__ARCH__="PowerPC"
-           else
-             if arch(powerpc64)
-               cpp-options: -D__ARCH__="PowerPC-64"
-             else
+--           if arch(powerpc)
+--             cpp-options: -D__ARCH__="PowerPC"
+--           else
+--             if arch(powerpc64)
+--               cpp-options: -D__ARCH__="PowerPC-64"
+--             else
                if arch(sparc)
                  cpp-options: -D__ARCH__="SPARC"
                else
