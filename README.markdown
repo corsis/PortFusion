@@ -28,7 +28,7 @@ PortFusion          | 0.9.3 – old                     | 1.0.3 – \]-[ayabusa
 Memory at Start-up  | ~14 MB                          | **~0.7 MB**
 Memory at 1 Fusion  | ~30 MB (lots of jumps)          | **~1.0 MB** (constant)
 OS Support          | ![Windows]                      | ![Windows], ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other]
-Corsis Binaries     | ![Windows]                      | ![Windows], ![Linux], ![OSX], ![FreeBSD]
+Official Binaries   | ![Windows]                      | ![Windows], ![Linux], ![OSX], ![FreeBSD]
 Source Code Size    | 778 lines (multiple files)      | **< 500 lines (1 file)**
 Language            | F# / C#                         | **[Haskell] \([GHC] / [LLVM]\)**
 Dependencies        | .NET 4.0 + F# 2.0 Runtime       | **none**
