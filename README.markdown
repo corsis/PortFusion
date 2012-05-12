@@ -80,7 +80,6 @@ CORSIS Research <br /> <br />
 
 ### Community Support
 
-We are seeking your support to provide up-to-date binaries for all platforms!
 If you have access to an OS+CPU combination lacking official binaries,
 please [contact us](#contact) to join our build team!
 
