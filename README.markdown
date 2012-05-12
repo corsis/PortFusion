@@ -171,6 +171,8 @@ Copyright © 2012  Cetin Sert
 
 ### License
 
+[![GPLv3]](http://beta.corsis.eu/license/)
+
 ```
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -182,7 +184,6 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 ```
-[![GPLv3] <br /> Full License Text](http://beta.corsis.eu/license/)
 
 
 ## Know
