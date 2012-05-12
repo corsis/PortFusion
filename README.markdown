@@ -59,9 +59,9 @@ Availability        | SourceForge.net                 | **SourceForge.net (binar
 
 ## Download
 
-Official statically-compiled binaries are available for several platforms.
+Official binaries are built and made availabe for several platforms.
 
-### Supported Platforms
+### Official Binaries
 
 | <img height='48px' alt='CPU' title='CPU' src='http://a.fsdn.com/sd/topics/hardware_64.png' /> | ![Windows]                                                                                    | ![Linux]                                                                                      | ![OSX]                                                                                        | ![FreeBSD]                                                                                    | ![OpenBSD] | ![Solaris] | ![Other]
 | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ---------- | ---------- | --------
@@ -82,9 +82,9 @@ CORSIS Research <br /> <br />
 ### Community Support
 
 We are seeking your support to provide up-to-date binaries for all platforms!
-If you have access to an OS+CPU combination that is missing support,
-community-supported or is scheduled for far future, please [contact us](#contact)
-to join our build team!
+
+If you have access to an OS+CPU combination lacking official binaries
+please [contact us](#contact) to join our build team!
 
 
 ## Use
