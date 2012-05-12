@@ -70,13 +70,14 @@ Official statically-compiled binaries are available for several platforms.
 | ARM                                                                                           | ![B]                                                                                          | ![B]                                                                                          | ![C]                                                                                          | ![C]                                                                                          | ![C]       | ![C]       | ![C]
 | Other                                                                                         |                                                                                               | ![C]                                                                                          |                                                                                               | ![C]                                                                                          | ![C]       | ![C]       | ![C]
 
-![D]: CORSIS has official binaries <br />
-![B]: CORSIS will build official binaries on demand  <br />
-![C]: CORSIS can cooperate with community for builds <br />
+CORSIS Research
+![D] builds official binaries <br />
+![B] will build official binaries on demand  <br />
+![C] can cooperate with community for builds <br />
 
 [D]: http://fusion.corsis.eu/i/down_16.png "Download"
-[B]: http://res2.windows.microsoft.com/resbox/en/Windows%207/main/33624ed4-7676-4be4-9f47-d77eab7ecd9c_0.gif "CORSIS-supported"
-[C]: http://res2.windows.microsoft.com/resbox/en/Windows%207/main/43fa1e85-5152-43ff-b0f7-63ae6520a88b_0.gif "Community-supported"
+[B]: http://res2.windows.microsoft.com/resbox/en/Windows%207/main/33624ed4-7676-4be4-9f47-d77eab7ecd9c_0.gif "Build-on-Demand"
+[C]: http://res2.windows.microsoft.com/resbox/en/Windows%207/main/43fa1e85-5152-43ff-b0f7-63ae6520a88b_0.gif "Coop-on-Demand"
 
 ### Community Support
 
