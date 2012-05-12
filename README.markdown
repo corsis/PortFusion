@@ -24,7 +24,7 @@ This is the new Haskell source code repository of the latest ]-[ayabusa version
 
 ### What is new in `]-[ayabusa`?
 
-PortFusion          | [0.9.3] – old                   | 1.0 – \]-[ayabusa
+PortFusion          | [0.9.3] – old                   | 1.0.3 – \]-[ayabusa
 --------------------|---------------------------------|-------------------------------
 Memory at Start-up  | ~14 MB                          | **~0.7 MB**
 Memory at 1 Fusion  | ~30 MB (lots of jumps)          | **~1.0 MB** (constant)
