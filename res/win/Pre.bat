@@ -1,3 +1,3 @@
 @echo off
 echo Compiling resource file ...
-\mingw\bin\windres PortFusion.rc -O coff -o PortFusion.res
+windres PortFusion.rc -O coff -o PortFusion.res
