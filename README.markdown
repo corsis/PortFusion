@@ -200,6 +200,32 @@ Development follows simple principles:
 5. [Provide excellent support](https://sourceforge.net/p/portfusion/discussion/general/thread/7ad0cb49/)
 6. Grow true to your principles
 
+
+### Japanese Influence: ]-[ayabusa (はやぶさ) (Hayabusa)
+
+I had already spent a great deal of time contemplating on a nice and intuitive
+syntax and it was only when I watched the Japanese movie
+[Hayabusa](http://www.dramacrazy.net/japanese-movie/hayabusa/) about [the
+same-named space probe](http://en.wikipedia.org/wiki/Hayabusa) sent to extract
+and bring to Earth pieces from the asteroid Itokawa that everything just fell
+into place:
+
+```
+# command line  # source file
+
+  ] [             :><:          # serve
+  - [             :-<:          # reverse
+  ] -             :>-:          # forward
+
+# > and < are reserved characters at command line
+# ] and [ are reserved characters in Haskell
+```
+
+PortFusion owes its design goals, ambitions and 1.0 release name ]-[ayabusa
+to the great Japanese culture and friends.
+
+
+
 ### Family
 
 We hope to grow a whole family of software-defined networking solutions reaching
