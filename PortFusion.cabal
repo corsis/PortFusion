@@ -1,7 +1,7 @@
 name:          PortFusion
-version:       1.0.3.1
+version:       1.0.3.2
 stability:     stable on all operating systems
-synopsis:      CORSIS PortFusion : high-performance distributed reverse / forward proxy & tunneling solution for TCP
+synopsis:      high-perf. distributed reverse / forward proxy & tunneling solution for TCP
 description:   PortFusion is a minimalistic, cross-platform, transport-layer
                distributed reverse / forward proxy & tunneling solution for TCP
                (RDP, SSH, HTTP(S), (S)FTP, VNC, ...) released under GPLv3.
