@@ -60,7 +60,7 @@ Availability        | SourceForge.net                 | **SourceForge.net (binar
 
 Official binaries are built and made availabe for several platforms.
 
-<a href="http://fusion.corsis.eu" class="button classy">Download from ![corsis]</a>
+<span class="mini-icon download" />
 
 ### Official Binaries
 
