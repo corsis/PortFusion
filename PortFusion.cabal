@@ -1,15 +1,39 @@
 name:          PortFusion
-version:       1.0.3
+version:       1.0.3.1
 stability:     stable on all operating systems
-synopsis:      CORSIS PortFusion : high-performance distributed reverse / forward proxy and tunneling solution for TCP
-description:   PortFusion is a minimalistic, cross-platform, transport-layer distributed reverse / forward proxy for TCP released under GPLv3.
+synopsis:      CORSIS PortFusion : high-performance distributed reverse / forward proxy & tunneling solution for TCP
+description:   PortFusion is a minimalistic, cross-platform, transport-layer
+               distributed reverse / forward proxy & tunneling solution for TCP
+               (RDP, SSH, HTTP(S), (S)FTP, VNC, ...) released under GPLv3.
                .
-               A single package that makes the most of each platform by tapping into their unique capabilities, combining this power with an intuitive interface, beautiful design and Haskell's excellent support for unprecedented levels of concurrency and parallelism.
+               A single package that makes the most of each platform by tapping
+               into their unique capabilities, combining this power with an
+               intuitive interface, beautiful design and Haskell's excellent
+               support for unprecedented levels of concurrency and parallelism.
                .
-               It strives for the smallest source code size while delivering maximum throughput with near zero overhead.
+               It strives for the smallest source code size while delivering
+               maximum throughput with near zero overhead.
                .
                [Official Binaries]
-               are available for download from <http://fusion.corsis.eu> for Windows, Linux, OS X and FreeBSD.
+               visit <http://fusion.corsis.eu> to download for:
+               .
+               * Windows
+               .
+               * GNU/Linux
+               .
+               * Mac OS X
+               .
+               * FreeBSD
+               .
+               [Version Scheme]
+               Major-@/R/@-ewrite . New-@/F/@-unctionality . @/I/@-mprovementAndBugFixes . @/P/@-ackagingOnly
+               .
+               * @PackagingOnly@ changes are made for quality assurance reasons.
+               .
+               * No new official binary releases are made for @PackagingOnly@ changes.
+               .
+               * Official @r.f.i@ binaries are bit-for-bit the same as @r.f.i.p@ builds for all @p@.
+
 copyright:     Copyright © 2012 Cetin Sert
 license:       GPL-3
 license-file:  LICENSE
@@ -57,10 +81,10 @@ executable PortFusion
     extensions:      ScopedTypeVariables CPP BangPatterns
                      TypeSynonymInstances TypeOperators OverloadedStrings
                      DeriveDataTypeable PostfixOperators TupleSections
-    build-depends:   base       >= 4     && <= 5,
-                     bytestring >= 0.9   && <= 1,
-                     vector     >= 0.9.1 && <= 1,
-                     splice     >= 0.6   && <= 1
+    build-depends:   base       >= 4 && <= 5,
+                     bytestring -any,
+                     vector     -any,
+                     splice     -any
     if os(mingw32)
       build-depends: network    >= 2.3.0.13
       ld-options:    res\win\PortFusion.res
