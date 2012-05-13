@@ -60,6 +60,8 @@ Availability        | SourceForge.net                 | **SourceForge.net (binar
 
 Official binaries are built and made availabe for several platforms.
 
+<a alt="Download from CORSIS Research" href="http://fusion.corsis.eu" class="button classy">Download from ![corsis]</a>
+
 ### Official Binaries
 
 | <img height='48px' alt='CPU' title='CPU' src='http://a.fsdn.com/sd/topics/hardware_64.png' /> | ![Windows]                                                                                    | ![Linux]                                                                                      | ![OSX]                                                                                        | ![FreeBSD]                                                                                    | ![OpenBSD] | ![Solaris] | ![Other]
