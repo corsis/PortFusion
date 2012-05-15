@@ -17,7 +17,7 @@ import System.Environment
 import System.Timeout
 import System.IO hiding  (hGetLine,hPutStr,hGetContents)
 import Data.String       (IsString,fromString)
-import GHC.Conc          (threadDelay)
+import GHC.Conc          (threadDelay,numCapabilities)
 
 import Foreign.Marshal.Alloc
 import Foreign.Ptr
@@ -203,7 +203,7 @@ data Request = (:-<-:)        Port
 -- CORE ^
 
 name, copyright, build :: ByteString
-name      = "CORSIS PortFusion    ( ]-[ayabusa 1.0.3 )"
+name      = "CORSIS PortFusion    ( ]-[ayabusa 1.0.4 )"
 copyright = "(c) 2012 Cetin Sert. All rights reserved."
 build     = __OS__ ++ " - " ++ __ARCH__ ++  " [" ++ __TIMESTAMP__ ++ "]"
 
@@ -214,6 +214,7 @@ main = withSocketsDo $ tryWith (const . print $ LS "INVALID SYNTAX") $ do
   tasks <- fmap i getArgs
   unless (null tasks) $ do
     print (LS "zeroCopy", zeroCopy)
+    print (LS "capa", numCapabilities)
     mapM_ (forkIO . run) tasks
     void Prelude.getChar
     where
@@ -272,17 +273,6 @@ initPortVectors = do
               sv <- SVM.read s i
               deRefStablePtr  sv >>= (✖); (sv ✖)
 
-(-✖-) :: Peer -> Port -> MVar ThreadId -> IO ()
-(o@(Peer s h) -✖- rp) t = do
-  l <- (s <@>)
-  p <- malloc :: IO (Ptr Word8)
-  let n x = do (o ✖); (rp -✖); takeMVar t >>= (`throwTo` x)
-  let y _ = return ()
-  let f x = do free p; maybe (n x) y $ (X.fromException x :: Maybe X.AsyncException)
-  tryWith f $ hGetBufSome h p 1 >>= \b -> f . X.toException $
-    case b of
-      0 -> Loss       l
-      _ -> Impatience l
 
 (|<>|) :: (MVar ThreadId -> IO ()) -> (MVar ThreadId -> IO ()) -> IO ()
 a |<>| b = do
@@ -292,6 +282,17 @@ a |<>| b = do
   tb <- forkIO $ b ma
   putMVar       ma ta
   putMVar       mb tb
+
+(-✖-) :: Peer -> Port -> MVar Peer -> MVar ThreadId -> IO ()
+(o@(Peer s _) -✖- rp) c t = do
+  l <- (s <@>); m <- newEmptyMVar :: IO (MVar ByteString)
+  void . forkIO . tryWith (const $ putMVar m B.empty) $ recv s 1 >>= trySendPut m
+  takeMVar m >>= \x -> end (error x) l
+   where
+    error b = case B.length b of 0 -> Loss; _ -> Impatience
+    trySendPut m b = do trySend (return ()) b; putMVar m b
+    trySend    a b = tryTakeMVar c >>= maybe a (\(Peer s _) -> do print "S"; try_ $ s `sendAll` b)
+    end        x l = do (o ✖); (rp -✖); takeMVar t >>= (`throwTo` x l)
 
 
 run :: Task -> IO () -- serve
@@ -317,12 +318,14 @@ run ((:><:) fp) = do
     (-<-) :: Peer -> Port -> IO ()
     o@(Peer !l _) -<- rp = do
       initPortVectors
-      r <- (rp -@<)                  -- retrieve listener for port
-      o -✖- rp |<>| \t -> do         -- enable patience checks
-        c <- (r !<@)                 -- wait for connection
-        killThread =<< takeMVar t    -- disable patience checks
-        l `sendAll` "+"              -- inform other end of flow start
-        o >-< c $ (rp -✖)            -- start flows & reduce listener weight on exception
+      r <- (rp -@<)
+      m <- newEmptyMVar :: IO (MVar Peer)
+      (o -✖- rp $ m) |<>| \t -> tryWith print $ do
+        c <- (r !<@)
+        m `putMVar` c
+        killThread =<< takeMVar t
+        l `sendAll` "+"
+        o >-< c $ (rp -✖)
 
     (->-) :: Peer -> Host -> Port -> IO ()
     (o@(Peer _ _) ->- rh) rp = do
@@ -382,8 +385,8 @@ run (lp :>=: (rh, rp)) = do
   !m <- newMVar True
   let p = print $ Terminate ::: t
   let j = modifyMVar_ m $ \v -> do when v (do p; (a ✖); (b ✖); h); return False
-  b >- a $ j
   a >- b $ j
+  b >- a $ j
 
 (>-) :: Peer -> Peer -> ErrorIO () -> IO ()
 (Peer as ah >- Peer bs bh) j =
