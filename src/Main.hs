@@ -85,7 +85,6 @@ data FusionLink = FusionLink (Maybe SockAddr) (Maybe Port    ) (Maybe SockAddr)
   deriving Show
 
 data ProtocolException = Loss        PeerLink
-                       | Impatience  PeerLink
                        | Silence    [SockAddr]    deriving (Show,Typeable)
 
 instance X.Exception ProtocolException where
@@ -214,7 +213,7 @@ main = withSocketsDo $ tryWith (const . print $ LS "INVALID SYNTAX") $ do
   tasks <- fmap i getArgs
   unless (null tasks) $ do
     print (LS "zeroCopy", zeroCopy)
-    print (LS "capa", numCapabilities)
+    print (LS "capabilities", numCapabilities)
     mapM_ (forkIO . run) tasks
     void Prelude.getChar
     where
@@ -283,16 +282,12 @@ a |<>| b = do
   putMVar       ma ta
   putMVar       mb tb
 
-(-✖-) :: Peer -> Port -> MVar Peer -> MVar ThreadId -> IO ()
-(o@(Peer s _) -✖- rp) c t = do
-  l <- (s <@>); m <- newEmptyMVar :: IO (MVar ByteString)
-  void . forkIO . tryWith (const $ putMVar m B.empty) $ recv s 1 >>= trySendPut m
-  takeMVar m >>= \x -> end (error x) l
-   where
-    error b = case B.length b of 0 -> Loss; _ -> Impatience
-    trySendPut m b = do trySend (return ()) b; putMVar m b
-    trySend    a b = tryTakeMVar c >>= maybe a (\(Peer s _) -> do print "S"; try_ $ s `sendAll` b)
-    end        x l = do (o ✖); (rp -✖); takeMVar t >>= (`throwTo` x l)
+(-✖-) :: Peer -> Port -> MVar ThreadId -> IO ()
+(o@(Peer s _) -✖- rp) t = do
+  l <- (s <@>)
+  let n x = do (o ✖); (rp -✖); takeMVar t >>= (`throwTo` x)
+  let f x = do maybe (n x) (const $ return ()) $ (X.fromException x :: Maybe X.AsyncException)
+  tryWith f $ do recv s 0; f . X.toException $ Loss l
 
 
 run :: Task -> IO () -- serve
@@ -319,10 +314,8 @@ run ((:><:) fp) = do
     o@(Peer !l _) -<- rp = do
       initPortVectors
       r <- (rp -@<)
-      m <- newEmptyMVar :: IO (MVar Peer)
-      (o -✖- rp $ m) |<>| \t -> tryWith print $ do
+      o -✖- rp |<>| \t -> tryWith print $ do
         c <- (r !<@)
-        m `putMVar` c
         killThread =<< takeMVar t
         l `sendAll` "+"
         o >-< c $ (rp -✖)
