@@ -208,7 +208,6 @@ build     = __OS__ ++ " - " ++ __ARCH__ ++  " [" ++ __TIMESTAMP__ ++ "]"
 
 main :: IO ()
 main = withSocketsDo $ tryWith (const . print $ LS "INVALID SYNTAX") $ do
-
   mapM_ B.putStrLn [ "\n", name, copyright, "", build, "\n" ]
   tasks <- fmap i getArgs
   unless (null tasks) $ do
