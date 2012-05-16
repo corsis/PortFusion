@@ -17,7 +17,7 @@ import System.Environment
 import System.Timeout
 import System.IO hiding  (hGetLine,hPutStr,hGetContents)
 import Data.String       (IsString,fromString)
-import GHC.Conc          (threadDelay,numCapabilities)
+import GHC.Conc          (threadDelay)
 
 import Foreign.Marshal.Alloc
 import Foreign.Ptr
@@ -212,7 +212,6 @@ main = withSocketsDo $ tryWith (const . print $ LS "INVALID SYNTAX") $ do
   tasks <- fmap i getArgs
   unless (null tasks) $ do
     print (LS "zeroCopy", zeroCopy)
-    print (LS "capabilities", numCapabilities)
     mapM_ (forkIO . run) tasks
     void Prelude.getChar
     where
