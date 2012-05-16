@@ -290,7 +290,7 @@ a |<>| b = do
   tryWith f $ do recv s 0; f . X.toException $ Loss l
 
 
-run :: Task -> IO () -- serve 
+run :: Task -> IO () -- serve
 run ((:><:) fp) = do
 
   f <- (fp @<)
