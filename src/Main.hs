@@ -90,8 +90,7 @@ instance X.Exception ProtocolException where
 (<@>)   s = PeerLink <$> (att $ getSocketName s) <*> (att $ getPeerName s)
 
 (@>-<@) :: Socket -> Socket -> IO FusionLink
-a @>-<@ b =
- FusionLink <$> (att $ getPeerName a) <*> (att $ socketPort b) <*> (att $ getPeerName b)
+a @>-<@ b = FusionLink <$> (att $ getPeerName a) <*> (att $ socketPort b) <*> (att $ getPeerName b)
 
 (@<) :: Port -> IO Socket
 (@<) p = do
@@ -120,8 +119,7 @@ h .@. p = getAddrInfo hint host port >>= \as -> e as ??? map c as
                   r <- s `connect`  addrAddress a // timeout (secs 3)
                   case r of
                     Nothing -> do (s ✖); X.throw $! Silence [addrAddress a]
-                    Just _  -> do print . (:.:) Open =<< (s <@>)
-                                  return s
+                    Just _  -> do print . (:.:) Open =<< (s <@>);  return s
 
 configure :: Socket -> IO ()
 configure x = do
