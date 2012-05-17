@@ -307,7 +307,7 @@ run ((:><:) fp) = do
     o@(Peer !l _) -<- rp = do
       initPortVectors
       r <- (rp -@<)
-      o -✖- rp |<>| \t -> tryWith print $ do
+      o -✖- rp |<>| \t -> do
         c <- (r !<@)
         killThread =<< takeMVar t
         l `sendAll` "+"
