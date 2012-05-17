@@ -17,7 +17,6 @@ import System.Environment
 import System.Timeout
 import System.IO hiding  (hGetLine,hPutStr,hGetContents)
 import Data.String       (IsString,fromString)
-import GHC.Conc          (threadDelay)
 
 import Foreign.Marshal.Alloc
 import Foreign.Ptr
@@ -35,17 +34,17 @@ import Network.Socket.Splice -- corsis library: SPLICE
 type Seconds = Int
 
 secs :: Int -> Seconds
-secs n = n * 1000000
+secs = (* 1000000)
 
-wait     :: Seconds -> IO ()
-wait n = GHC.Conc.threadDelay $ secs n
+wait :: Seconds -> IO ()
+wait = threadDelay . secs
 
 schedule :: Seconds -> IO () -> IO ThreadId
-schedule s a = forkIO $ do wait s; a
+schedule s a = forkIO $ wait s >> a
 
 {-# INLINE (|>) #-}
 (|>) :: IO () -> IO () -> IO ()
-a |> b = do void $ forkIO a; b
+a |> b = forkIO a >> b
 
 {-# INLINE (++) #-}; (++) :: ByteString -> ByteString -> ByteString; (++) = B.append
 
@@ -84,9 +83,7 @@ data PeerLink   = PeerLink   (Maybe SockAddr) (Maybe SockAddr) deriving Show
 data FusionLink = FusionLink (Maybe SockAddr) (Maybe Port    ) (Maybe SockAddr)
   deriving Show
 
-data ProtocolException = Loss        PeerLink
-                       | Silence    [SockAddr]    deriving (Show,Typeable)
-
+data ProtocolException = Loss PeerLink | Silence [SockAddr]    deriving (Show,Typeable)
 instance X.Exception ProtocolException where
 
 (<@>)   :: Socket ->           IO PeerLink
