@@ -11,7 +11,7 @@ import Network.Socket hiding       (recv,send)
 import Network.Socket.ByteString   (recv,sendAll)
 import Data.Typeable
 import Data.ByteString.Char8       (ByteString)
-import qualified Data.ByteString.Char8 as B hiding (map,concatMap,filter,reverse)
+import qualified Data.ByteString.Char8 as B hiding (map,concatMap,reverse)
 import qualified Control.Exception as X
 import System.Environment
 import System.Timeout
@@ -22,6 +22,7 @@ import Foreign.Marshal.Alloc
 import Foreign.Ptr
 import Foreign.StablePtr
 import Data.Word
+import Data.Char
 
 import System.IO.Unsafe
 import qualified Data.Vector.Storable.Mutable as SVM
@@ -92,15 +93,11 @@ instance X.Exception ProtocolException where
 (@>-<@) :: Socket -> Socket -> IO FusionLink
 a @>-<@ b = FusionLink <$> (att $ getPeerName a) <*> (att $ socketPort b) <*> (att $ getPeerName b)
 
-(@<) :: Port -> IO Socket
+(@<) :: AddrPort -> IO Socket
 (@<) p = do
-#if !defined(IPV4ONLY)
+  i <- ap2sa p
   s <- socket AF_INET6 Stream 0 =>> opt
-  bindSocket      s $ SockAddrInet6 p 0 iN6ADDR_ANY 0
-#else
-  s <- socket AF_INET  Stream 0 =>> opt               -- Windows XP does not have
-  bindSocket      s $ SockAddrInet  p    iNADDR_ANY   -- a dual-stack sockets API
-#endif
+  bindSocket      s i
   listen          s maxListenQueue
   print $! Listen :^: p
   return s
@@ -148,14 +145,7 @@ configure x = do
 class    Disposable a       where (✖) :: a -> IO ()
 instance Disposable Socket  where
   (✖) s = do
-    try_ $ do
-      o <- (s <@>)
-      let pc = print $ Close :.: o
-      case o of
-        PeerLink (Just _) (Just _) -> pc
-        PeerLink (Just _) _        -> pc
-        PeerLink _        (Just _) -> pc
-        _                          -> return ()
+    try_ $ print . (Close :.:) =<< (s <@>)
     try_ $ shutdown s ShutdownBoth
     try_ $ sClose   s
 instance Disposable Peer          where (✖) (Peer s h) = do (s ✖); (h ✖)
@@ -167,16 +157,34 @@ instance Disposable (StablePtr a) where (✖) = freeStablePtr
 data Peer = Peer !Socket !Handle
 type Host = ByteString
 type Port = PortNumber
+data AddrPort = !Host :@: !Port deriving (Show, Read)
 
-instance Read Port where
-  readsPrec p s = map (\(x,y) -> (fromInteger x,y)) $ readsPrec p s
+readAP :: ByteString -> AddrPort
+readAP = (\(a,p) -> format a :@: (read . show $ LS p)) . B.breakEnd (== ':')
+  where
+    format = def . rs . rc
+    def "" = "::"
+    def x  = any
+    rs     = B.filter $ not . isSpace
+    rc  a  = B.take (B.length a - 1) a
+
+ap2sa :: AddrPort -> IO SockAddr
+ap2sa (a :@: p) = do
+  ask a >>= \sa -> case sa of { SockAddrInet _ _ -> ask $ "::ffff:" ++ a; _ -> return sa }
+  where hints = defaultHints { addrSocketType = Stream }
+        ask a = addrAddress . head <$> getAddrInfo (Just hints) (Just $ B.unpack a) (Just $ show p)
+
+instance Read Port where readsPrec p s = map (\(x,y) -> (fromInteger x,y)) $ readsPrec p s
+instance Read LiteralString where readsPrec p s = map (\(x,y) -> (LS x,y)) $ readsPrec p s
+instance Read AddrPort where
+  readsPrec p s = readAP s
 
 type Message = Request
 data ServiceAction = Listen | Watch | Drop                                   deriving Show
 data    PeerAction = Accept | Open  | Close | Receive Message | Send Message deriving Show
 data  FusionAction = Establish | Terminate                                   deriving Show
 
-data Event = ServiceAction :^: Port
+data Event = ServiceAction :^: AddrPort
            |    PeerAction :.: PeerLink
            |  FusionAction ::: FusionLink deriving Show
 
@@ -185,19 +193,19 @@ chunk = 8 * 1024
 
 -- CORE
 
-data Task =             (:><:)  Port
-          | (Port, Host) :-<: ((Port, Host),        Port )
-          |  Port        :>-: ((Host, Port), (Host, Port))
-          |  Port        :>=:                (Host, Port)   deriving (Show,Read)
+data Task =             (:><:)  AddrPort
+          | (Port, Host) :-<: ((Port, Host),    AddrPort )
+          |  AddrPort    :>-: ((Host, Port), (Host, Port))
+          |  AddrPort    :>=:                (Host, Port)   deriving (Show,Read)
 
-data Request = (:-<-:)        Port
+data Request = (:-<-:)    AddrPort
              | (:->-:)   Host Port
              | (:?)    | Run  Task                          deriving (Show,Read)
 
 -- CORE ^
 
 name, copyright, build :: ByteString
-name      = "CORSIS PortFusion    ( ]-[ayabusa 1.0.4 )"
+name      = "CORSIS PortFusion    ( ]-[ayabusa 1.1.0 )"
 copyright = "(c) 2012 Cetin Sert. All rights reserved."
 build     = __OS__ ++ " - " ++ __ARCH__ ++  " [" ++ __TIMESTAMP__ ++ "]"
 
@@ -210,13 +218,14 @@ main = withSocketsDo $ tryWith (const . print $ LS "INVALID SYNTAX") $ do
     mapM_ (forkIO . run) tasks
     void Prelude.getChar
     where
+      a  = readAP . B.pack
       r  = read
       p  = B.pack
       i :: [String] -> [Task]
-      i [         "]", fp,     "[" ]     = [(:><:) $ r fp]
-      i [ lp, lh, "-", fp, fh, "[", rp ] = [(r lp, p lh) :-<: ((r fp, p fh),r rp) ]
-      i [ lp, "]", fh, fp, "-", rh, rp ] = [r lp :>-: ((p fh, r fp), (p rh, r rp))]
-      i [ lp, "]",         "-", rh, rp ] = [r lp :>=:                (p rh, r rp) ]
+      i [         "]", fp,     "[" ]     = [(:><:) $ a fp]
+      i [ lp, lh, "-", fp, fh, "[", rp ] = [(r lp, p lh) :-<: ((r fp, p fh),a rp) ]
+      i [ lp, "]", fh, fp, "-", rh, rp ] = [a lp :>-: ((p fh, r fp), (p rh, r rp))]
+      i [ lp, "]",         "-", rh, rp ] = [a lp :>=:                (p rh, r rp) ]
       i m = concatMap i ss
         where
           ss = map (map B.unpack . filter (not . B.null) . B.split ' ' . B.pack) m
@@ -236,32 +245,32 @@ initPortVectors = do
     putMVar portVectors (c,s)
       where portCount = 65535
 
-(-@<) :: Port -> IO Socket
-(-@<) p = do
+(-@<) :: AddrPort -> IO Socket
+(-@<) ap@(_ :@: p) = do
   let i = fromIntegral p
   withMVar portVectors $ \(c,s) -> do
     cv <- SVM.read c i
     SVM.write c i $ cv + 1
-    if cv > 0 then                 SVM.read  s i >>= deRefStablePtr
-              else do l <- (p @<); SVM.write s i =<< newStablePtr l; return l
+    if cv > 0 then                  SVM.read  s i >>= deRefStablePtr
+              else do l <- (ap @<); SVM.write s i =<< newStablePtr l; return l
 
-(-✖) :: Port -> IO ()
-(-✖) !p = do
-  let i = fromIntegral p
+(-✖) :: AddrPort -> IO ()
+(-✖) ap@(_ :@: p) = do
+  let i = fromIntegral . read . show $ p
   withMVar portVectors $ \(c,_) -> do
     cv <- SVM.read c i
     let n = cv - 1
     if  n > 0
       then SVM.write c i n
       else do
-        print $ Watch :^: p
+        print $ Watch :^: ap
         void  . schedule 10 $ do
           withMVar portVectors $ \(c,s) -> do
             cv <- SVM.read c i
             let n = cv - 1
             SVM.write c i n
             when (n == 0) $ do
-              print $ Drop :^: p
+              print $ Drop :^: ap
               sv <- SVM.read s i
               deRefStablePtr  sv >>= (✖); (sv ✖)
 
@@ -275,7 +284,7 @@ a |<>| b = do
   putMVar       ma ta
   putMVar       mb tb
 
-(-✖-) :: Peer -> Port -> MVar ThreadId -> IO ()
+(-✖-) :: Peer -> AddrPort -> MVar ThreadId -> IO ()
 (o@(Peer s _) -✖- rp) t = do
   l <- (s <@>)
   let n x = do (o ✖); (rp -✖); takeMVar t >>= (`throwTo` x)
@@ -303,9 +312,10 @@ run ((:><:) fp) = do
           (:?)          -> s <: LS build |> (o ✖)
           Run task      -> run task      |> (o ✖)
 
-    (-<-) :: Peer -> Port -> IO ()
+    (-<-) :: Peer -> AddrPort -> IO ()
     o@(Peer !l _) -<- rp = do
       initPortVectors
+      rp // print
       r <- (rp -@<)
       o -✖- rp |<>| \t -> do
         c <- (r !<@)

@@ -60,8 +60,6 @@ Availability        | SourceForge.net                 | **SourceForge.net (binar
 
 Official binaries are built and made availabe for several platforms.
 
-<span class="mini-icon download" />
-
 ### Official Binaries
 
 | <img height='48px' alt='CPU' title='CPU' src='http://a.fsdn.com/sd/topics/hardware_64.png' /> | ![Windows]                                                                                    | ![Linux]                                                                                      | ![OSX]                                                                                        | ![FreeBSD]                                                                                    | ![OpenBSD] | ![Solaris] | ![Other]
