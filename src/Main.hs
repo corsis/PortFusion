@@ -37,9 +37,9 @@ secs     :: Int -> Seconds;                  secs         = (* 1000000)
 wait     :: Seconds -> IO ();                wait         = threadDelay . secs
 schedule :: Seconds -> IO () -> IO ThreadId; schedule s a = forkIO $ wait s >> a
 
+{-# INLINE (<>)  #-}; (<>) :: ByteString -> ByteString -> ByteString; (<>)   = B.append
 {-# INLINE (//)  #-}; (//) :: a -> (a -> b) -> b;                     x // f = f x
 {-# INLINE (|>)  #-}; (|>) :: IO () -> IO () -> IO ();                a |> b = forkIO a >> b
-{-# INLINE (<>)  #-}; (<>) :: ByteString -> ByteString -> ByteString; (<>)   = B.append
 {-# INLINE (=>>) #-}; infixr 0 =>>; (=>>) :: Monad m => m a -> (a -> m b) -> m a
 a =>> f = do r <- a; _ <- f r; return r
 
@@ -54,6 +54,7 @@ tryRun :: IO () -> IO ();        tryRun a = tryWith (\x -> do print x; wait 2) a
 e ??? as = foldr (?>) e as
   where x ?> y = x `X.catch` (\(_ :: X.SomeException) -> y)
 
+
 newtype LiteralString = LS ByteString
 instance Show     LiteralString where show (LS x) = B.unpack x
 instance IsString LiteralString where fromString  = LS . B.pack
@@ -61,11 +62,9 @@ instance IsString LiteralString where fromString  = LS . B.pack
 
 -- PortFusion Prelude
 
-data PeerLink   = PeerLink   (Maybe SockAddr) (Maybe SockAddr) deriving Show
-data FusionLink = FusionLink (Maybe SockAddr) (Maybe Port    ) (Maybe SockAddr)
-  deriving Show
-
-data ProtocolException = Loss PeerLink | Silence [SockAddr]    deriving (Show,Typeable)
+data PeerLink   = PeerLink   (Maybe SockAddr) (Maybe SockAddr)                  deriving Show
+data FusionLink = FusionLink (Maybe SockAddr) (Maybe Port    ) (Maybe SockAddr) deriving Show
+data ProtocolException = Loss PeerLink | Silence [SockAddr]           deriving (Typeable,Show)
 instance X.Exception ProtocolException where
 
 (<@>)   :: Socket ->           IO PeerLink
@@ -104,13 +103,12 @@ configure s = m RecvBuffer c >> m SendBuffer c >> setSocketOption s KeepAlive 1
    where m o u = do v <- getSocketOption s o; when (v < u) $ setSocketOption s o u
          c     = fromIntegral chunk
 
-(#@)  :: Socket -> IO Handle
+
+(!@)  :: Socket ->         IO Peer; (!@)  s = Peer s <$> (s #@)
+(!<@) :: Socket ->         IO Peer; (!<@) l = (!@)   =<< (l <@)
+(!)   :: Host   -> Port -> IO Peer; (!) h p = (!@)   =<< h .@. p
+(#@)  :: Socket ->         IO Handle
 (#@)  s = socketToHandle s ReadWriteMode =>> (`hSetBuffering` NoBuffering)
-(!@),(!<@) :: Socket -> IO Peer
-(!@)  s = Peer s <$> (s #@)
-(!<@) l = (!@)   =<< (l <@)
-(!)  :: Host -> Port -> IO Peer
-(!) h p = (!@)   =<< h .@. p
 
 
 -- ✖ ✿ @
@@ -129,6 +127,7 @@ instance Disposable (StablePtr a) where (✖) = freeStablePtr
 data Peer = Peer !Socket !Handle
 type Host = ByteString
 type Port = PortNumber
+
 data AddrPort = !Host :@: !Port
 instance Show AddrPort where show (a :@: p) = "[" ++ show (LS a) ++ "]:" ++ show p
 instance Read AddrPort where
@@ -253,12 +252,9 @@ initPortVectors = do
 
 (|<>|) :: (MVar ThreadId -> IO ()) -> (MVar ThreadId -> IO ()) -> IO ()
 a |<>| b = do
-  ma <- newEmptyMVar
-  mb <- newEmptyMVar
-  ta <- forkIO $ a mb
-  tb <- forkIO $ b ma
-  putMVar       ma ta
-  putMVar       mb tb
+  ma <- newEmptyMVar ; mb <- newEmptyMVar
+  ta <- forkIO $ a mb; tb <- forkIO $ b ma
+  putMVar       ma ta; putMVar       mb tb
 
 (-✖-) :: Peer -> AddrPort -> MVar ThreadId -> IO ()
 (o@(Peer s _) -✖- rp) t = do
@@ -357,8 +353,7 @@ run (lp :>=: (rh, rp)) = do
   !m <- newMVar True
   let p = print $ Terminate ::: t
   let j = modifyMVar_ m $ \v -> do when v (do p; (a ✖); (b ✖); h); return False
-  a >- b $ j
-  b >- a $ j
+  a >- b $ j; b >- a $ j
 
 (>-) :: Peer -> Peer -> ErrorIO () -> IO ()
 (Peer as ah >- Peer bs bh) j =
