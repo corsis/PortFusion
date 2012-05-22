@@ -17,12 +17,12 @@ import System.Environment
 import System.Timeout
 import System.IO hiding  (hGetLine,hPutStr,hGetContents)
 import Data.String       (IsString,fromString)
+import Data.List (elemIndices,(++))
 
 import Foreign.Marshal.Alloc
 import Foreign.Ptr
 import Foreign.StablePtr
 import Data.Word
-import Data.Char
 
 import System.IO.Unsafe
 import qualified Data.Vector.Storable.Mutable as SVM
@@ -33,41 +33,22 @@ import Network.Socket.Splice -- corsis library: SPLICE
 -- Utility Functions
 
 type Seconds = Int
+secs     :: Int -> Seconds;                  secs         = (* 1000000)
+wait     :: Seconds -> IO ();                wait         = threadDelay . secs
+schedule :: Seconds -> IO () -> IO ThreadId; schedule s a = forkIO $ wait s >> a
 
-secs :: Int -> Seconds
-secs = (* 1000000)
-
-wait :: Seconds -> IO ()
-wait = threadDelay . secs
-
-schedule :: Seconds -> IO () -> IO ThreadId
-schedule s a = forkIO $ wait s >> a
-
-{-# INLINE (|>) #-}
-(|>) :: IO () -> IO () -> IO ()
-a |> b = forkIO a >> b
-
-{-# INLINE (++) #-}; (++) :: ByteString -> ByteString -> ByteString; (++) = B.append
-
-(<:) :: Show a => Socket -> a -> IO ()
-s <: a = s `sendAll` ((B.pack . show $ a) ++ "\r\n")
-
-type ErrorIO = IO
-
-att :: IO a -> IO (Maybe a)
-att a = tryWith (const $ return Nothing) (Just <$> a)
-
-tryRun :: IO () -> IO ()
-tryRun a = tryWith (\x -> do print x; wait 2) a
-
-{-# INLINE (=>>) #-}
-infixr 0 =>>
-(=>>) :: Monad m => m a -> (a -> m b) -> m a
+{-# INLINE (//)  #-}; (//) :: a -> (a -> b) -> b;                     x // f = f x
+{-# INLINE (|>)  #-}; (|>) :: IO () -> IO () -> IO ();                a |> b = forkIO a >> b
+{-# INLINE (<>)  #-}; (<>) :: ByteString -> ByteString -> ByteString; (<>)   = B.append
+{-# INLINE (=>>) #-}; infixr 0 =>>; (=>>) :: Monad m => m a -> (a -> m b) -> m a
 a =>> f = do r <- a; _ <- f r; return r
 
-{-# INLINE (//) #-}
-(//) :: a -> (a -> b) -> b
-x // f = f x
+(<:) :: Show a => Socket -> a -> IO (); s <: a = s `sendAll` ((B.pack . show $ a) <> "\r\n")
+
+type ErrorIO = IO
+att    :: IO a  -> IO (Maybe a); att    a = tryWith (const $ return Nothing) (Just <$> a)
+tryRun :: IO () -> IO ();        tryRun a = tryWith (\x -> do print x; wait 2) a
+
 
 (???) :: ErrorIO a -> [IO a] -> IO a
 e ??? as = foldr (?>) e as
@@ -119,26 +100,17 @@ h .@. p = getAddrInfo hint host port >>= \as -> e as ??? map c as
                     Just _  -> do print . (:.:) Open =<< (s <@>);  return s
 
 configure :: Socket -> IO ()
-configure x = do
-  m RecvBuffer $ fromIntegral chunk
-  m SendBuffer $ fromIntegral chunk
-  s KeepAlive  1
-    where
-      g o   = do v <- getSocketOption x o  ; {-print ("get",v);-} return v
-      s o v = do      setSocketOption x o v; {-print ("set",v) -}
-      m o u = do v <- g o; when (v < u) $ s o u
+configure s = m RecvBuffer c >> m SendBuffer c >> setSocketOption s KeepAlive 1
+   where m o u = do v <- getSocketOption s o; when (v < u) $ setSocketOption s o u
+         c     = fromIntegral chunk
 
 (#@)  :: Socket -> IO Handle
 (#@)  s = socketToHandle s ReadWriteMode =>> (`hSetBuffering` NoBuffering)
-
-(!@)  :: Socket -> IO Peer
+(!@),(!<@) :: Socket -> IO Peer
 (!@)  s = Peer s <$> (s #@)
-
-(!<@) :: Socket -> IO Peer
-(!<@) l = (!@) =<< (l <@)
-
-(!) :: Host -> Port -> IO Peer
-(!) h p = (!@) =<< h .@. p
+(!<@) l = (!@)   =<< (l <@)
+(!)  :: Host -> Port -> IO Peer
+(!) h p = (!@)   =<< h .@. p
 
 
 -- ✖ ✿ @
@@ -157,27 +129,32 @@ instance Disposable (StablePtr a) where (✖) = freeStablePtr
 data Peer = Peer !Socket !Handle
 type Host = ByteString
 type Port = PortNumber
-data AddrPort = !Host :@: !Port deriving (Show, Read)
-
-readAP :: ByteString -> AddrPort
-readAP = (\(a,p) -> format a :@: (read . show $ LS p)) . B.breakEnd (== ':')
-  where
-    format = def . rs . rc
-    def "" = "::"
-    def x  = any
-    rs     = B.filter $ not . isSpace
-    rc  a  = B.take (B.length a - 1) a
+data AddrPort = !Host :@: !Port
+instance Show AddrPort where show (a :@: p) = "[" ++ show (LS a) ++ "]:" ++ show p
+instance Read AddrPort where
+  readsPrec p s =
+    case reverse $ elemIndices ':' s of
+      []  -> all          s
+      0:_ -> all $ drop 1 s
+      i:_ -> one        i s
+    where
+      all   s = readsPrec p s >>= \(p, s') -> return $ ("::" :@: p, s')
+      one i s = do
+        (a,_) <- readsPrec p $ if   elem '[' x
+                               then map (\c->case c of '['->'"';']'->'"';c->c) x
+                               else "\"" ++ x ++ "\""
+        (p,r) <- readsPrec p $ tail y
+        return $ (a :@: p, r)
+        where (x,y) = splitAt i s
 
 ap2sa :: AddrPort -> IO SockAddr
 ap2sa (a :@: p) = do
-  ask a >>= \sa -> case sa of { SockAddrInet _ _ -> ask $ "::ffff:" ++ a; _ -> return sa }
+  ask a >>= \sa -> case sa of { SockAddrInet _ _ -> ask $ "::ffff:" <> a; _ -> return sa }
   where hints = defaultHints { addrSocketType = Stream }
         ask a = addrAddress . head <$> getAddrInfo (Just hints) (Just $ B.unpack a) (Just $ show p)
 
 instance Read Port where readsPrec p s = map (\(x,y) -> (fromInteger x,y)) $ readsPrec p s
 instance Read LiteralString where readsPrec p s = map (\(x,y) -> (LS x,y)) $ readsPrec p s
-instance Read AddrPort where
-  readsPrec p s = readAP s
 
 type Message = Request
 data ServiceAction = Listen | Watch | Drop                                   deriving Show
@@ -207,7 +184,7 @@ data Request = (:-<-:)    AddrPort
 name, copyright, build :: ByteString
 name      = "CORSIS PortFusion    ( ]-[ayabusa 1.1.0 )"
 copyright = "(c) 2012 Cetin Sert. All rights reserved."
-build     = __OS__ ++ " - " ++ __ARCH__ ++  " [" ++ __TIMESTAMP__ ++ "]"
+build     = __OS__ <> " - " <> __ARCH__ <>  " [" <> __TIMESTAMP__ <> "]"
 
 main :: IO ()
 main = withSocketsDo $ tryWith (const . print $ LS "INVALID SYNTAX") $ do
@@ -218,7 +195,7 @@ main = withSocketsDo $ tryWith (const . print $ LS "INVALID SYNTAX") $ do
     mapM_ (forkIO . run) tasks
     void Prelude.getChar
     where
-      a  = readAP . B.pack
+      a  = read
       r  = read
       p  = B.pack
       i :: [String] -> [Task]
@@ -227,8 +204,7 @@ main = withSocketsDo $ tryWith (const . print $ LS "INVALID SYNTAX") $ do
       i [ lp, "]", fh, fp, "-", rh, rp ] = [a lp :>-: ((p fh, r fp), (p rh, r rp))]
       i [ lp, "]",         "-", rh, rp ] = [a lp :>=:                (p rh, r rp) ]
       i m = concatMap i ss
-        where
-          ss = map (map B.unpack . filter (not . B.null) . B.split ' ' . B.pack) m
+        where ss = map (map B.unpack . filter (not . B.null) . B.split ' ' . B.pack) m
 
 
 type PortVector a = SVM.IOVector a
