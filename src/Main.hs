@@ -17,12 +17,13 @@ import System.Environment
 import System.Timeout
 import System.IO hiding  (hGetLine,hPutStr,hGetContents)
 import Data.String       (IsString,fromString)
-import Data.List (elemIndices,(++))
+import Data.List         (elemIndices,(++))
 
 import Foreign.Marshal.Alloc
 import Foreign.Ptr
 import Foreign.StablePtr
 import Data.Word
+import Debug.Trace
 
 import System.IO.Unsafe
 import qualified Data.Vector.Storable.Mutable as SVM
@@ -74,14 +75,12 @@ instance X.Exception ProtocolException where
 a @>-<@ b = FusionLink <$> (att $ getPeerName a) <*> (att $ socketPort b) <*> (att $ getPeerName b)
 
 (@<) :: AddrPort -> IO Socket
-(@<) p = do
-  i <- ap2sa p
-  s <- socket AF_INET6 Stream 0 =>> opt
-  bindSocket      s i
-  listen          s maxListenQueue
-  print $! Listen :^: p
+(@<) ap = do
+  i <- ap2sa ap
+  s <- socket AF_INET6 Stream 0 =>> \s->mapM_ (\o -> setSocketOption s o 1) [ ReuseAddr,KeepAlive ]
+  bindSocket s i; listen s maxListenQueue
+  print $! Listen :^: ap
   return s
-    where opt s = mapM_ (\o -> setSocketOption s o 1) [ ReuseAddr, KeepAlive ]
 
 (<@) :: Socket -> IO Socket
 (<@) s = do (c,_) <- accept s; configure c; print . (:.:) Accept =<< (c <@>); return c
@@ -104,9 +103,9 @@ configure s = m RecvBuffer c >> m SendBuffer c >> setSocketOption s KeepAlive 1
          c     = fromIntegral chunk
 
 
-(!@)  :: Socket ->         IO Peer; (!@)  s = Peer s <$> (s #@)
-(!<@) :: Socket ->         IO Peer; (!<@) l = (!@)   =<< (l <@)
-(!)   :: Host   -> Port -> IO Peer; (!) h p = (!@)   =<< h .@. p
+(!@)  :: Socket ->         IO Peer;   (!@)  s = Peer s <$> (s #@)
+(!<@) :: Socket ->         IO Peer;   (!<@) l = (!@)   =<< (l <@)
+(!)   :: Host   -> Port -> IO Peer;   (!) h p = (!@)   =<< h .@. p
 (#@)  :: Socket ->         IO Handle
 (#@)  s = socketToHandle s ReadWriteMode =>> (`hSetBuffering` NoBuffering)
 
@@ -140,11 +139,12 @@ instance Read AddrPort where
       all   s = readsPrec p s >>= \(p, s') -> return $ ("::" :@: p, s')
       one i s = do
         (a,_) <- readsPrec p $ if   elem '[' x
-                               then map (\c->case c of '['->'"';']'->'"';c->c) x
-                               else "\"" ++ x ++ "\""
+                               then q $ map (\c -> case c of '[' -> '"'; ']' -> '"' ; c -> c) x
+                               else q $ "\"" ++ x ++ "\""
         (p,r) <- readsPrec p $ tail y
-        return $ (a :@: p, r)
+        return $ (q a :@: p, r)
         where (x,y) = splitAt i s
+              q a   = traceShow a a
 
 ap2sa :: AddrPort -> IO SockAddr
 ap2sa ap@(a :@: p) = do
@@ -153,8 +153,10 @@ ap2sa ap@(a :@: p) = do
   where hints = defaultHints { addrSocketType = Stream }
         ask a = addrAddress . head <$> getAddrInfo (Just hints) (Just $ B.unpack a) (Just $ show p)
 
+
 instance Read Port where readsPrec p s = map (\(x,y) -> (fromInteger x,y)) $ readsPrec p s
 instance Read LiteralString where readsPrec p s = map (\(x,y) -> (LS x,y)) $ readsPrec p s
+
 
 type Message = Request
 data ServiceAction = Listen | Watch | Drop                                   deriving Show
