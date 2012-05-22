@@ -281,8 +281,8 @@ run ((:><:) fp) = do
         case q of
           (:-<-:) rp    -> o -<- rp
           (:->-:) rh rp -> o ->- rh $ rp
-          (:?)          -> s <: LS build |> (o ✖)
-          Run task      -> run task      |> (o ✖)
+          (:?)          -> s <: LS (name <> "\n" <> build) |> (o ✖)
+          Run task      -> run task                        |> (o ✖)
 
     (-<-) :: Peer -> AddrPort -> IO ()
     o@(Peer !l _) -<- rp = do
