@@ -147,7 +147,8 @@ instance Read AddrPort where
         where (x,y) = splitAt i s
 
 ap2sa :: AddrPort -> IO SockAddr
-ap2sa (a :@: p) = do
+ap2sa ap@(a :@: p) = do
+  print (LS "ask", ap)
   ask a >>= \sa -> case sa of { SockAddrInet _ _ -> ask $ "::ffff:" <> a; _ -> return sa }
   where hints = defaultHints { addrSocketType = Stream }
         ask a = addrAddress . head <$> getAddrInfo (Just hints) (Just $ B.unpack a) (Just $ show p)
