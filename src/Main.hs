@@ -82,8 +82,8 @@ a @>-<@ b = FusionLink <$> (att $ getPeerName a) <*> (att $ socketPort b) <*> (a
 
 (@<) :: AddrPort -> IO Socket
 (@<) ap = do
-  a <- (ap ?:)
-  s <- socket AF_INET6 Stream 0 =>> \s->mapM_ (\o -> setSocketOption s o 1) [ ReuseAddr,KeepAlive ]
+  (f,a) <- (ap ?:)
+  s <- socket f Stream 0 =>> \s->mapM_ (\o -> setSocketOption s o 1) [ ReuseAddr,KeepAlive ]
   bindSocket s a; listen s maxListenQueue
   print $! Listen :^: ap
   return s
@@ -152,11 +152,10 @@ instance Read AddrPort where
             return $ (a :@: p, r)
               where (x,y) = splitAt i s
 
-(?:) :: AddrPort -> IO SockAddr
-(?:) (a :@: p) = do
-  ask a >>= \sa -> case sa of { SockAddrInet _ _ -> ask $ "::ffff:" <> a; _ -> return sa }
+(?:) :: AddrPort -> IO (Family, SockAddr)
+(?:) (a :@: p) = f . head <$> getAddrInfo (Just hints) (Just $ B.unpack a) (Just $ show p)
   where hints = defaultHints { addrSocketType = Stream }
-        ask a = addrAddress . head <$> getAddrInfo (Just hints) (Just $ B.unpack a) (Just $ show p)
+        f   a = (addrFamily a, addrAddress a)
 
 ----------------------------------------------------------------------------------------------EVENTS
 
