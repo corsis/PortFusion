@@ -1,6 +1,16 @@
 -- CORSIS PortFusion ]-[ayabusa
 -- Copyright © 2012  Cetin Sert
 
+{-# LANGUAGE ScopedTypeVariables, CPP, BangPatterns, TypeSynonymInstances, TypeOperators,
+             OverloadedStrings, DeriveDataTypeable, PostfixOperators, TupleSections       #-}
+
+#if !defined(__OS__)
+#define __OS__ "interactive"
+#endif
+#if !defined(__ARCH__)
+#define __ARCH__ "interactive"
+#endif
+
 module Main where
 
 import Prelude hiding              ((++),length,last,init)
@@ -23,15 +33,14 @@ import Foreign.Marshal.Alloc
 import Foreign.Ptr
 import Foreign.StablePtr
 import Data.Word
-import Debug.Trace
 
 import System.IO.Unsafe
 import qualified Data.Vector.Storable.Mutable as SVM
 
 import Network.Socket.Splice -- corsis library: SPLICE
+import GHC.Conc (numCapabilities)
 
-
--- Utility Functions
+----------------------------------------------------------------------------------------------------
 
 type Seconds = Int
 secs     :: Int -> Seconds;                  secs         = (* 1000000)
@@ -47,21 +56,13 @@ a =>> f = do r <- a; _ <- f r; return r
 (<:) :: Show a => Socket -> a -> IO (); s <: a = s `sendAll` ((B.pack . show $ a) <> "\r\n")
 
 type ErrorIO = IO
-att    :: IO a  -> IO (Maybe a); att    a = tryWith (const $ return Nothing) (Just <$> a)
-tryRun :: IO () -> IO ();        tryRun a = tryWith (\x -> do print x; wait 2) a
-
-
-(???) :: ErrorIO a -> [IO a] -> IO a
+att    :: IO a  -> IO (Maybe a);       att    a = tryWith (const $ return Nothing) (Just <$> a)
+tryRun :: IO () -> IO ();              tryRun a = tryWith (\x -> do print x; wait 2) a
+(???)  :: ErrorIO a -> [IO a] -> IO a
 e ??? as = foldr (?>) e as
   where x ?> y = x `X.catch` (\(_ :: X.SomeException) -> y)
 
-
-newtype LiteralString = LS ByteString
-instance Show     LiteralString where show (LS x) = B.unpack x
-instance IsString LiteralString where fromString  = LS . B.pack
-
-
--- PortFusion Prelude
+----------------------------------------------------------------------------------------------------
 
 data PeerLink   = PeerLink   (Maybe SockAddr) (Maybe SockAddr)                  deriving Show
 data FusionLink = FusionLink (Maybe SockAddr) (Maybe Port    ) (Maybe SockAddr) deriving Show
@@ -76,9 +77,9 @@ a @>-<@ b = FusionLink <$> (att $ getPeerName a) <*> (att $ socketPort b) <*> (a
 
 (@<) :: AddrPort -> IO Socket
 (@<) ap = do
-  i <- ap2sa ap
+  a <- (ap ?:)
   s <- socket AF_INET6 Stream 0 =>> \s->mapM_ (\o -> setSocketOption s o 1) [ ReuseAddr,KeepAlive ]
-  bindSocket s i; listen s maxListenQueue
+  bindSocket s a; listen s maxListenQueue
   print $! Listen :^: ap
   return s
 
@@ -102,15 +103,12 @@ configure s = m RecvBuffer c >> m SendBuffer c >> setSocketOption s KeepAlive 1
    where m o u = do v <- getSocketOption s o; when (v < u) $ setSocketOption s o u
          c     = fromIntegral chunk
 
-
 (!@)  :: Socket ->         IO Peer;   (!@)  s = Peer s <$> (s #@)
 (!<@) :: Socket ->         IO Peer;   (!<@) l = (!@)   =<< (l <@)
 (!)   :: Host   -> Port -> IO Peer;   (!) h p = (!@)   =<< h .@. p
 (#@)  :: Socket ->         IO Handle
 (#@)  s = socketToHandle s ReadWriteMode =>> (`hSetBuffering` NoBuffering)
 
-
--- ✖ ✿ @
 class    Disposable a       where (✖) :: a -> IO ()
 instance Disposable Socket  where
   (✖) s = do
@@ -122,6 +120,7 @@ instance Disposable Handle        where (✖) = try_ . hClose
 instance Disposable (Ptr       a) where (✖) = free
 instance Disposable (StablePtr a) where (✖) = freeStablePtr
 
+----------------------------------------------------------------------------------------------------
 
 data Peer = Peer !Socket !Handle
 type Host = ByteString
@@ -131,31 +130,27 @@ data AddrPort = !Host :@: !Port
 instance Show AddrPort where show (a :@: p) = "[" ++ show (LS a) ++ "]:" ++ show p
 instance Read AddrPort where
   readsPrec p s =
-    case reverse $ elemIndices ':' s of
-      []  -> all          s
-      0:_ -> all $ drop 1 s
-      i:_ -> one        i s
-    where
-      all   s = readsPrec p s >>= \(p, s') -> return $ ("::" :@: p, s')
-      one i s = do
-        (a,_) <- readsPrec p $ if   elem '[' x
-                               then q $ map (\c -> case c of '[' -> '"'; ']' -> '"' ; c -> c) x
-                               else q $ "\"" ++ x ++ "\""
-        (p,r) <- readsPrec p $ tail y
-        return $ (q a :@: p, r)
-        where (x,y) = splitAt i s
-              q a   = traceShow a a
+    case reverse $ elemIndices ':' s of { [] -> all s; (0:_) -> all $ drop 1 s; (i:_) -> one i s }
+    where all   s = readsPrec p s >>= \(p, s') -> return $ ("::" :@: p, s')
+          one i s = do
+            (a,_) <- readsPrec p $ if   elem '[' x
+                                   then map (\c -> case c of '[' -> '"'; ']' -> '"' ; c -> c) x
+                                   else "\"" ++ x ++ "\""
+            (p,r) <- readsPrec p $ tail y
+            return $ (a :@: p, r)
+              where (x,y) = splitAt i s
 
-ap2sa :: AddrPort -> IO SockAddr
-ap2sa ap@(a :@: p) = do
-  print (LS "ask", ap)
+(?:) :: AddrPort -> IO SockAddr
+(?:) (a :@: p) = do
   ask a >>= \sa -> case sa of { SockAddrInet _ _ -> ask $ "::ffff:" <> a; _ -> return sa }
   where hints = defaultHints { addrSocketType = Stream }
         ask a = addrAddress . head <$> getAddrInfo (Just hints) (Just $ B.unpack a) (Just $ show p)
 
-
-instance Read Port where readsPrec p s = map (\(x,y) -> (fromInteger x,y)) $ readsPrec p s
-instance Read LiteralString where readsPrec p s = map (\(x,y) -> (LS x,y)) $ readsPrec p s
+newtype LiteralString = LS ByteString
+instance IsString LiteralString where fromString  = LS . B.pack
+instance Show     LiteralString where show (LS x) = B.unpack x
+instance Read     LiteralString where readsPrec p s = map (\(x,y) -> (LS x,y)) $ readsPrec p s
+instance Read     Port where readsPrec p s = map (\(x,y) -> (fromInteger x,y)) $ readsPrec p s
 
 
 type Message = Request
@@ -169,6 +164,8 @@ data Event = ServiceAction :^: AddrPort
 
 chunk :: ChunkSize
 chunk = 8 * 1024
+
+----------------------------------------------------------------------------------------------------
 
 -- CORE
 
@@ -191,23 +188,22 @@ build     = __OS__ <> " - " <> __ARCH__ <>  " [" <> __TIMESTAMP__ <> "]"
 main :: IO ()
 main = withSocketsDo $ tryWith (const . print $ LS "INVALID SYNTAX") $ do
   mapM_ B.putStrLn [ "\n", name, copyright, "", build, "\n" ]
-  tasks <- fmap i getArgs
+  tasks <- fmap parse getArgs
   unless (null tasks) $ do
-    print (LS "zeroCopy", zeroCopy)
+    when zeroCopy $ print (LS "zeroCopy", zeroCopy)
+    when (numCapabilities > 1) $ print (LS "numCapabilities", numCapabilities)
     mapM_ (forkIO . run) tasks
     void Prelude.getChar
-    where
-      a  = read
-      r  = read
-      p  = B.pack
-      i :: [String] -> [Task]
-      i [         "]", fp,     "[" ]     = [(:><:) $ a fp]
-      i [ lp, lh, "-", fp, fh, "[", rp ] = [(r lp, p lh) :-<: ((r fp, p fh),a rp) ]
-      i [ lp, "]", fh, fp, "-", rh, rp ] = [a lp :>-: ((p fh, r fp), (p rh, r rp))]
-      i [ lp, "]",         "-", rh, rp ] = [a lp :>=:                (p rh, r rp) ]
-      i m = concatMap i ss
-        where ss = map (map B.unpack . filter (not . B.null) . B.split ' ' . B.pack) m
 
+parse :: [String] -> [Task]
+parse [         "]", ap, "["         ] = [(:><:) $ read ap                                         ]
+parse [ lp, lh, "-", fp, fh, "[", ap ] = [(read lp, B.pack lh) :-<: ((read fp, B.pack fh),read ap) ]
+parse [ ap, "]", fh, fp, "-", rh, rp ] = [read ap :>-: ((B.pack fh, read fp), (B.pack rh, read rp))]
+parse [ ap, "]",         "-", rh, rp ] = [read ap :>=:                        (B.pack rh, read rp) ]
+parse m = concatMap parse ss
+  where ss = map (map B.unpack . filter (not . B.null) . B.split ' ' . B.pack) m
+
+----------------------------------------------------------------------------------------------------
 
 type PortVector a = SVM.IOVector a
 
@@ -252,6 +248,7 @@ initPortVectors = do
               sv <- SVM.read s i
               deRefStablePtr  sv >>= (✖); (sv ✖)
 
+----------------------------------------------------------------------------------------------------
 
 (|<>|) :: (MVar ThreadId -> IO ()) -> (MVar ThreadId -> IO ()) -> IO ()
 a |<>| b = do
@@ -266,6 +263,7 @@ a |<>| b = do
   let f x = do maybe (n x) (const $ return ()) $ (X.fromException x :: Maybe X.AsyncException)
   tryWith f $ do recv s 0; f . X.toException $ Loss l
 
+----------------------------------------------------------------------------------------------------
 
 run :: Task -> IO () -- serve
 run ((:><:) fp) = do
@@ -284,8 +282,8 @@ run ((:><:) fp) = do
         case q of
           (:-<-:) rp    -> o -<- rp
           (:->-:) rh rp -> o ->- rh $ rp
-          (:?)          -> s <: LS (name <> "\n" <> build) |> (o ✖)
-          Run task      -> run task                        |> (o ✖)
+          (:?)          -> s <: LS build |> (o ✖)
+          Run task      -> run task      |> (o ✖)
 
     (-<-) :: Peer -> AddrPort -> IO ()
     o@(Peer !l _) -<- rp = do
@@ -348,6 +346,7 @@ run (lp :>=: (rh, rp)) = do
     r <- rh ! rp
     r >-< c $ return ()
 
+----------------------------------------------------------------------------------------------------
 
 (>-<) :: Peer -> Peer -> ErrorIO () -> IO ()
 (a@(Peer as _) >-< b@(Peer bs _)) h = do

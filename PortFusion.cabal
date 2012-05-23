@@ -78,9 +78,6 @@ executable PortFusion
     hs-source-dirs:  src
     main-is:         Main.hs
     buildable:       True
-    extensions:      ScopedTypeVariables CPP BangPatterns
-                     TypeSynonymInstances TypeOperators OverloadedStrings
-                     DeriveDataTypeable PostfixOperators TupleSections
     build-depends:   base       >= 4 && <= 5,
                      bytestring -any,
                      vector     -any,
@@ -109,12 +106,6 @@ executable PortFusion
 
 
    -- CORSIS Build Name Components
-   --
-   -- Below is only used to generate standard build names each time a PortFusion
-   -- binary is compiled using Cabal; can be simply replaced with:
-   --
-   --   cpp-options: -D__OS__="SOME OS" -D__ARCH__="SOME ARCH"
-   --
 
     if os(linux)
        cpp-options: -D__OS__="Linux"
