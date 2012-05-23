@@ -5,7 +5,7 @@
              OverloadedStrings, DeriveDataTypeable, PostfixOperators, TupleSections       #-}
 
 #if !defined(__OS__)
-#define __OS__ "interactive"
+#define __OS__   "interactive"
 #endif
 #if !defined(__ARCH__)
 #define __ARCH__ "interactive"
