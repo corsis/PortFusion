@@ -140,7 +140,7 @@ instance Read Port where readsPrec p s = map (\(i,r) -> (fromInteger i,r)) $ rea
 
 data AddrPort = !Host :@: !Port
 instance Show AddrPort where
-  show (a:@:p) = if B.null     a then "" else f a ++ ":" ++ show p
+  show (a:@:p) = if B.null     a then show p else f a ++ ":" ++ show p
     where f  a = if B.elem ':' a then "["++show (LS a)++"]" else show (LS a)
 instance Read AddrPort where
   readsPrec p s =
