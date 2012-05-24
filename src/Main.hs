@@ -27,7 +27,7 @@ import System.Environment
 import System.Timeout
 import System.IO hiding  (hGetLine,hPutStr,hGetContents)
 import Data.String       (IsString,fromString)
-import Data.List         (elemIndices,(++))
+import Data.List         (elemIndices,(++),find)
 
 import Foreign.Marshal.Alloc
 import Foreign.Ptr
@@ -83,7 +83,7 @@ a @>-<@ b = FusionLink <$> (att $ getPeerName a) <*> (att $ socketPort b) <*> (a
 (@<) :: AddrPort -> IO Socket
 (@<) ap = do
   (f,a) <- (ap ?:)
-  s <- socket f Stream 0 =>> \s->mapM_ (\o -> setSocketOption s o 1) [ ReuseAddr,KeepAlive ]
+  s <- socket f Stream 0x6 =>> \s -> mapM_ (\o -> setSocketOption s o 1) [ ReuseAddr,KeepAlive ]
   bindSocket s a; listen s maxListenQueue
   print $! Listen :^: ap
   return s
@@ -139,11 +139,13 @@ instance Read Port where readsPrec p s = map (\(i,r) -> (fromInteger i,r)) $ rea
 
 
 data AddrPort = !Host :@: !Port
-instance Show AddrPort where show (a :@: p) = "[" ++ show (LS a) ++ "]:" ++ show p
+instance Show AddrPort where
+  show (a:@:p) = if B.null     a then "" else f a ++ ":" ++ show p
+    where f  a = if B.elem ':' a then "["++show (LS a)++"]" else show (LS a)
 instance Read AddrPort where
   readsPrec p s =
     case reverse $ elemIndices ':' s of { [] -> all s; (0:_) -> all $ drop 1 s; (i:_) -> one i s }
-    where all   s = readsPrec p s >>= \(p, s') -> return $ ("::" :@: p, s')
+    where all   s = readsPrec p s >>= \(p, s') -> return $ ("" :@: p, s')
           one i s = do
             (a,_) <- readsPrec p $ if   elem '[' x
                                    then map (\c -> case c of '[' -> '"'; ']' -> '"' ; c -> c) x
@@ -153,9 +155,11 @@ instance Read AddrPort where
               where (x,y) = splitAt i s
 
 (?:) :: AddrPort -> IO (Family, SockAddr)
-(?:) (a :@: p) = f . head <$> getAddrInfo (Just hints) (Just $ B.unpack a) (Just $ show p)
-  where hints = defaultHints { addrSocketType = Stream }
-        f   a = (addrFamily a, addrAddress a)
+(?:) (a :@: p) = f . c <$> getAddrInfo (Just hints) n (Just $! show p)
+  where hints = defaultHints { addrFlags = [ AI_PASSIVE, AI_NUMERICHOST ], addrSocketType = Stream }
+        n     = if B.null a then Nothing else Just $! B.unpack a
+        c  xs = case find ((== AF_INET6) . addrFamily) xs of Just v6 -> v6; Nothing -> head xs
+        f  x  = (addrFamily x, addrAddress x)
 
 ----------------------------------------------------------------------------------------------EVENTS
 
