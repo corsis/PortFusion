@@ -59,34 +59,6 @@ Availability        | SourceForge.net                 | **SourceForge.net (binar
 [Haskell Platform]: http://hackage.haskell.org/platform/                                   "Haskell Platform"
 
 
-## Download
-
-Official binaries are built and made availabe for several platforms.
-
-### Official Binaries
-
-| <img height='48px' alt='CPU' title='CPU' src='http://a.fsdn.com/sd/topics/hardware_64.png' /> | ![Windows]                                                                                    | ![Linux]                                                                                      | ![OSX]                                                                                        | ![FreeBSD]                                                                                    | ![OpenBSD] | ![Solaris] | ![Other]
-| --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ---------- | ---------- | --------
-| x86-64                                                                                        | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | ![C]       | ![C]       | ![C]
-| x86                                                                                           | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | ![B]                                                                                          |                                                                                               | ![C]                                                                                          | ![C]       | ![C]       | ![C]
-| ARM                                                                                           | ![B]                                                                                          | ![B]                                                                                          | ![C]                                                                                          | ![C]                                                                                          | ![C]       | ![C]       | ![C]
-| Other                                                                                         |                                                                                               | ![C]                                                                                          |                                                                                               | ![C]                                                                                          | ![C]       | ![C]       | ![C]
-
-CORSIS Research <br /> <br />
-![D] builds official binaries <br />
-![B] will build official binaries on demand  <br />
-![C] can cooperate with community for builds <br />
-
-[D]: http://fusion.corsis.eu/i/down_16.png "Download"
-[B]: http://res2.windows.microsoft.com/resbox/en/Windows%207/main/33624ed4-7676-4be4-9f47-d77eab7ecd9c_0.gif "Build-on-Demand"
-[C]: http://res2.windows.microsoft.com/resbox/en/Windows%207/main/43fa1e85-5152-43ff-b0f7-63ae6520a88b_0.gif "Coop-on-Demand"
-
-### Community Support
-
-If you have access to an OS+CPU combination lacking official binaries,
-please [contact us](#contact) to join our build team!
-
-
 ## Use
 
 | Distributed Reverse Proxy Mode  | Distributed Forward Proxy Mode |
@@ -134,6 +106,34 @@ Following flags can be activated with `cabal configure -f llvm`.
 | `llvm`   | compile via LLVM            | `false` | `true`
 
 These are by default not activated to make PortFusion easy to compile for everyone :).
+
+
+## Download
+
+Official binaries are built and made availabe for several platforms.
+
+### Official Binaries
+
+| <img height='48px' alt='CPU' title='CPU' src='http://a.fsdn.com/sd/topics/hardware_64.png' /> | ![Windows]                                                                                    | ![Linux]                                                                                      | ![OSX]                                                                                        | ![FreeBSD]                                                                                    | ![OpenBSD] | ![Solaris] | ![Other]
+| --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ---------- | ---------- | --------
+| x86-64                                                                                        | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | ![C]       | ![C]       | ![C]
+| x86                                                                                           | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | ![B]                                                                                          |                                                                                               | ![C]                                                                                          | ![C]       | ![C]       | ![C]
+| ARM                                                                                           | ![B]                                                                                          | ![B]                                                                                          | ![C]                                                                                          | ![C]                                                                                          | ![C]       | ![C]       | ![C]
+| Other                                                                                         |                                                                                               | ![C]                                                                                          |                                                                                               | ![C]                                                                                          | ![C]       | ![C]       | ![C]
+
+CORSIS Research <br /> <br />
+![D] builds official binaries <br />
+![B] will build official binaries on demand  <br />
+![C] can cooperate with community for builds <br />
+
+[D]: http://fusion.corsis.eu/i/down_16.png "Download"
+[B]: http://res2.windows.microsoft.com/resbox/en/Windows%207/main/33624ed4-7676-4be4-9f47-d77eab7ecd9c_0.gif "Build-on-Demand"
+[C]: http://res2.windows.microsoft.com/resbox/en/Windows%207/main/43fa1e85-5152-43ff-b0f7-63ae6520a88b_0.gif "Coop-on-Demand"
+
+### Community Support
+
+If you have access to an OS+CPU combination lacking official binaries,
+please [contact us](#contact) to join our build team!
 
 
 ## Remember
