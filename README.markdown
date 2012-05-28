@@ -60,7 +60,7 @@ Following flags can be activated with `cabal install splice -f llvm` and `cabal 
 | Flag     | Effect                      | Default | Official Binaries  |
 |:---------|:----------------------------|:--------|:-------------------|
 |          |                             |         |
-| `llvm`   | compile via LLVM            | `false` | `true`
+| `llvm`   | compile via ![LLVM]         | `false` | `true`
 
 These are by default not activated to make PortFusion easy to compile for everyone :).
 
@@ -94,9 +94,8 @@ please [contact us](#contact) to join our build team!
 
 ### Hackage
 
-PortFusion is also [available on Hackage](http://hackage.haskell.org/package/PortFusion).
-
-To install it using `cabal-install`:
+PortFusion is also [available on Hackage](http://hackage.haskell.org/package/PortFusion)
+and can be easily installed using `cabal-install`:
 
 ````bash
 cabal update
@@ -104,7 +103,7 @@ cabal install splice      -f llvm
 cabal install PortFusion  -f llvm
 ````
 
-You can drop `-f llvm` if you do not have LLVM installed.
+If you do not have ![LLVM] install, you can drop `-f llvm`.
 
 
 ## Notice
