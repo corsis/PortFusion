@@ -1,5 +1,5 @@
 name:          PortFusion
-version:       1.0.4
+version:       1.1.0
 stability:     stable on all operating systems
 synopsis:      high-perf. distributed reverse / forward proxy & tunneling solution for TCP
 description:   PortFusion is a minimalistic, cross-platform, transport-layer
@@ -37,12 +37,12 @@ description:   PortFusion is a minimalistic, cross-platform, transport-layer
 copyright:     Copyright © 2012 Cetin Sert
 license:       GPL-3
 license-file:  LICENSE
-author:        Cetin Sert <fusion@corsis.eu>
+author:        Cetin Sert <fusion@corsis.eu>, Corsis Research
 maintainer:    Cetin Sert <fusion@corsis.eu>
 homepage:      http://fusion.corsis.eu
 package-url:   http://fusion.corsis.eu
 bug-reports:   http://github.com/corsis/PortFusion/issues
-category:      System, Network
+category:      System, Network,
 build-type:    Simple
 cabal-version: >=1.6
 
@@ -78,16 +78,13 @@ executable PortFusion
     hs-source-dirs:  src
     main-is:         Main.hs
     buildable:       True
-    extensions:      ScopedTypeVariables CPP BangPatterns
-                     TypeSynonymInstances TypeOperators OverloadedStrings
-                     DeriveDataTypeable PostfixOperators TupleSections
     build-depends:   base       >= 4 && <= 5,
                      bytestring -any,
                      vector     -any,
                      splice     -any
     if os(mingw32)
       build-depends: network    >= 2.3.0.13
-      ld-options:    res\win\PortFusion.res
+      ghc-options:   res\win\PortFusion.res
     else
       build-depends: network    -any
 
@@ -109,12 +106,6 @@ executable PortFusion
 
 
    -- CORSIS Build Name Components
-   --
-   -- Below is only used to generate standard build names each time a PortFusion
-   -- binary is compiled using Cabal; can be simply replaced with:
-   --
-   --   cpp-options: -D__OS__="SOME OS" -D__ARCH__="SOME ARCH"
-   --
 
     if os(linux)
        cpp-options: -D__OS__="Linux"
