@@ -16,49 +16,6 @@ It strives for the smallest source code size while delivering maximum throughput
 with near zero overhead.
 
 
-## Notice
-
-```
-This is the new Haskell source code repository of the latest ]-[ayabusa version
-– a complete rewrite of the initial Windows-only versions developed in F# / C#.
-```
-
-
-### What is new in `]-[ayabusa`?
-
-PortFusion          | 0.9.3 – old                     | 1.1 – \]-[ayabusa
---------------------|---------------------------------|-------------------------------
-Memory at Start-up  | ~14 MB                          | **~0.7 MB**
-Memory at 1 Fusion  | ~30 MB (lots of jumps)          | **~1.0 MB** (constant)
-OS Support          | ![Windows]                      | ![Windows], ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other]
-Official Binaries   | ![Windows]                      | ![Windows], ![Linux], ![OSX], ![FreeBSD]
-Source Code Size    | 778 lines (multiple files)      | **< 500 lines (1 file)**
-Language            | F# / C#                         | **[Haskell] \([GHC] / [LLVM]\)**
-Dependencies        | .NET 4.0 + F# 2.0 Runtime       | **none**
-Deployment          | 2 .NET 4.0 managed binaries     | **1 unified, native code binary for each platform**
-Binary Size         | **78.3 KB** (34.3 KB + 44 KB)   | 1-3 MB (~400 KB compressed)
-Concurrency Model   | 1 OS thread per connection      | **1 Haskell thread per connection**
-Distribution Technique | Windows Communication Foundation | **native sockets API and system calls of each OS**
-Distributed Proxy Modes | reverse                     | **reverse, forward**
-Local Proxy Modes   |                                 | **forward**
-Native IPv6 Support | **yes**                         | **yes**
-License             | ![GPLv3]                        | ![GPLv3]
-Availability        | SourceForge.net                 | **SourceForge.net (binary) <br /> GitHub (source) <br /> Corsis.eu (commercial)**
-
-[GPLv3]:   http://gplv3.fsf.org/gplv3-127x51.png                                           "GPLv3"
-[Windows]: http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_win_other.png "Windows"
-[Linux]:   http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_oracle.png    "Linux"
-[OSX]:     http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_macosx.png    "Mac OS"
-[FreeBSD]: http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_freebsd.png   "FreeBSD"
-[OpenBSD]: http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_openbsd.png   "OpenBSD"
-[Solaris]: http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_solaris.png   "Solaris"
-[Other]:   http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_other.png     "Other"
-[Haskell]: http://www.haskell.org/                                                         "Haskell"
-[GHC]:     http://www.haskell.org/ghc/                                                     "GHC"
-[LLVM]:    http://llvm.org                                                                 "LLVM"
-[Haskell Platform]: http://hackage.haskell.org/platform/                                   "Haskell Platform"
-
-
 ## Use
 
 | Distributed Reverse Proxy Mode  | Distributed Forward Proxy Mode |
@@ -134,6 +91,60 @@ CORSIS Research <br /> <br />
 
 If you have access to an OS+CPU combination lacking official binaries,
 please [contact us](#contact) to join our build team!
+
+### Hackage
+
+PortFusion is also [available on Hackage](http://hackage.haskell.org/package/PortFusion).
+
+To install it using `cabal-install`:
+
+````bash
+cabal update
+cabal install splice
+cabal install PortFusion
+````
+
+
+## Notice
+
+```
+This is the new Haskell source code repository of the latest ]-[ayabusa version
+– a complete rewrite of the initial Windows-only versions developed in F# / C#.
+```
+
+### What is new in `]-[ayabusa`?
+
+PortFusion          | 0.9.3 – old                     | 1.1 – \]-[ayabusa
+--------------------|---------------------------------|-------------------------------
+Memory at Start-up  | ~14 MB                          | **~0.7 MB**
+Memory at 1 Fusion  | ~30 MB (lots of jumps)          | **~1.0 MB** (constant)
+OS Support          | ![Windows]                      | ![Windows], ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other]
+Official Binaries   | ![Windows]                      | ![Windows], ![Linux], ![OSX], ![FreeBSD]
+Source Code Size    | 778 lines (multiple files)      | **< 500 lines (1 file)**
+Language            | F# / C#                         | **[Haskell] \([GHC] / [LLVM]\)**
+Dependencies        | .NET 4.0 + F# 2.0 Runtime       | **none**
+Deployment          | 2 .NET 4.0 managed binaries     | **1 unified, native code binary for each platform**
+Binary Size         | **78.3 KB** (34.3 KB + 44 KB)   | 1-3 MB (~400 KB compressed)
+Concurrency Model   | 1 OS thread per connection      | **1 Haskell thread per connection**
+Distribution Technique | Windows Communication Foundation | **native sockets API and system calls of each OS**
+Distributed Proxy Modes | reverse                     | **reverse, forward**
+Local Proxy Modes   |                                 | **forward**
+Native IPv6 Support | **yes**                         | **yes**
+License             | ![GPLv3]                        | ![GPLv3]
+Availability        | SourceForge.net                 | **SourceForge.net (binary) <br /> GitHub (source) <br /> Corsis.eu (commercial)**
+
+[GPLv3]:   http://gplv3.fsf.org/gplv3-127x51.png                                           "GPLv3"
+[Windows]: http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_win_other.png "Windows"
+[Linux]:   http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_oracle.png    "Linux"
+[OSX]:     http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_macosx.png    "Mac OS"
+[FreeBSD]: http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_freebsd.png   "FreeBSD"
+[OpenBSD]: http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_openbsd.png   "OpenBSD"
+[Solaris]: http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_solaris.png   "Solaris"
+[Other]:   http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_other.png     "Other"
+[Haskell]: http://www.haskell.org/                                                         "Haskell"
+[GHC]:     http://www.haskell.org/ghc/                                                     "GHC"
+[LLVM]:    http://llvm.org                                                                 "LLVM"
+[Haskell Platform]: http://hackage.haskell.org/platform/                                   "Haskell Platform"
 
 
 ## Remember
