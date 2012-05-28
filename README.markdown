@@ -60,7 +60,7 @@ Following flags can be activated with `cabal install splice -f llvm` and `cabal 
 | Flag     | Effect                      | Default | Official Binaries  |
 |:---------|:----------------------------|:--------|:-------------------|
 |          |                             |         |
-| `llvm`   | compile via ![LLVM]         | `false` | `true`
+| `llvm`   | compile via [LLVM]         | `false` | `true`
 
 These are by default not activated to make PortFusion easy to compile for everyone :).
 
@@ -103,7 +103,7 @@ cabal install splice      -f llvm
 cabal install PortFusion  -f llvm
 ````
 
-If you do not have ![LLVM] install, you can drop `-f llvm`.
+If you do not have [LLVM] install, you can drop `-f llvm`.
 
 
 ## Notice
