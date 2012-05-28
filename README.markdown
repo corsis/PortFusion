@@ -100,9 +100,11 @@ To install it using `cabal-install`:
 
 ````bash
 cabal update
-cabal install splice
-cabal install PortFusion
+cabal install splice      -f llvm
+cabal install PortFusion  -f llvm
 ````
+
+You can drop `-f llvm` if you do not have LLVM installed.
 
 
 ## Notice
