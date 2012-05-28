@@ -1,7 +1,7 @@
 name:          PortFusion
 version:       1.1.0
 stability:     stable on all operating systems
-synopsis:      high-perf. distributed reverse / forward proxy & tunneling solution for TCP
+synopsis:      high-performance distributed reverse / forward proxy & tunneling for TCP
 description:   PortFusion is a minimalistic, cross-platform, transport-layer
                distributed reverse / forward proxy & tunneling solution for TCP
                (RDP, SSH, HTTP(S), (S)FTP, VNC, ...) released under GPLv3.
@@ -38,7 +38,7 @@ copyright:     Copyright © 2012 Cetin Sert
 license:       GPL-3
 license-file:  LICENSE
 author:        Cetin Sert <fusion@corsis.eu>, Corsis Research
-maintainer:    Cetin Sert <fusion@corsis.eu>
+maintainer:    Cetin Sert <fusion@corsis.eu>, Corsis Research
 homepage:      http://fusion.corsis.eu
 package-url:   http://fusion.corsis.eu
 bug-reports:   http://github.com/corsis/PortFusion/issues
