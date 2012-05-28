@@ -55,7 +55,7 @@ cabal build
 
 ### Flags
 
-Following flags can be activated with `cabal configure -f llvm`.
+Following flags can be activated with `cabal install splice -f llvm` and `cabal configure -f llvm`.
 
 | Flag     | Effect                      | Default | Official Binaries  |
 |:---------|:----------------------------|:--------|:-------------------|
