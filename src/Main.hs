@@ -85,7 +85,7 @@ a @>-<@ b = FusionLink <$> (att $ getPeerName a) <*> (att $ socketPort b) <*> (a
   (f,a) <- (ap ?:)
   s <- socket f Stream 0x6 =>> \s -> mapM_ (\o -> setSocketOption s o 1) [ ReuseAddr,KeepAlive ]
   bindSocket s a; listen s maxListenQueue
-  print $! Listen :^: ap
+  print $! Listen :^: (faf f,ap)
   return s
 
 (<@) :: Socket -> IO Socket
@@ -154,6 +154,9 @@ instance Read AddrPort where
             return $ (a :@: p, r)
               where (x,y) = splitAt i s
 
+faf :: Family -> LiteralString
+faf x  = LS $! case x of { AF_INET6 -> "IPv6(+4?)"; AF_INET -> "IPv4"; _ -> B.pack $ show x }
+
 (?:) :: AddrPort -> IO (Family, SockAddr)
 (?:) (a :@: p) = f . c <$> getAddrInfo (Just hints) n (Just $! show p)
   where hints = defaultHints { addrFlags = [ AI_PASSIVE, AI_NUMERICHOST ], addrSocketType = Stream }
@@ -168,7 +171,7 @@ data ServiceAction = Listen | Watch | Drop                                   der
 data    PeerAction = Accept | Open  | Close | Receive Message | Send Message deriving Show
 data  FusionAction = Establish | Terminate                                   deriving Show
 
-data Event = ServiceAction :^: AddrPort
+data Event = ServiceAction :^: (LiteralString, AddrPort)
            |    PeerAction :.: PeerLink
            |  FusionAction ::: FusionLink deriving Show
 
@@ -194,11 +197,12 @@ main :: IO ()
 main = withSocketsDo $ tryWith (const . print $ LS "INVALID SYNTAX") $ do
   mapM_ B.putStrLn [ "\n", name, copyright, "", build, "\n" ]
   tasks <- parse <$> getArgs
-  unless (null tasks) $ do
+  unless (null tasks) $! do
     when zeroCopy              $ print (LS "zeroCopy"       , zeroCopy       )
     when (numCapabilities > 1) $ print (LS "numCapabilities", numCapabilities)
     mapM_ (forkIO . run) tasks
     void Prelude.getChar
+  when (null tasks) $! mapM_ B.putStrLn [ "  Documentation: http://fusion.corsis.eu", "",""]
 
 
 parse :: [String] -> [Task]
@@ -242,14 +246,14 @@ initPortVectors = do
     if  n > 0
       then SVM.write c i n
       else do
-        print $ Watch :^: ap
+        print $! Watch :^: (faf AF_UNSPEC,ap)
         void  . schedule 10 $ do
           withMVar portVectors $ \(c,s) -> do
             cv <- SVM.read c i
             let n = cv - 1
             SVM.write c i n
             when (n == 0) $ do
-              print $ Drop :^: ap
+              print $! Drop :^: (faf AF_UNSPEC,ap)
               sv <- SVM.read s i
               deRefStablePtr  sv >>= (✖); (sv ✖)
 
