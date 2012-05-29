@@ -133,6 +133,7 @@ Distribution Technique | Windows Communication Foundation | **native sockets API
 Distributed Proxy Modes | reverse                     | **reverse, forward**
 Local Proxy Modes   |                                 | **forward**
 Native IPv6 Support | **yes**                         | **yes**
+Interactive Mode    |                                 | [**REPL in GHCi**](https://github.com/corsis/PortFusion/wiki/PortFusion-REPL)
 License             | ![GPLv3]                        | ![GPLv3]
 Availability        | SourceForge.net                 | **SourceForge.net (binary) <br /> GitHub (source) <br /> Corsis.eu (commercial)**
 
