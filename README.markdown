@@ -25,11 +25,11 @@ with near zero overhead.
 | |
 | `@remote>` <pre>PortFusion             ] 2000        [</pre> `@local>` <pre>PortFusion 3389 server - 2000 remote [ 3389</pre> | `@remote>` <pre>PortFusion      ]        2000 [</pre> `@local>` <pre>PortFusion 3128 ] remote 2000 - server 3128</pre>
 | |
-| [<img src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/dr.png" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/dr.png) | [<img src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/df.png" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/df.png)
+| <a name='illustrate' class='anchor' href='#illustrate' /> [<img src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/dr1.png" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/dr1.png) | [<img src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/df1.png" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/df1.png)
 | |
 | <p>You can now connect to `remote:3389` with your favourite remote desktop client. All connections will be tunneled via gateway `local` to your workstation `server`.</p> <p>You only need to configure the firewall at your own home PC `remote` for port `2000`.</p> | <p>`local` HTTP clients that connects to the tunneled proxy `local:3128` are served via gateway `remote` by your friend's http proxy `server:3128`.</p> <p>Your friend only needs to configure the firewall on gateway `remote` for port `2000`.</p>
 | |
-| <a name='illustrate' class='anchor' href='#illustrate' /> [<img width='100%' src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/reverse-fusion-msc-7.png" alt="DR" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/reverse-fusion-msc-7.png) | [<img width='100%' src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/forward-fusion-msc-7.png" alt="DF" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/forward-fusion-msc-7.png)
+| [<img width='100%' src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/reverse-fusion-msc-7.png" alt="DR" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/reverse-fusion-msc-7.png) | [<img width='100%' src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/forward-fusion-msc-7.png" alt="DF" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/forward-fusion-msc-7.png)
 
 
 ## Build
