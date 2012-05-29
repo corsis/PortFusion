@@ -260,7 +260,7 @@ For their support and inspiration, we extend our heart-felt thanks to:
 <img alt='Japan Aerospace Exploration Agency'         title='Japan Aerospace Exploration Agency'                       src='http://upload.wikimedia.org/wikipedia/en/thumb/8/85/Jaxa_logo.svg/160px-Jaxa_logo.svg.png' />
 </div>
 
-
+----
 
 ## Contact
 
