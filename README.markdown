@@ -27,6 +27,8 @@ with near zero overhead.
 | |
 | <p>You can now connect to `remote:3389` with your favourite remote desktop client. All connections will be tunneled via gateway `local` to your workstation `server`.</p> <p>You only need to configure the firewall at your own home PC `remote` for port `2000`.</p> | <p>`local` HTTP clients that connects to the tunneled proxy `local:3128` are served by your friend's http proxy `server:3128` via gateway`remote`.</p> <p>Your friend only needs to configure the firewall on gateway `remote` for port `2000`.</p>
 | |
+| [<img src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/dr.png" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/dr.png) | [<img src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/df.png" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/df.png)
+| |
 | <a name='illustrate' class='anchor' href='#illustrate' /> [<img width='100%' src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/reverse-fusion-msc-7.png" alt="DR" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/reverse-fusion-msc-7.png) | [<img width='100%' src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/forward-fusion-msc-7.png" alt="DF" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/forward-fusion-msc-7.png)
 
 
@@ -103,7 +105,7 @@ cabal install splice      -f llvm
 cabal install PortFusion  -f llvm
 ````
 
-If you do not have [LLVM] install, you can drop `-f llvm`.
+If you do not have [LLVM] installed, you can drop `-f llvm`.
 
 
 ## Notice
