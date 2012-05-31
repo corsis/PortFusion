@@ -13,7 +13,7 @@ design and [Haskell]'s excellent support for unprecedented levels of concurrency
 and parallelism.
 
 It strives for the smallest source code size while delivering maximum throughput
-with near zero overhead.
+with near-zero overhead.
 
 
 ## Use
