@@ -195,12 +195,12 @@ main :: IO ()
 main = withSocketsDo $ tryWith (const . print $ LS "INVALID SYNTAX") $ do
   mapM_ B.putStrLn [ "\n", name, copyright, "", build, "\n" ]
   tasks <- parse <$> getArgs
+  when   (null tasks) $! mapM_ B.putStrLn [ "  Documentation: http://fusion.corsis.eu", "",""]
   unless (null tasks) $! do
     when zeroCopy              $ print (LS "zeroCopy"       , zeroCopy       )
     when (numCapabilities > 1) $ print (LS "numCapabilities", numCapabilities)
     mapM_ (forkIO . run) tasks
     void Prelude.getChar
-  when (null tasks) $! mapM_ B.putStrLn [ "  Documentation: http://fusion.corsis.eu", "",""]
 
 
 parse :: [String] -> [Task]
@@ -231,9 +231,8 @@ initPortVectors = do
   let i = fromIntegral p
   withMVar portVectors $ \(c,s) -> do
     cv <- SVM.read c i
-    SVM.write c i $ cv + 1
-    if cv > 0 then                  SVM.read  s i >>= deRefStablePtr
-              else do l <- (ap @<); SVM.write s i =<< newStablePtr l; return l
+    if cv > 0 then do              SVM.read  s i >>= deRefStablePtr
+              else do l <-(ap @<); SVM.write s i =<< newStablePtr l; SVM.write c i $! cv+1; return l
 
 (-✖) :: AddrPort -> IO ()
 (-✖) ap@(_ :@: p) = do
@@ -297,10 +296,11 @@ run ((:><:) fp) = do
       initPortVectors
       r <- (rp -@<)
       o -✖- rp |<>| \t -> do
-        c <- (r !<@)
-        killThread =<< takeMVar t
-        l `sendAll` "+"
-        o >-< c $ (rp -✖)
+        let f = killThread =<< takeMVar t
+        tryWith (const f) $! do
+          c <- (r !<@); f
+          l `sendAll` "+"
+          o >-< c $ (rp -✖)
 
     (->-) :: Peer -> Host -> Port -> IO ()
     (o ->- rh) rp = do
