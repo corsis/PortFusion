@@ -1,7 +1,7 @@
 101 ICON PortFusion.ico
 1 VERSIONINFO
-FILEVERSION     1,1,0,0
-PRODUCTVERSION  1,1,0,0
+FILEVERSION     1,1,1,0
+PRODUCTVERSION  1,1,1,0
 BEGIN
   BLOCK "StringFileInfo"
   BEGIN
@@ -9,7 +9,7 @@ BEGIN
     BEGIN
       VALUE "CompanyName",      "CORSIS Research"
       VALUE "FileDescription",  "CORSIS PortFusion : High-performance Distributed Proxy"
-      VALUE "FileVersion",      "Hayabusa.1.1.0.0"
+      VALUE "FileVersion",      "Hayabusa.1.1.1.0"
       VALUE "InternalName",     "Hayabusa"
       VALUE "LegalCopyright",   "© 2012 Cetin Sert"
       VALUE "LegalTrademarks",  "PortFusion™ Cetin Sert"
