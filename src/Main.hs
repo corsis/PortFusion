@@ -33,6 +33,7 @@ import Foreign.Marshal.Alloc
 import Foreign.Ptr
 import Foreign.StablePtr
 import Data.Word
+import Data.Char
 
 import System.IO.Unsafe
 import qualified Data.Vector.Storable.Mutable as SVM
@@ -137,7 +138,6 @@ type Port = PortNumber
 
 instance Read Port where readsPrec p s = map (\(i,r) -> (fromInteger i,r)) $ readsPrec p s
 
-
 data AddrPort = !Host :@: !Port
 instance Show AddrPort where
   show (a:@:p) = if B.null     a then show p else f a ++ ":" ++ show p
@@ -145,14 +145,12 @@ instance Show AddrPort where
 instance Read AddrPort where
   readsPrec p s =
     case reverse $ elemIndices ':' s of { [] -> all s; (0:_) -> all $ drop 1 s; (i:_) -> one i s }
-    where all   s = readsPrec p s >>= \(p, s') -> return $ ("" :@: p, s')
-          one i s = do
-            (a,_) <- readsPrec p $ if   elem '[' x
-                                   then map (\c -> case c of '[' -> '"'; ']' -> '"' ; c -> c) x
-                                   else "\"" ++ x ++ "\""
-            (p,r) <- readsPrec p $ tail y
+    where all   s =  readsPrec p s >>= \(p, s') -> return $ ("" :@: p, s')
+          one i s =  do
+            let (x,y) = splitAt i s // \(a,b) -> (dropWhile isSpace a, b)
+            (a,_) <- readsPrec p $! "\"" ++ filter (\c -> c /= '[' && ']' /= c) x ++ "\""
+            (p,r) <- readsPrec p $! tail y
             return $ (a :@: p, r)
-              where (x,y) = splitAt i s
 
 faf :: Family -> LiteralString
 faf x  = LS $! case x of { AF_INET6 -> "IPv6(+4?)"; AF_INET -> "IPv4"; _ -> B.pack $ show x }
