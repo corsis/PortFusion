@@ -57,8 +57,7 @@ a =>> f = do r <- a; _ <- f r; return r
 type ErrorIO = IO
 att    :: IO a  -> IO (Maybe a);       att    a = tryWith (const $ return Nothing) (Just <$> a)
 tryRun :: IO () -> IO ();              tryRun a = tryWith (\x -> do print x; wait 2) a
-(???)  :: ErrorIO a -> [IO a] -> IO a
-e ??? as = foldr (?>) e as
+(???)  :: ErrorIO a -> [IO a] -> IO a; e ??? as = foldr (?>) e as
   where x ?> y = x `X.catch` (\(_ :: X.SomeException) -> y)
 
 newtype LiteralString = LS ByteString
