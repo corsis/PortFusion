@@ -38,7 +38,6 @@ import Data.Word
 import Data.Char
 
 import System.IO.Unsafe
---import qualified Data.Vector.Storable.Mutable as SVM
 
 import Network.Socket.Splice -- corsis library: SPLICE
 import GHC.Conc (numCapabilities)
@@ -87,7 +86,7 @@ a @>-<@ b = FusionLink <$> (att $ getPeerName a) <*> (att $ socketPort b) <*> (a
   (f,a) <- (ap ?:)
   s <- socket f Stream 0x6 =>> \s -> mapM_ (\o -> setSocketOption s o 1) [ ReuseAddr, KeepAlive ]
   bindSocket s a; listen s maxListenQueue
-  print $! Listen :^: (faf f,ap)
+  print $! Listen :^: (faf f, ap)
   return s
 
 (<@) :: Socket -> IO Socket
@@ -154,7 +153,8 @@ instance Read AddrPort where
             return $ (a :@: p, r)
 
 faf :: Family -> LiteralString
-faf x  = LS $! case x of { AF_INET6 -> "IPv6(+4?)"; AF_INET -> "IPv4"; _ -> B.pack $ show x }
+faf x  = LS $! case x of { AF_INET6 -> sf; AF_UNSPEC -> sf; AF_INET -> "IPv4"; _-> B.pack $ show x }
+  where sf = "IPv6(+4?)"
 
 (?:) :: AddrPort -> IO (Family, SockAddr)
 (?:) (a :@: p)= f . c <$> getAddrInfo (Just hints) n (Just $! show p)
@@ -222,7 +222,7 @@ portVectors = unsafePerformIO newEmptyMVar
 initPortVectors :: IO ()
 initPortVectors = do
   e <- isEmptyMVar portVectors
-  when e $ do
+  when e $! do
     c <- mallocArray0 portCount
     s <- mallocArray  portCount
     putMVar portVectors (c,s)
@@ -231,30 +231,30 @@ initPortVectors = do
 (-@<) :: AddrPort -> IO Socket
 (-@<) ap@(_ :@: p) = do
   let i = fromIntegral p
-  withMVar portVectors $ \(c,s) -> do
+  withMVar portVectors $! \(c,s) -> do
     cv <- peekElemOff c i
-    if cv>0 then do             peekElemOff s i >>= deRefStablePtr
+    if cv>0 then do pokeElemOff c i $! cv+1; peekElemOff s i >>= deRefStablePtr
             else do l <-(ap @<);pokeElemOff s i =<< newStablePtr l;pokeElemOff c i $! cv+1; return l
 
 (-✖) :: AddrPort -> IO ()
 (-✖) ap@(_ :@: p) = do
   let i = fromIntegral p
-  withMVar portVectors $ \(c,_) -> do
+  withMVar portVectors $! \(c,_) -> do
     cv <- peekElemOff c i
-    let n = cv - 1
+    let n = cv-1
     if  n > 0
       then pokeElemOff c i n
       else do
-        print $! Watch :^: (faf AF_UNSPEC,ap)
-        void  . schedule 10 $ do
-          withMVar portVectors $ \(c,s) -> do
+        print $! Watch :^: (faf AF_UNSPEC, ap)
+        void  . schedule 10 $! do
+          withMVar portVectors $! \(c,s) -> do
             cv <- peekElemOff c i
-            let n = cv - 1
+            let n = cv-1
             pokeElemOff c i n
-            when (n == 0) $ do
-              print $! Drop :^: (faf AF_UNSPEC,ap)
+            when (n == 0) $! do
+              print $! Drop :^: (faf AF_UNSPEC, ap)
               sv <- peekElemOff s i
-              deRefStablePtr  sv >>= (✖); (sv ✖)
+              deRefStablePtr sv >>= (✖); (sv ✖)
 
 -----------------------------------------------------------------------------------------------CHECK
 
@@ -313,7 +313,9 @@ run ((:><:) fp) = do
 --- :: Task -> IO () - distributed reverse
 run ((lp,lh) :-<: ((fp,fh),rp)) = do
 
-  forever . tryRun $ fh ! fp `X.bracketOnError` (✖) $ \f@(Peer s _) -> do
+  forever . tryRun $! fh ! fp `X.bracketOnError` (✖) $! \f@(Peer s _) -> do
+
+    8 // print
 
     let m = (:-<-:) rp
     print . (:.:) (Send m) =<< (s <@>)
@@ -324,6 +326,7 @@ run ((lp,lh) :-<: ((fp,fh),rp)) = do
 
       e <- lh ! lp `X.onException` (f ✖)
       f >-< e $ return ()
+      9 // print
 
 
 --- :: Task -> IO () - distributed forward
