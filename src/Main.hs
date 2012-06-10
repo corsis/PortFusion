@@ -315,8 +315,6 @@ run ((lp,lh) :-<: ((fp,fh),rp)) = do
 
   forever . tryRun $! fh ! fp `X.bracketOnError` (✖) $! \f@(Peer s _) -> do
 
-    8 // print
-
     let m = (:-<-:) rp
     print . (:.:) (Send m) =<< (s <@>)
     s <: m
@@ -326,7 +324,6 @@ run ((lp,lh) :-<: ((fp,fh),rp)) = do
 
       e <- lh ! lp `X.onException` (f ✖)
       f >-< e $ return ()
-      9 // print
 
 
 --- :: Task -> IO () - distributed forward
