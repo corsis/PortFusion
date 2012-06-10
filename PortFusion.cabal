@@ -1,5 +1,5 @@
 name:          PortFusion
-version:       1.1.1
+version:       1.2.0
 stability:     stable on all operating systems
 synopsis:      high-performance distributed reverse / forward proxy & tunneling for TCP
 description:   PortFusion is a minimalistic, cross-platform, transport-layer
@@ -80,7 +80,6 @@ executable PortFusion
     buildable:       True
     build-depends:   base       >= 4 && <= 5,
                      bytestring -any,
-                     vector     -any,
                      splice     -any
     if os(mingw32)
       build-depends: network    >= 2.3.0.13
@@ -89,9 +88,9 @@ executable PortFusion
       build-depends: network    -any
 
 
-    ghc-options:     -W -O2 -O3 -fspec-constr-count=16
+    ghc-options:     -W -O2
 
-    if !os(mingw32)
+    if !os(mingw32) && !arch(arm)
       ghc-options:   -threaded -rtsopts
 
     if flag(static)
@@ -99,7 +98,7 @@ executable PortFusion
       ld-options:    -static
 
     if flag(llvm)
-      ghc-options:   -fllvm -optlo-O3 -msse4.2
+      ghc-options:   -fllvm -optlo-O3
 
 
 --------------------------------------------------------------------------------

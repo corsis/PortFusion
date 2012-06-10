@@ -29,6 +29,8 @@ import System.IO hiding  (hGetLine,hPutStr,hGetContents)
 import Data.String       (IsString,fromString)
 import Data.List         (elemIndices,(++),find)
 
+import Foreign.Storable
+import Foreign.Marshal.Array
 import Foreign.Marshal.Alloc
 import Foreign.Ptr
 import Foreign.StablePtr
@@ -36,7 +38,7 @@ import Data.Word
 import Data.Char
 
 import System.IO.Unsafe
-import qualified Data.Vector.Storable.Mutable as SVM
+--import qualified Data.Vector.Storable.Mutable as SVM
 
 import Network.Socket.Splice -- corsis library: SPLICE
 import GHC.Conc (numCapabilities)
@@ -83,7 +85,7 @@ a @>-<@ b = FusionLink <$> (att $ getPeerName a) <*> (att $ socketPort b) <*> (a
 (@<) :: AddrPort -> IO Socket
 (@<) ap = do
   (f,a) <- (ap ?:)
-  s <- socket f Stream 0x6 =>> \s -> mapM_ (\o -> setSocketOption s o 1) [ ReuseAddr,KeepAlive ]
+  s <- socket f Stream 0x6 =>> \s -> mapM_ (\o -> setSocketOption s o 1) [ ReuseAddr, KeepAlive ]
   bindSocket s a; listen s maxListenQueue
   print $! Listen :^: (faf f,ap)
   return s
@@ -155,7 +157,7 @@ faf :: Family -> LiteralString
 faf x  = LS $! case x of { AF_INET6 -> "IPv6(+4?)"; AF_INET -> "IPv4"; _ -> B.pack $ show x }
 
 (?:) :: AddrPort -> IO (Family, SockAddr)
-(?:) (a :@: p) = f . c <$> getAddrInfo (Just hints) n (Just $! show p)
+(?:) (a :@: p)= f . c <$> getAddrInfo (Just hints) n (Just $! show p)
   where hints = defaultHints { addrFlags = [ AI_PASSIVE, AI_NUMERICHOST ], addrSocketType = Stream }
         n     = if B.null a then Nothing else Just $! B.unpack a
         c  xs = case find ((== AF_INET6) . addrFamily) xs of Just v6 -> v6; Nothing -> head xs
@@ -186,12 +188,13 @@ data Request = (:-<-:)    AddrPort
 ------------------------------------------------------------------------------------------------MAIN
 
 name, copyright, build :: ByteString
-name      = "CORSIS PortFusion    ( ]-[ayabusa 1.1.1 )"
+name      = "CORSIS PortFusion    ( ]-[ayabusa 1.2.0 )"
 copyright = "(c) 2012 Cetin Sert. All rights reserved."
 build     = __OS__ <> " - " <> __ARCH__ <>  " [" <> __TIMESTAMP__ <> "]"
 
 main :: IO ()
 main = withSocketsDo $ tryWith (const . print $ LS "INVALID SYNTAX") $ do
+  initPortVectors
   mapM_ B.putStrLn [ "\n", name, copyright, "", build, "\n" ]
   tasks <- parse <$> getArgs
   when   (null tasks) $! mapM_ B.putStrLn [ "  Documentation: http://fusion.corsis.eu", "",""]
@@ -211,7 +214,7 @@ parse m = concatMap parse $ map (map B.unpack . filter (not . B.null) . B.split 
 
 ----------------------------------------------------------------------------------------------VECTOR
 
-type PortVector a = SVM.IOVector a
+type PortVector a = Ptr a
 
 portVectors :: MVar (PortVector Word16, PortVector (StablePtr Socket))
 portVectors = unsafePerformIO newEmptyMVar
@@ -220,8 +223,8 @@ initPortVectors :: IO ()
 initPortVectors = do
   e <- isEmptyMVar portVectors
   when e $ do
-    c <- SVM.new portCount =>> (`SVM.set` 0)
-    s <- SVM.new portCount
+    c <- mallocArray0 portCount
+    s <- mallocArray  portCount
     putMVar portVectors (c,s)
       where portCount = 65535
 
@@ -229,28 +232,28 @@ initPortVectors = do
 (-@<) ap@(_ :@: p) = do
   let i = fromIntegral p
   withMVar portVectors $ \(c,s) -> do
-    cv <- SVM.read c i
-    if cv > 0 then do              SVM.read  s i >>= deRefStablePtr
-              else do l <-(ap @<); SVM.write s i =<< newStablePtr l; SVM.write c i $! cv+1; return l
+    cv <- peekElemOff c i
+    if cv>0 then do             peekElemOff s i >>= deRefStablePtr
+            else do l <-(ap @<);pokeElemOff s i =<< newStablePtr l;pokeElemOff c i $! cv+1; return l
 
 (-✖) :: AddrPort -> IO ()
 (-✖) ap@(_ :@: p) = do
   let i = fromIntegral p
   withMVar portVectors $ \(c,_) -> do
-    cv <- SVM.read c i
+    cv <- peekElemOff c i
     let n = cv - 1
     if  n > 0
-      then SVM.write c i n
+      then pokeElemOff c i n
       else do
         print $! Watch :^: (faf AF_UNSPEC,ap)
         void  . schedule 10 $ do
           withMVar portVectors $ \(c,s) -> do
-            cv <- SVM.read c i
+            cv <- peekElemOff c i
             let n = cv - 1
-            SVM.write c i n
+            pokeElemOff c i n
             when (n == 0) $ do
               print $! Drop :^: (faf AF_UNSPEC,ap)
-              sv <- SVM.read s i
+              sv <- peekElemOff s i
               deRefStablePtr  sv >>= (✖); (sv ✖)
 
 -----------------------------------------------------------------------------------------------CHECK
