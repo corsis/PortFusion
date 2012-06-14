@@ -214,7 +214,7 @@ Development follows simple principles:
 3. Push and keep code where it belongs
  1. Create [fully documented reusable libraries](http://hackage.haskell.org/package/splice) that [cover common needs](http://stackoverflow.com/questions/10080670/using-gnu-linux-system-call-splice-for-zero-copy-socket-to-socket-data-transfe)
  2. [Report bugs and work on fixes](https://github.com/haskell/network/issues/31)
-4. Share *every*thing
+4. Share *everything*
  1. [Use the most permissive licenses possible](http://hackage.haskell.org/package/splice)
  2. [Illustrate every concept in detail worthy of books](#illustrate)
 5. [Provide excellent support](https://sourceforge.net/p/portfusion/discussion/general/thread/7ad0cb49/)
