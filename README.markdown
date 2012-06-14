@@ -3,7 +3,7 @@
 
 ### <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Download 1.2 now for Windows, Linux¹, Mac OS X and FreeBSD</a>
 
-<span style="font-size: small">¹: now also for ARM CPUs</span>
+<span style="font-size: small">(¹ now also available for ARM CPUs)</span>
 
 PortFusion is a minimalistic, cross-platform, transport-layer distributed
 reverse / forward proxy and tunneling solution for TCP released under
