@@ -117,7 +117,7 @@ This is the new Haskell source code repository of the latest ]-[ayabusa version
 
 ### What is new in `]-[ayabusa`?
 
-PortFusion          | 0.9.3 – old                     | 1.1 – \]-[ayabusa
+PortFusion          | 0.9.3 – old                     | 1.2 – \]-[ayabusa
 --------------------|---------------------------------|-------------------------------
 Memory at Start-up  | ~14 MB                          | **~0.7 MB**
 Memory at 1 Fusion  | ~30 MB (lots of jumps)          | **~1.0 MB** (constant)
@@ -127,7 +127,7 @@ Source Code Size    | 778 lines (multiple files)      | **< 500 lines (1 file)**
 Language            | F# / C#                         | **[Haskell] \([GHC] / [LLVM]\)**
 Dependencies        | .NET 4.0 + F# 2.0 Runtime       | **none**
 Deployment          | 2 .NET 4.0 managed binaries     | **1 unified, native code binary for each platform**
-Binary Size         | **78.3 KB** (34.3 KB + 44 KB)   | 1-3 MB (~400 KB compressed)
+Binary Size         | **78.3 KB** (34.3 KB + 44 KB)   | 1-2 MB (~400 KB compressed)
 Concurrency Model   | 1 OS thread per connection      | **1 Haskell thread per connection**
 Distribution Technique | Windows Communication Foundation | **native sockets API and system calls of each OS**
 Distributed Proxy Modes | reverse                     | **reverse, forward**
