@@ -21,7 +21,7 @@ with near-zero overhead.
 ## Use
 
 | Distributed Reverse Proxy Mode  | Distributed Forward Proxy Mode |
-|:-------------------------------:|:-------------------------------|
+|:--------------------------------|:-------------------------------|
 | |
 | <p>You have a Linux PC at home `remote` and two Windows PCs behind a corporate firewall at work: the gateway `local` and your personal workstation `server`.</p> <p>You open port `2000` at `remote` and tunnel incoming RDP traffic at port `3389` on `remote` to your workstation `server` via gateway `local`.</p> | <p>A friend is operating an http proxy server `server:3128` and has only one gateway PC in his network that accepts incoming connections from the public internet `remote`.</p> <p>You `local` want to connect to the internet through your friend's http proxy `server:3128` to access websites blocked by your current internet service provider.</p>
 | |
