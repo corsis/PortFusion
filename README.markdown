@@ -17,6 +17,7 @@ and parallelism.
 It strives for the smallest source code size while delivering maximum throughput
 with near-zero overhead.
 
+[A growing number of companies and institutions around the world use PortFusion.](https://github.com/corsis/PortFusion/wiki/Users)
 
 ## Use
 
