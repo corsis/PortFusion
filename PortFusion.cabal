@@ -81,16 +81,19 @@ executable PortFusion
     build-depends:   base       >= 4 && <= 5,
                      bytestring -any,
                      splice     -any
-    if os(mingw32)
+    if os(windows)
       build-depends: network    >= 2.3.0.13
-      ghc-options:   res\win\PortFusion.res
+      if arch(i386)
+        ghc-options: res\win\PortFusion.res
+      if arch(x86_64)
+        ghc-options: res\win\PortFusion-64.res
     else
       build-depends: network    -any
 
 
     ghc-options:     -W -O2
 
-    if !os(mingw32) && !arch(arm)
+    if !os(windows) && !arch(arm)
       ghc-options:   -threaded -rtsopts
 
     if flag(static)
@@ -109,7 +112,7 @@ executable PortFusion
     if os(linux)
        cpp-options: -D__OS__="Linux"
     else
-       if os(mingw32)
+       if os(windows)
          cpp-options: -D__OS__="Windows"
        else
          if os(freebsd)
