@@ -83,7 +83,7 @@ executable PortFusion
                      splice     -any
     if os(mingw32)
       build-depends: network    >= 2.3.0.13
-      ghc-options:   res\win\PortFusion.res
+      ghc-options:   res\win\PortFusion-64.res
     else
       build-depends: network    -any
 
@@ -131,7 +131,7 @@ executable PortFusion
 
 
     if arch(i386)
-       cpp-options: -D__ARCH__="x86"
+       cpp-options: -D__ARCH__="x86-64"
     else
        if arch(x86_64)
          cpp-options: -D__ARCH__="x86-64"
