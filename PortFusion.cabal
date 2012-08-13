@@ -17,7 +17,7 @@ description:   PortFusion is a minimalistic, cross-platform, transport-layer
                [Official Binaries]
                visit <http://fusion.corsis.eu> to download for:
                .
-               * Windows
+               * Windows (: now also builds 64-bit, with GHC 7.6.1 or above *^o*^!! :)
                .
                * GNU/Linux
                .
