@@ -188,7 +188,7 @@ data Request = (:-<-:)    AddrPort
 ------------------------------------------------------------------------------------------------MAIN
 
 name, copyright, build :: ByteString
-name      = "CORSIS PortFusion    ( ]-[ayabusa 1.2.0 )"
+name      = "CORSIS PortFusion    ( ]-[ayabusa 1.3.0 )"
 copyright = "(c) 2012 Cetin Sert. All rights reserved."
 build     = __OS__ <> " - " <> __ARCH__ <>  " [" <> __TIMESTAMP__ <> "]"
 
@@ -216,11 +216,15 @@ parse m = concatMap parse $ map (map B.unpack . filter (not . B.null) . B.split 
 type PortVector a = Ptr a
 
 portVectors :: MVar (PortVector Word16, PortVector (StablePtr Socket))
-portVectors = unsafePerformIO $! newMVar =<<
-  (,) <$> mallocArray0 portCount
-      <*> mallocArray  portCount
-                 where portCount = 65536
-
+portVectors = unsafePerformIO $! newEmptyMVar
+portVectorsInitialized :: MVar Bool
+portVectorsInitialized = unsafePerformIO $! newMVar False
+initPortVectors :: IO ()
+initPortVectors = modifyMVar_ portVectorsInitialized $! \initialized ->
+  if not initialized then initialize >> return True else return True
+  where initialize = putMVar portVectors =<< (,) <$> mallocArray0 pc <*> mallocArray pc
+        pc         = 65536
+ 
 (-@<) :: AddrPort -> IO Socket
 (-@<) ap@(_ :@: p) = do
   let i = fromIntegral p
@@ -288,6 +292,7 @@ run ((:><:) fp) = do
 
     (-<-) :: Peer -> AddrPort -> IO ()
     o@(Peer !l _) -<- rp = do
+      initPortVectors
       r <- (rp -@<)
       o -✖- rp |<>| \t -> do
         let f = killThread =<< takeMVar t
