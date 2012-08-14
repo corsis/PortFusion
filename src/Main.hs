@@ -194,7 +194,6 @@ build     = __OS__ <> " - " <> __ARCH__ <>  " [" <> __TIMESTAMP__ <> "]"
 
 main :: IO ()
 main = withSocketsDo $ tryWith (const . print $ LS "INVALID SYNTAX") $ do
-  initPortVectors
   mapM_ B.putStrLn [ "\n", name, copyright, "", build, "\n" ]
   tasks <- parse <$> getArgs
   when   (null tasks) $! mapM_ B.putStrLn [ "  Documentation: http://fusion.corsis.eu", "",""]
@@ -217,16 +216,10 @@ parse m = concatMap parse $ map (map B.unpack . filter (not . B.null) . B.split 
 type PortVector a = Ptr a
 
 portVectors :: MVar (PortVector Word16, PortVector (StablePtr Socket))
-portVectors = unsafePerformIO newEmptyMVar
-
-initPortVectors :: IO ()
-initPortVectors = do
-  e <- isEmptyMVar portVectors
-  when e $! do
-    c <- mallocArray0 portCount
-    s <- mallocArray  portCount
-    putMVar portVectors (c,s)
-      where portCount = 65535
+portVectors = unsafePerformIO $! newMVar =<<
+  (,) <$> mallocArray0 portCount
+      <*> mallocArray  portCount
+                 where portCount = 65536
 
 (-@<) :: AddrPort -> IO Socket
 (-@<) ap@(_ :@: p) = do
@@ -295,7 +288,6 @@ run ((:><:) fp) = do
 
     (-<-) :: Peer -> AddrPort -> IO ()
     o@(Peer !l _) -<- rp = do
-      initPortVectors
       r <- (rp -@<)
       o -✖- rp |<>| \t -> do
         let f = killThread =<< takeMVar t
