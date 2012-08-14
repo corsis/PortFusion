@@ -84,7 +84,7 @@ executable PortFusion
     if os(windows)
       build-depends: network    >= 2.3.0.13
       if arch(i386)
-        ghc-options: res\win\PortFusion-64.res
+        ghc-options: res\win\PortFusion.res
       if arch(x86_64)
         ghc-options: res\win\PortFusion-64.res
     else
@@ -134,7 +134,7 @@ executable PortFusion
 
 
     if arch(i386)
-       cpp-options: -D__ARCH__="x86-64"
+       cpp-options: -D__ARCH__="x86"
     else
        if arch(x86_64)
          cpp-options: -D__ARCH__="x86-64"
