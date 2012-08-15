@@ -1,5 +1,5 @@
 name:          PortFusion
-version:       1.3.0
+version:       1.3
 stability:     stable on all operating systems
 synopsis:      high-performance distributed reverse / forward proxy & tunneling for TCP
 description:   PortFusion is a minimalistic, cross-platform, transport-layer
@@ -64,7 +64,7 @@ source-repository head
 
 
 flag static
-    description: enable fullly static linking
+    description: enable fully static linking
     default    : False
 
 
@@ -84,7 +84,7 @@ executable PortFusion
     if os(windows)
       build-depends: network    >= 2.3.0.13
       if arch(i386)
-        ghc-options: res\win\PortFusion.res
+        ghc-options: res\win\PortFusion-64.res
       if arch(x86_64)
         ghc-options: res\win\PortFusion-64.res
     else
@@ -134,7 +134,7 @@ executable PortFusion
 
 
     if arch(i386)
-       cpp-options: -D__ARCH__="x86"
+       cpp-options: -D__ARCH__="x86-64"
     else
        if arch(x86_64)
          cpp-options: -D__ARCH__="x86-64"
