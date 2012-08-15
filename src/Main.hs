@@ -211,20 +211,22 @@ parse [ ap, "]", fh, fp, "-", rh, rp ] = [read ap :>-: ((B.pack fh, read fp), (B
 parse [ ap, "]",         "-", rh, rp ] = [read ap :>=:                        (B.pack rh, read rp) ]
 parse m = concatMap parse $! map (map B.unpack . filter (not . B.null) . B.split ' ' . B.pack) m
 
-----------------------------------------------------------------------------------------------VECTOR
+-----------------------------------------------------------------------------------------PORTVECTORS
 
 type PortVector a = Ptr a
 
-portVectors :: MVar (PortVector Word16, PortVector (StablePtr Socket))
-portVectors = unsafePerformIO $! newEmptyMVar
+portVectors            :: MVar (PortVector Word16, PortVector (StablePtr Socket))
 portVectorsInitialized :: MVar Bool
+initPortVectors        :: IO   ()
+
+portVectors            = unsafePerformIO $! newEmptyMVar
 portVectorsInitialized = unsafePerformIO $! newMVar False
-initPortVectors :: IO ()
-initPortVectors = modifyMVar_ portVectorsInitialized $! \initialized ->
+initPortVectors        = modifyMVar_ portVectorsInitialized $! \initialized ->
   when (not initialized) initialize >> return True
   where initialize = putMVar portVectors =<< (,) <$> mallocArray0 pc <*> mallocArray pc
         pc         = 65536
- 
+
+        
 (-@<) :: AddrPort -> IO Socket
 (-@<) ap@(_ :@: p) = do
   let i = fromIntegral p
@@ -257,16 +259,16 @@ initPortVectors = modifyMVar_ portVectorsInitialized $! \initialized ->
 
 (|<>|) :: (MVar ThreadId -> IO ()) -> (MVar ThreadId -> IO ()) -> IO ()
 a |<>| b = do
-  ma <- newEmptyMVar ; mb <- newEmptyMVar
+  ma <- newEmptyMVar  ; mb <- newEmptyMVar
   ta <- forkIO $! a mb; tb <- forkIO $! b ma
-  putMVar       ma ta; putMVar       mb tb
+  putMVar        ma ta; putMVar        mb tb
 
 (-✖-) :: Peer -> AddrPort -> MVar ThreadId -> IO ()
 (o@(Peer s _) -✖- rp) t = do
   l <- (s <@>)
   let n x = do (o ✖); (rp -✖); takeMVar t >>= (`throwTo` x)
   let f x = do maybe (n x) (const $! return ()) $! (X.fromException x :: Maybe X.AsyncException)
-  tryWith f $! do recv s 0; f . X.toException $! Loss l
+  tryWith f $! do _ <- recv s 0; f . X.toException $! Loss l
 
 -----------------------------------------------------------------------------------------------TASKS
 
