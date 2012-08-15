@@ -221,7 +221,7 @@ portVectorsInitialized :: MVar Bool
 portVectorsInitialized = unsafePerformIO $! newMVar False
 initPortVectors :: IO ()
 initPortVectors = modifyMVar_ portVectorsInitialized $! \initialized ->
-  if not initialized then initialize >> return True else return True
+  when (not initialized) initialize >> return True
   where initialize = putMVar portVectors =<< (,) <$> mallocArray0 pc <*> mallocArray pc
         pc         = 65536
  
