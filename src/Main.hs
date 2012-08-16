@@ -42,8 +42,6 @@ import System.IO.Unsafe
 import Network.Socket.Splice -- corsis library: SPLICE
 import GHC.Conc (numCapabilities)
 
-import System.Exit
-
 ---------------------------------------------------------------------------------------------UTILITY
 
 type Seconds = Int
@@ -239,25 +237,27 @@ initialize  = initialized `modifyMVar_` \initialized ->
   let p = fromIntegral p'
   withMVar portVectors $! \ !(V !c !s) -> do
     n <- c |. p
-    if n > 0 then do                                        c |^ p $! n+1; s |. p >>= deRefStablePtr
-             else do when (n < 0) $! do print $! LS "n < 0 in -@<"; exitFailure
-                     l <- (ap @<); s|^p =<< newStablePtr l; c |^ p $! n+1; return l
+    case compare n 0 of
+      GT -> do                                           c |^ p $! n+1; s |. p >>= deRefStablePtr
+      EQ -> do l <- (ap @<) ; s |^ p =<< newStablePtr l; c |^ p $! n+1; return l
+      LT ->    error "-@< ERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR"
 
 (-✖) :: AddrPort -> IO ()
 (-✖) ap@(_ :@: p') = do
   let p = fromIntegral p'
   withMVar portVectors $! \(V !c _) -> do
     n <- c |. p
-    if n > 1 then    c |^ p $! n-1
-             else do when (n < 1) $! do print $! LS "n < 1 in -x"; exitFailure
-                     print  $! Watch :^: (faf AF_UNSPEC, ap)
-                     void . schedule 10 $! do
-                       withMVar portVectors $! \ !(V !c !s) -> do
-                         n <- c |. p
-                         c |^ p $! n-1
-                         when (n == 1) $! do
-                           print $! Drop :^: (faf AF_UNSPEC, ap)
-                           sv <- s |. p; deRefStablePtr sv >>= (✖); (sv ✖)
+    case compare n 1 of
+      GT -> c |^ p $! n-1
+      EQ -> do print  $! Watch :^: (faf AF_UNSPEC, ap)
+               void . schedule 10 $! do
+                 withMVar portVectors $! \ !(V !c !s) -> do
+                   n <- c |. p
+                   c |^ p $! n-1
+                   when (n == 1) $! do
+                     print $! Drop :^: (faf AF_UNSPEC, ap)
+                     sv <- s |. p; deRefStablePtr sv >>= (✖); (sv ✖)
+      LT ->    error "-x  ERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR"
 
 -----------------------------------------------------------------------------------------------CHECK
 
