@@ -213,47 +213,49 @@ parse m = concatMap parse $! map (map B.unpack . filter (not . B.null) . B.split
 
 -----------------------------------------------------------------------------------------PORTVECTORS
 
-type PortVector a = Ptr a
+data Vectors = V {-# UNPACK #-} !(Ptr (Word16)          )  -- number of clients
+                 {-# UNPACK #-} !(Ptr (StablePtr Socket))  -- server socket
+              -- {-# UNPACK #-} !(Ptr (ThreadId)        )  -- watch thread
 
-portVectors            :: MVar (PortVector Word16, PortVector (StablePtr Socket))
-portVectorsInitialized :: MVar Bool
-initPortVectors        :: IO   ()
+portVectors :: MVar Vectors
+initialized :: MVar Bool
+initialize  :: IO   ()
 
-portVectors            = unsafePerformIO $! newEmptyMVar
-portVectorsInitialized = unsafePerformIO $! newMVar False
-initPortVectors        = modifyMVar_ portVectorsInitialized $! \initialized ->
-  when (not initialized) initialize >> return True
-  where initialize = putMVar portVectors =<< (,) <$> mallocArray0 pc <*> mallocArray pc
-        pc         = 65536
+portVectors = unsafePerformIO $! newEmptyMVar
+initialized = unsafePerformIO $! newMVar False
+initialize  = initialized `modifyMVar_` \initialized ->
+  when (not initialized) alloc >> return True
+  where pc    = 65536
+        alloc = putMVar portVectors =<< V <$> mallocArray pc 
+                                          <*> mallocArray pc
 
+{-# INLINE (|.) #-}; (|.)::Storable a=>Ptr a -> Int -> IO a         ; (|.) a i   = peekElemOff a i
+{-# INLINE (|^) #-}; (|^)::Storable a=>Ptr a -> Int ->    a -> IO (); (|^) a i v = pokeElemOff a i v
         
 (-@<) :: AddrPort -> IO Socket
-(-@<) ap@(_ :@: p) = do
-  let i = fromIntegral p
-  withMVar portVectors $! \(c,s) -> do
-    cv <- peekElemOff c i
-    if cv>0 then do pokeElemOff c i $! cv+1; peekElemOff s i >>= deRefStablePtr
-            else do l <-(ap @<);pokeElemOff s i =<< newStablePtr l;pokeElemOff c i $! cv+1; return l
+(-@<) ap@(_ :@: p') = do
+  let p = fromIntegral p'
+  withMVar portVectors $! \ !(V !c !s) -> do
+    n <- c |. p
+    if n > 0 then do                                        c |^ p $! n+1; s |. p >>= deRefStablePtr
+             else do when (n < 0) $! do error "n < 0 in -@<"
+                     l <- (ap @<); s|^p =<< newStablePtr l; c |^ p $! n+1; return l
 
 (-✖) :: AddrPort -> IO ()
-(-✖) ap@(_ :@: p) = do
-  let i = fromIntegral p
-  withMVar portVectors $! \(c,_) -> do
-    cv <- peekElemOff c i
-    let n = cv-1
-    if  n > 0
-      then pokeElemOff c i n
-      else do
-        print $! Watch :^: (faf AF_UNSPEC, ap)
-        void  . schedule 10 $! do
-          withMVar portVectors $! \(c,s) -> do
-            cv <- peekElemOff c i
-            let n = cv-1
-            pokeElemOff c i n
-            when (n == 0) $! do
-              print $! Drop :^: (faf AF_UNSPEC, ap)
-              sv <- peekElemOff s i
-              deRefStablePtr sv >>= (✖); (sv ✖)
+(-✖) ap@(_ :@: p') = do
+  let p = fromIntegral p'
+  withMVar portVectors $! \(V !c _) -> do
+    n <- c |. p
+    if n > 1 then    c |^ p $! n-1
+             else do when (n < 1) $! error "n < 1 in -x"
+                     print  $! Watch :^: (faf AF_UNSPEC, ap)
+                     void . schedule 10 $! do
+                       withMVar portVectors $! \ !(V !c !s) -> do
+                         n <- c |. p
+                         c |^ p $! n-1
+                         when (n == 1) $! do
+                           print $! Drop :^: (faf AF_UNSPEC, ap)
+                           sv <- s |. p; deRefStablePtr sv >>= (✖); (sv ✖)
 
 -----------------------------------------------------------------------------------------------CHECK
 
@@ -294,7 +296,7 @@ run ((:><:) fp) = do
 
     (-<-) :: Peer -> AddrPort -> IO ()
     o@(Peer !l _) -<- rp = do
-      initPortVectors
+      initialize
       r <- (rp -@<)
       o -✖- rp |<>| \t -> do
         let f = killThread =<< takeMVar t

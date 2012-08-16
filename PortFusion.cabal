@@ -65,7 +65,7 @@ source-repository head
 
 flag threaded
     description: use threaded runtime
-    default:     True
+    default:     False
 
 
 flag static
