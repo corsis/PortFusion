@@ -42,6 +42,8 @@ import System.IO.Unsafe
 import Network.Socket.Splice -- corsis library: SPLICE
 import GHC.Conc (numCapabilities)
 
+import System.Exit
+
 ---------------------------------------------------------------------------------------------UTILITY
 
 type Seconds = Int
@@ -238,7 +240,7 @@ initialize  = initialized `modifyMVar_` \initialized ->
   withMVar portVectors $! \ !(V !c !s) -> do
     n <- c |. p
     if n > 0 then do                                        c |^ p $! n+1; s |. p >>= deRefStablePtr
-             else do when (n < 0) $! do error "n < 0 in -@<"
+             else do when (n < 0) $! do print $! LS "n < 0 in -@<"; exitFailure
                      l <- (ap @<); s|^p =<< newStablePtr l; c |^ p $! n+1; return l
 
 (-✖) :: AddrPort -> IO ()
@@ -247,7 +249,7 @@ initialize  = initialized `modifyMVar_` \initialized ->
   withMVar portVectors $! \(V !c _) -> do
     n <- c |. p
     if n > 1 then    c |^ p $! n-1
-             else do when (n < 1) $! error "n < 1 in -x"
+             else do when (n < 1) $! do print $! LS "n < 1 in -x"; exitFailure
                      print  $! Watch :^: (faf AF_UNSPEC, ap)
                      void . schedule 10 $! do
                        withMVar portVectors $! \ !(V !c !s) -> do
