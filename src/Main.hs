@@ -217,7 +217,7 @@ parse m = concatMap parse $! map (map B.unpack . filter (not . B.null) . B.split
 
 data Vectors = V {-# UNPACK #-} !(Ptr (Word16)          )  -- number of clients
                  {-# UNPACK #-} !(Ptr (StablePtr Socket))  -- server socket
-              -- {-# UNPACK #-} !(Ptr (ThreadId)        )  -- watch thread
+                 {-# UNPACK #-} !(Ptr (Seconds)         )  -- watch thread
 
 portVectors :: MVar Vectors
 initialized :: MVar Bool
@@ -226,18 +226,17 @@ initialize  :: IO   ()
 portVectors = unsafePerformIO $! newEmptyMVar
 initialized = unsafePerformIO $! newMVar False
 initialize  = initialized `modifyMVar_` \initialized ->
-  when (not initialized) alloc >> return True
-  where pc    = 65536
-        alloc = putMVar portVectors =<< V <$> mallocArray pc 
-                                          <*> mallocArray pc
-
+  when (not initialized) init >> return True
+  where init = putMVar portVectors =<< V <$> mallocArray pc <*> mallocArray pc <*> mallocArray pc
+        pc   = 65536
 {-# INLINE (|.) #-}; (|.)::Storable a=>Ptr a -> Int -> IO a         ; (|.) a i   = peekElemOff a i
 {-# INLINE (|^) #-}; (|^)::Storable a=>Ptr a -> Int ->    a -> IO (); (|^) a i v = pokeElemOff a i v
         
 (-@<) :: AddrPort -> IO Socket
 (-@<) ap@(_ :@: p') = do
   let p = fromIntegral p'
-  withMVar portVectors $! \ !(V !c !s) -> do
+  withMVar portVectors $! \ !(V !c !s !t) -> do
+    t |^ p =<< now
     n <- c |. p
     case compare n 0 of
       GT -> do                                           c |^ p $! n+1; s |. p >>= deRefStablePtr
@@ -247,20 +246,23 @@ initialize  = initialized `modifyMVar_` \initialized ->
 (-✖) :: AddrPort -> IO ()
 (-✖) ap@(_ :@: p') = do
   let p = fromIntegral p'
-  withMVar portVectors $! \(V !c _) -> do
+  withMVar portVectors $! \(V !c _ !t) -> do
     n <- c |. p
     case compare n 1 of
       GT -> c |^ p $! n-1
-      EQ -> do print $! Watch :^: (faf AF_UNSPEC, ap)
-               start <- now
-               void . schedule 10 $! do
-                 withMVar portVectors $! \ !(V !c !s) -> do
-                   n <- c |. p
-                   c |^ p $! n-1
-                   span <- abs . (start -) <$> now
-                   when (n == 1 && span > 9) $! do
-                     print $! Drop :^: (faf AF_UNSPEC, ap)
-                     sv <- s |. p; deRefStablePtr sv >>= (✖); (sv ✖)
+      EQ -> do last <- t |. p
+               span <- abs . (last -) <$> now
+               when (span >= 10) $! do
+                 print $! Watch :^: (faf AF_UNSPEC, ap)               
+                 void . schedule 10 $! do
+                   withMVar portVectors $! \ !(V !c !s !t) -> do
+                     last <- t |. p
+                     span <- abs . (last -) <$> now
+                     when (span >= 10) $! do
+                       n <- c |. p
+                       c |^ p $! n-1
+                       print $! Drop :^: (faf AF_UNSPEC, ap)
+                       sv <- s |. p; deRefStablePtr sv >>= (✖); (sv ✖)
       LT ->    error "-x  ERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR"
 
 -----------------------------------------------------------------------------------------------CHECK
