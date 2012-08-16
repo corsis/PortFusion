@@ -39,8 +39,9 @@ import Data.Char
 
 import System.IO.Unsafe
 
-import Network.Socket.Splice -- corsis library: SPLICE
 import GHC.Conc (numCapabilities)
+import Network.Socket.Splice -- corsis library: SPLICE
+import System.Clock          -- corsis library: CLOCK
 
 ---------------------------------------------------------------------------------------------UTILITY
 
@@ -48,6 +49,7 @@ type Seconds = Int
 secs     :: Int -> Seconds;                  secs         = (* 1000000)
 wait     :: Seconds -> IO ();                wait         = threadDelay . secs
 schedule :: Seconds -> IO () -> IO ThreadId; schedule s a = forkIO $! wait s >> a
+now      :: IO Seconds;                      csecs        = sec <$> getTime Monotonic
 
 {-# INLINE (<>)  #-}; (<>) :: ByteString -> ByteString -> ByteString; (<>)   = B.append
 {-# INLINE (//)  #-}; (//) :: a -> (a -> b) -> b;                     x // f = f x
@@ -249,7 +251,7 @@ initialize  = initialized `modifyMVar_` \initialized ->
     n <- c |. p
     case compare n 1 of
       GT -> c |^ p $! n-1
-      EQ -> do print  $! Watch :^: (faf AF_UNSPEC, ap)
+      EQ -> do print $! Watch :^: (faf AF_UNSPEC, ap)
                void . schedule 10 $! do
                  withMVar portVectors $! \ !(V !c !s) -> do
                    n <- c |. p

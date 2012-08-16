@@ -44,7 +44,7 @@ package-url:   http://fusion.corsis.eu
 bug-reports:   http://github.com/corsis/PortFusion/issues
 category:      System, Network,
 build-type:    Simple
-cabal-version: >=1.6
+cabal-version: >= 1.6
 
 
 
@@ -85,7 +85,8 @@ executable PortFusion
     buildable:       True
     build-depends:   base       >= 4 && <= 5,
                      bytestring -any,
-                     splice     -any
+                     splice     -any,
+                     clock      -any
     if os(windows)
       build-depends: network    >= 2.3.0.13
       if arch(i386)
