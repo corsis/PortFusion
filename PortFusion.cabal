@@ -57,20 +57,25 @@ extra-source-files: res/*.svg
                     res/win/*.res
 
 
-
 source-repository head
     type:      git
     location:  git://github.com/corsis/PortFusion.git
 
 
+
+flag threaded
+    description: use threaded runtime
+    default:     True
+
+
 flag static
     description: enable fully static linking
-    default    : False
+    default:     False
 
 
 flag llvm
     description: compile via LLVM
-    default    : False
+    default:     False
 
 
 
@@ -93,7 +98,7 @@ executable PortFusion
 
     ghc-options:     -O2 -Wall -fno-warn-name-shadowing -fno-warn-orphans
 
-    if !os(windows) && !arch(arm)
+    if flag(threaded) && !os(windows) && !arch(arm)
       ghc-options:   -threaded -rtsopts
 
     if flag(static)
