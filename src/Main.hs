@@ -49,7 +49,7 @@ type Seconds = Int
 secs     :: Int -> Seconds;                  secs         = (* 1000000)
 wait     :: Seconds -> IO ();                wait         = threadDelay . secs
 schedule :: Seconds -> IO () -> IO ThreadId; schedule s a = forkIO $! wait s >> a
-now      :: IO Seconds;                      csecs        = sec <$> getTime Monotonic
+now      :: IO Seconds;                      now          = sec <$> getTime Monotonic
 
 {-# INLINE (<>)  #-}; (<>) :: ByteString -> ByteString -> ByteString; (<>)   = B.append
 {-# INLINE (//)  #-}; (//) :: a -> (a -> b) -> b;                     x // f = f x
@@ -252,11 +252,13 @@ initialize  = initialized `modifyMVar_` \initialized ->
     case compare n 1 of
       GT -> c |^ p $! n-1
       EQ -> do print $! Watch :^: (faf AF_UNSPEC, ap)
+               start <- now
                void . schedule 10 $! do
                  withMVar portVectors $! \ !(V !c !s) -> do
                    n <- c |. p
                    c |^ p $! n-1
-                   when (n == 1) $! do
+                   span <- abs . (start -) <$> now
+                   when (n == 1 && span > 9) $! do
                      print $! Drop :^: (faf AF_UNSPEC, ap)
                      sv <- s |. p; deRefStablePtr sv >>= (✖); (sv ✖)
       LT ->    error "-x  ERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR"
