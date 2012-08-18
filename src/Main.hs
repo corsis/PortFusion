@@ -13,34 +13,37 @@
 
 module Main where
 
-import Prelude hiding              ((++),length,last,init)
-import Control.Concurrent
-import Control.Monad               (forever,void,when,unless)
-import Control.Applicative
-import Network.Socket hiding       (recv,send)
-import Network.Socket.ByteString   (recv,sendAll)
-import Data.Typeable
-import Data.ByteString.Char8       (ByteString)
-import qualified Data.ByteString.Char8 as B hiding (map,concatMap,reverse)
+import           Prelude                                              hiding ((++),length,last,init)
+
+import           Control.Concurrent
+import           Control.Applicative
+import           Control.Monad              (forever,void,when,unless)
 import qualified Control.Exception as X
-import System.Environment
-import System.Timeout
-import System.IO hiding  (hGetLine,hPutStr,hGetContents)
-import Data.String       (IsString,fromString)
-import Data.List         (elemIndices,(++),find)
 
-import Foreign.Storable
-import Foreign.Marshal.Array
-import Foreign.Marshal.Alloc
-import Foreign.Ptr
-import Foreign.StablePtr
-import Data.Word
-import Data.Char
+import           Data.Char
+import           Data.Word
+import           Data.Typeable
+import           Data.List                  (elemIndices,(++),find)
+import           Data.String                (IsString,fromString)
+import           Data.ByteString.Char8      (ByteString)
+import qualified Data.ByteString.Char8 as B                          hiding (map,concatMap,reverse)
 
-import System.IO.Unsafe
+import           Network.Socket                                      hiding (recv,send)
+import           Network.Socket.ByteString   (recv,sendAll)
+import           Network.Socket.Splice -- corsis library: SPLICE
 
-import GHC.Conc (numCapabilities)
-import Network.Socket.Splice -- corsis library: SPLICE
+import           System.Environment
+import           System.Timeout
+import           System.IO hiding  (hGetLine,hPutStr,hGetContents)
+import           System.IO.Unsafe
+
+import           Foreign.Storable
+import           Foreign.Marshal.Array
+import           Foreign.Marshal.Alloc
+import           Foreign.Ptr
+import           Foreign.StablePtr
+
+import           GHC.Conc (numCapabilities)
 
 ---------------------------------------------------------------------------------------------UTILITY
 
@@ -48,7 +51,6 @@ type Seconds = Int
 secs     :: Int -> Seconds;                  secs         = (* 1000000)
 wait     :: Seconds -> IO ();                wait         = threadDelay . secs
 schedule :: Seconds -> IO () -> IO ThreadId; schedule s a = forkIO $! wait s >> a
---now      :: IO Seconds;                      now          = sec <$> getTime Monotonic
 
 {-# INLINE (<>)  #-}; (<>) :: ByteString -> ByteString -> ByteString; (<>)   = B.append
 {-# INLINE (//)  #-}; (//) :: a -> (a -> b) -> b;                     x // f = f x
