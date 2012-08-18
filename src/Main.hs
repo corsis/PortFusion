@@ -214,9 +214,9 @@ parse m = concatMap parse $! map (map B.unpack . filter (not . B.null) . B.split
 
 -----------------------------------------------------------------------------------------PORTVECTORS
 
-data Vectors = V {-# UNPACK #-} !(Ptr (Word16)          )  -- number of clients
-                 {-# UNPACK #-} !(Ptr (StablePtr Socket))  -- server socket
-                 {-# UNPACK #-} !(Ptr (Word16)          )  -- watch thread number
+data Vectors = V {-# UNPACK #-} !(Ptr (Word16)          )                      -- number of clients
+                 {-# UNPACK #-} !(Ptr (StablePtr Socket))                      -- server socket
+                 {-# UNPACK #-} !(Ptr (Word16)          )                      -- watch thread
 portVectors :: MVar Vectors; portVectors = unsafePerformIO $! newEmptyMVar
 initialized :: MVar Bool;    initialized = unsafePerformIO $! newMVar False
 initialize  :: IO   ();      initialize  = initialized `modifyMVar_` \initialized ->
