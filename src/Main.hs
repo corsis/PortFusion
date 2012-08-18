@@ -198,7 +198,7 @@ main :: IO ()
 main = withSocketsDo $! tryWith (const . print $! LS "INVALID SYNTAX") $! do
   mapM_ B.putStrLn [ "\n", name, copyright, "", build, "\n" ]
   tasks <- parse <$> getArgs
-  when   (null tasks) $! mapM_ B.putStrLn [ "  Documentation: http://fusion.corsis.eu", "",""]
+  when   (null tasks) $! mapM_ B.putStrLn [ "  See usage: http://fusion.corsis.eu", "",""]
   unless (null tasks) $! do
     when zeroCopy              $! print (LS "zeroCopy"       , zeroCopy       )
     when (numCapabilities > 1) $! print (LS "numCapabilities", numCapabilities)
