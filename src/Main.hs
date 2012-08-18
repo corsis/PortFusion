@@ -203,7 +203,7 @@ main = withSocketsDo $! tryWith (const . print $! LS "INVALID SYNTAX") $! do
     when zeroCopy              $! print (LS "zeroCopy"       , zeroCopy       )
     when (numCapabilities > 1) $! print (LS "numCapabilities", numCapabilities)
     mapM_ (forkIO . run) tasks
-    void Prelude.getChar
+  void Prelude.getChar
 
 parse :: [String] -> [Task]
 parse [         "]", ap, "["         ] = [(:><:) $! read ap                                        ]
