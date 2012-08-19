@@ -1,3 +1,7 @@
+a {
+    border: 0px solid transparent;
+}
+
 #logo {
     display: block;
     width: 180px;
