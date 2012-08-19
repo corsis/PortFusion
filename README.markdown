@@ -1,7 +1,7 @@
 ![pf]
 [pf]: http://corsis.eu/i/icon/h.png "PortFusion"
 
-### <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Download 1.2 now for Windows², Linux¹, Mac OS X and FreeBSD</a>
+### <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Download 1.2.1 now for Windows², Linux¹, Mac OS X and FreeBSD</a>
 
 <span style="font-size: small">(¹ now also available for ARM CPUs and ² as [a 64-bit-native Windows binary](https://github.com/downloads/corsis/PortFusion/PortFusion64.exe))</span>
 
@@ -47,7 +47,7 @@ You need only *one* of the following rows for compilation.
 | Remarks | OS           | Compilers           |
 |:--------|:-------------|:--------------------|
 | recommended and <br /> used for official binaries | ![Windows], ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other] | [GHC] >= 7.4 <br /> [LLVM] >= 3
-| easy to install for <br /> all Haskell newbies | ![Windows], ![OSX] | [Haskell Platform] >= 2012.2.0.0
+| easy to install for <br /> all Haskell newbies    | ![Windows], ![OSX] | [Haskell Platform] >= 2012.2.0.0
 
 ### Instructions
 
@@ -68,7 +68,7 @@ Following flags can be activated with `cabal install splice -f llvm` and `cabal 
 | Flag     | Effect                      | Default | Official Binaries  |
 |:---------|:----------------------------|:--------|:-------------------|
 |          |                             |         |
-| `llvm`   | compile via [LLVM]         | `false` | `true`
+| `llvm`   | compile via [LLVM]          | `false` | `true`
 
 These are by default not activated to make PortFusion easy to compile for everyone :).
 
@@ -123,7 +123,7 @@ This is the new Haskell source code repository of the latest ]-[ayabusa version
 
 ### What is new in `]-[ayabusa`?
 
-PortFusion          | 0.9.3 – old                     | 1.2 – \]-[ayabusa
+PortFusion          | 0.9.3 – old                     | 1.2.1 – \]-[ayabusa
 --------------------|---------------------------------|-------------------------------
 Memory at Start-up  | ~14 MB                          | **~0.7 MB**
 Memory at 1 Fusion  | ~30 MB (lots of jumps)          | **~1.0 MB** (constant)
