@@ -1,9 +1,9 @@
 ![pf]
 [pf]: http://corsis.eu/i/icon/h.png "PortFusion"
 
-### <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Download 1.2.1 now for Windows², Linux¹, Mac OS X and FreeBSD</a>
+### <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Download 1.2.1</a>
 
-<span style="font-size: small">(¹ now also available for ARM CPUs and ² as a native 64-bit Windows binary)</span>
+<span style="font-size: small">(binaries for Windows, Linux, Mac OS X and FreeBSD)</span>
 
 PortFusion is a minimalistic, cross-platform, transport-layer distributed
 reverse / forward proxy and tunneling solution for TCP released under
