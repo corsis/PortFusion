@@ -1,7 +1,7 @@
 ![pf]
 [pf]: http://corsis.eu/i/icon/h.png "PortFusion"
 
-### <a href='http://sourceforge.net/projects/portfusion/files/#files'><img src='http://fusion.corsis.eu/i/down_16.png' /> Download 1.2.1</a> <span style="font-size: small">(for Windows, Linux, Mac OS X and FreeBSD)</span>
+### <a href='http://sourceforge.net/projects/portfusion/files/1.2.1/#files'><img src='http://fusion.corsis.eu/i/down_16.png' /> Download 1.2.1</a> <span style="font-size: small">(for Windows, Linux, Mac OS X and FreeBSD)</span>
 
 ---
 
