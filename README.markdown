@@ -1,9 +1,9 @@
 ![pf]
 [pf]: http://corsis.eu/i/icon/h.png "PortFusion"
 
-### <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Download 1.2 now for Windows², Linux¹, Mac OS X and FreeBSD</a>
+### <a href='http://sourceforge.net/projects/portfusion/files/1.2.1/#files'><img src='http://fusion.corsis.eu/i/down_16.png' /> Download 1.2.1</a> <span style="font-size: small">(for Windows, Linux, Mac OS X and FreeBSD)</span>
 
-<span style="font-size: small">(¹ now also available for ARM CPUs and ² as [a 64-bit-native Windows binary](https://github.com/downloads/corsis/PortFusion/PortFusion64.exe))</span>
+---
 
 PortFusion is a minimalistic, cross-platform, transport-layer distributed
 reverse / forward proxy and tunneling solution for TCP released under
@@ -47,7 +47,7 @@ You need only *one* of the following rows for compilation.
 | Remarks | OS           | Compilers           |
 |:--------|:-------------|:--------------------|
 | recommended and <br /> used for official binaries | ![Windows], ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other] | [GHC] >= 7.4 <br /> [LLVM] >= 3
-| easy to install for <br /> all Haskell newbies | ![Windows], ![OSX] | [Haskell Platform] >= 2012.2.0.0
+| easy to install for <br /> all Haskell newbies    | ![Windows], ![Linux], ![OSX] | [Haskell Platform] >= 2012.2.0.0
 
 ### Instructions
 
@@ -68,7 +68,7 @@ Following flags can be activated with `cabal install splice -f llvm` and `cabal 
 | Flag     | Effect                      | Default | Official Binaries  |
 |:---------|:----------------------------|:--------|:-------------------|
 |          |                             |         |
-| `llvm`   | compile via [LLVM]         | `false` | `true`
+| `llvm`   | compile via [LLVM]          | `false` | `true`
 
 These are by default not activated to make PortFusion easy to compile for everyone :).
 
@@ -82,7 +82,7 @@ Official binaries are built and made availabe for several platforms.
 | <img height='48px' alt='CPU' title='CPU' src='http://a.fsdn.com/sd/topics/hardware_64.png' /> | ![Windows]                                                                                    | ![Linux]                                                                                      | ![OSX]                                                                                        | ![FreeBSD]                                                                                    | ![OpenBSD] | ![Solaris] | ![Other]
 | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ---------- | ---------- | --------
 | x86-64                                                                                        | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | ![C]       | ![C]       | ![C]
-| x86                                                                                           | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> |                                                                                               | ![C]                                                                                          | ![C]       | ![C]       | ![C]
+| x86-32                                                                                        | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> |                                                                                               | ![C]                                                                                          | ![C]       | ![C]       | ![C]
 | ARM                                                                                           | ![B]                                                                                          | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | ![C]                                                                                          | ![C]                                                                                          | ![C]       | ![C]       | ![C]
 | Other                                                                                         |                                                                                               | ![C]                                                                                          |                                                                                               | ![C]                                                                                          | ![C]       | ![C]       | ![C]
 
@@ -123,7 +123,7 @@ This is the new Haskell source code repository of the latest ]-[ayabusa version
 
 ### What is new in `]-[ayabusa`?
 
-PortFusion          | 0.9.3 – old                     | 1.2 – \]-[ayabusa
+PortFusion          | 0.9.3 – old                     | 1.2.1 – \]-[ayabusa
 --------------------|---------------------------------|-------------------------------
 Memory at Start-up  | ~14 MB                          | **~0.7 MB**
 Memory at 1 Fusion  | ~30 MB (lots of jumps)          | **~1.0 MB** (constant)
