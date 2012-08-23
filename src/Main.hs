@@ -26,9 +26,9 @@ import           Data.Typeable
 import           Data.List                  (elemIndices,(++),find)
 import           Data.String                (IsString,fromString)
 import           Data.ByteString.Char8      (ByteString)
-import qualified Data.ByteString.Char8 as B                          hiding (map,concatMap,reverse)
+import qualified Data.ByteString.Char8 as B                           hiding (map,concatMap,reverse)
 
-import           Network.Socket                                      hiding (recv,send)
+import           Network.Socket                                       hiding (recv,send)
 import           Network.Socket.ByteString   (recv,sendAll)
 import           Network.Socket.Splice -- corsis library: SPLICE
 
@@ -105,12 +105,12 @@ h .@. p = getAddrInfo hint host port >>= \as -> e as ??? map c as
                   r <- s `connect`  addrAddress a // timeout (secs 3)
                   case r of
                     Nothing -> do (s ✖); X.throw $! Silence [addrAddress a]
-                    Just _  -> do print . (:.:) Open =<< (s <@>);  return s
+                    Just _  -> do print . (:.:) Open =<< (s <@>); return s
 
 configure :: Socket -> IO ()
-configure s = m RecvBuffer c >> m SendBuffer c >> setSocketOption s KeepAlive 1
-   where m o u = do v <- getSocketOption s o; when (v < u) $! setSocketOption s o u
-         c     = fromIntegral chunk
+configure s   = m RecvBuffer c >> m SendBuffer c >> setSocketOption s KeepAlive 1
+  where m o u = do v <- getSocketOption s o; when (v < u) $! setSocketOption s o u
+        c     = fromIntegral chunk
 
 chunk :: ChunkSize
 chunk = 8 * 1024
