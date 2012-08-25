@@ -67,7 +67,7 @@ tryRun :: IO () -> IO ();              tryRun a = tryWith (\x -> do print x; wai
 newtype LiteralString = LS ByteString
 instance IsString LiteralString where fromString  = LS . B.pack
 instance Show     LiteralString where show (LS x) = B.unpack x
-instance Read     LiteralString where readsPrec p s = map (\(s,r) -> (LS s,r)) $! readsPrec p s
+instance Read     LiteralString where readsPrec p s = map (\(!s, !r) -> (LS s,r)) $! readsPrec p s
 
 --------------------------------------------------------------------------------------------ADDRPORT
 
@@ -86,7 +86,7 @@ instance Read AddrPort where
     where all   s = readsPrec p s >>= \(!p, !s') -> return $! ("" :@: p, s')
           one i s = do
             let (x,y) = splitAt i s // \(!a, !b) -> (dropWhile isSpace a, b)
-            (a,_) <- readsPrec p $! "\"" ++ filter (\!c -> c /= '[' && ']' /= c) x ++ "\""
+            (a,_) <- readsPrec p $! "\"" ++ filter (\c -> c /= '[' && ']' /= c) x ++ "\""
             (p,r) <- readsPrec p $! tail y
             return $! (a :@: p, r)
 
