@@ -83,10 +83,10 @@ instance Show AddrPort where
 instance Read AddrPort where
   readsPrec p s =
     case reverse $! elemIndices ':' s of { [] -> all s; (0:_) -> all $! drop 1 s; (i:_) -> one i s }
-    where all   s = readsPrec p s >>= \(p, s') -> return $! ("" :@: p, s')
+    where all   s = readsPrec p s >>= \(!p, !s') -> return $! ("" :@: p, s')
           one i s = do
-            let (x,y) = splitAt i s // \(a,b) -> (dropWhile isSpace a, b)
-            (a,_) <- readsPrec p $! "\"" ++ filter (\c -> c /= '[' && ']' /= c) x ++ "\""
+            let (x,y) = splitAt i s // \(!a, !b) -> (dropWhile isSpace a, b)
+            (a,_) <- readsPrec p $! "\"" ++ filter (\!c -> c /= '[' && ']' /= c) x ++ "\""
             (p,r) <- readsPrec p $! tail y
             return $! (a :@: p, r)
 
@@ -120,7 +120,7 @@ chunk = 8 * 1024
 
 (<:) :: Show a => Socket -> a -> IO (); s <: a = s `sendAll` ((B.pack . show $! a) <> "\r\n")
 
-(<@>)   :: Socket ->           IO PeerLink
+(<@>)   :: Socket ->           IO   PeerLink
 (<@>)   s = PeerLink <$> (att $! getSocketName s)<*>(att $! getPeerName s)
 
 (@>-<@) :: Socket -> Socket -> IO FusionLink
@@ -153,8 +153,8 @@ h .@. p = getAddrInfo hint host port >>= \as -> e as ??? map c as
 (#@) s = socketToHandle s ReadWriteMode =>> (`hSetBuffering` NoBuffering)
 
 (!@)  :: Socket ->         IO Peer; (!@)  s = (:!:) s <$> (s #@)
-(!<@) :: Socket ->         IO Peer; (!<@) l = (!@)   =<< (l <@)
-(!)   :: Host   -> Port -> IO Peer; (!) h p = (!@)   =<< h .@. p
+(!<@) :: Socket ->         IO Peer; (!<@) l =  (!@)   =<< (l <@)
+(!)   :: Host   -> Port -> IO Peer; (!) h p =  (!@)   =<<  h .@. p
 
 class    Disposable a       where (✖) :: a -> IO ()
 instance Disposable Socket  where
