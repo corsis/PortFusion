@@ -69,12 +69,54 @@ instance IsString LiteralString where fromString  = LS . B.pack
 instance Show     LiteralString where show (LS x) = B.unpack x
 instance Read     LiteralString where readsPrec p s = map (\(s,r) -> (LS s,r)) $! readsPrec p s
 
+--------------------------------------------------------------------------------------------ADDRPORT
+
+type Host = ByteString
+type Port = PortNumber
+
+instance Read Port where readsPrec p s = map (\(i,r) -> (fromInteger i,r)) $! readsPrec p s
+
+data AddrPort = !Host :@: !Port
+instance Show AddrPort where
+  show (a:@:p) = if B.null     a then show p else f a ++ ":" ++ show p
+    where f  a = if B.elem ':' a then "["++show (LS a)++"]" else show (LS a)
+instance Read AddrPort where
+  readsPrec p s =
+    case reverse $! elemIndices ':' s of { [] -> all s; (0:_) -> all $! drop 1 s; (i:_) -> one i s }
+    where all   s = readsPrec p s >>= \(p, s') -> return $! ("" :@: p, s')
+          one i s = do
+            let (x,y) = splitAt i s // \(a,b) -> (dropWhile isSpace a, b)
+            (a,_) <- readsPrec p $! "\"" ++ filter (\c -> c /= '[' && ']' /= c) x ++ "\""
+            (p,r) <- readsPrec p $! tail y
+            return $! (a :@: p, r)
+
+(?:) :: AddrPort -> IO (Family, SockAddr)
+(?:) (a :@: p)= f . c <$> getAddrInfo (Just hints) n (Just $! show p)
+  where hints = defaultHints { addrFlags = [ AI_PASSIVE, AI_NUMERICHOST ], addrSocketType = Stream }
+        n     = if B.null a then Nothing else Just $! B.unpack a
+        c  xs = case find ((== AF_INET6) . addrFamily) xs of Just v6 -> v6; Nothing -> head xs
+        f  x  = (addrFamily x, addrAddress x)
+
 -----------------------------------------------------------------------------------------------PEERS
 
-data PeerLink   = PeerLink   (Maybe SockAddr) (Maybe SockAddr)                  deriving Show
+data Peer = Peer !Socket !Handle
+
+data   PeerLink =   PeerLink (Maybe SockAddr) (Maybe SockAddr)                  deriving Show
 data FusionLink = FusionLink (Maybe SockAddr) (Maybe Port    ) (Maybe SockAddr) deriving Show
 data ProtocolException = Loss PeerLink | Silence [SockAddr]           deriving (Typeable,Show)
 instance X.Exception ProtocolException where
+
+faf :: Family -> LiteralString
+faf x = LS $! case x of { AF_INET6 -> sf; AF_UNSPEC -> sf; AF_INET -> "IPv4"; _-> B.pack $! show x }
+  where sf = "IPv6(+4?)"
+
+configure :: Socket -> IO ()
+configure s   = m RecvBuffer c >> m SendBuffer c >> setSocketOption s KeepAlive 1
+  where m o u = do v <- getSocketOption s o; when (v < u) $! setSocketOption s o u
+        c     = fromIntegral chunk
+
+chunk :: ChunkSize
+chunk = 8 * 1024
 
 (<:) :: Show a => Socket -> a -> IO (); s <: a = s `sendAll` ((B.pack . show $! a) <> "\r\n")
 
@@ -107,21 +149,12 @@ h .@. p = getAddrInfo hint host port >>= \as -> e as ??? map c as
                     Nothing -> do (s ✖); X.throw $! Silence [addrAddress a]
                     Just _  -> do print . (:.:) Open =<< (s <@>); return s
 
-configure :: Socket -> IO ()
-configure s   = m RecvBuffer c >> m SendBuffer c >> setSocketOption s KeepAlive 1
-  where m o u = do v <- getSocketOption s o; when (v < u) $! setSocketOption s o u
-        c     = fromIntegral chunk
+(#@) :: Socket -> IO Handle
+(#@) s = socketToHandle s ReadWriteMode =>> (`hSetBuffering` NoBuffering)
 
-chunk :: ChunkSize
-chunk = 8 * 1024
-
-data Peer = Peer !Socket !Handle
-
-(!@)  :: Socket ->         IO Peer;   (!@)  s = Peer s <$> (s #@)
-(!<@) :: Socket ->         IO Peer;   (!<@) l = (!@)   =<< (l <@)
-(!)   :: Host   -> Port -> IO Peer;   (!) h p = (!@)   =<< h .@. p
-(#@)  :: Socket ->         IO Handle
-(#@)  s = socketToHandle s ReadWriteMode =>> (`hSetBuffering` NoBuffering)
+(!@)  :: Socket ->         IO Peer; (!@)  s = Peer s <$> (s #@)
+(!<@) :: Socket ->         IO Peer; (!<@) l = (!@)   =<< (l <@)
+(!)   :: Host   -> Port -> IO Peer; (!) h p = (!@)   =<< h .@. p
 
 class    Disposable a       where (✖) :: a -> IO ()
 instance Disposable Socket  where
@@ -131,40 +164,8 @@ instance Disposable Socket  where
     try_ $! sClose   s
 instance Disposable Peer          where (✖) (Peer s h) = do (s ✖); (h ✖)
 instance Disposable Handle        where (✖) = try_ . hClose
-instance Disposable (Ptr       a) where (✖) = free
 instance Disposable (StablePtr a) where (✖) = freeStablePtr
-
---------------------------------------------------------------------------------------------ADDRPORT
-
-type Host = ByteString
-type Port = PortNumber
-
-instance Read Port where readsPrec p s = map (\(i,r) -> (fromInteger i,r)) $! readsPrec p s
-
-data AddrPort = !Host :@: !Port
-instance Show AddrPort where
-  show (a:@:p) = if B.null     a then show p else f a ++ ":" ++ show p
-    where f  a = if B.elem ':' a then "["++show (LS a)++"]" else show (LS a)
-instance Read AddrPort where
-  readsPrec p s =
-    case reverse $! elemIndices ':' s of { [] -> all s; (0:_) -> all $! drop 1 s; (i:_) -> one i s }
-    where all   s = readsPrec p s >>= \(p, s') -> return $! ("" :@: p, s')
-          one i s = do
-            let (x,y) = splitAt i s // \(a,b) -> (dropWhile isSpace a, b)
-            (a,_) <- readsPrec p $! "\"" ++ filter (\c -> c /= '[' && ']' /= c) x ++ "\""
-            (p,r) <- readsPrec p $! tail y
-            return $! (a :@: p, r)
-
-faf :: Family -> LiteralString
-faf x = LS $! case x of { AF_INET6 -> sf; AF_UNSPEC -> sf; AF_INET -> "IPv4"; _-> B.pack $! show x }
-  where sf = "IPv6(+4?)"
-
-(?:) :: AddrPort -> IO (Family, SockAddr)
-(?:) (a :@: p)= f . c <$> getAddrInfo (Just hints) n (Just $! show p)
-  where hints = defaultHints { addrFlags = [ AI_PASSIVE, AI_NUMERICHOST ], addrSocketType = Stream }
-        n     = if B.null a then Nothing else Just $! B.unpack a
-        c  xs = case find ((== AF_INET6) . addrFamily) xs of Just v6 -> v6; Nothing -> head xs
-        f  x  = (addrFamily x, addrAddress x)
+instance Disposable (      Ptr a) where (✖) = free
 
 ----------------------------------------------------------------------------------------------EVENTS
 
@@ -214,15 +215,14 @@ parse m = concatMap parse $! map (map B.unpack . filter (not . B.null) . B.split
 
 -----------------------------------------------------------------------------------------PORTVECTORS
 
-data Vectors = V {-# UNPACK #-} !(Ptr (Word16)          )                      -- number of clients
+data Vectors = V {-# UNPACK #-} !(Ptr            Word16 )                      -- number of clients
                  {-# UNPACK #-} !(Ptr (StablePtr Socket))                      -- server socket
-                 {-# UNPACK #-} !(Ptr (Word16)          )                      -- watch thread
+                 {-# UNPACK #-} !(Ptr            Word16 )                      -- watch thread
 portVectors :: MVar Vectors; portVectors = unsafePerformIO $! newEmptyMVar
 initialized :: MVar Bool;    initialized = unsafePerformIO $! newMVar False
 initialize  :: IO   ();      initialize  = initialized `modifyMVar_` \initialized ->
-  when (not initialized) init >> return True
-  where init = putMVar portVectors =<< V <$> mallocArray pc <*> mallocArray pc <*> mallocArray pc
-        pc   = 65536
+  when (not initialized) (new >>= putMVar portVectors) >> return True
+  where new = let pc = 65536 in V <$> mallocArray pc <*> mallocArray pc <*> mallocArray pc
 
 {-# INLINE (|.) #-}; (|.)::Storable a=>Ptr a -> Int -> IO a         ; (|.) a i   = peekElemOff a i
 {-# INLINE (|^) #-}; (|^)::Storable a=>Ptr a -> Int ->    a -> IO (); (|^) a i v = pokeElemOff a i v
