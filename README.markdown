@@ -27,7 +27,7 @@ with near-zero overhead.
 | Distributed Reverse Proxy Mode  | Distributed Forward Proxy Mode |
 |:--------------------------------|:-------------------------------|
 | |
-| <p>You want to work from home using remote desktop.</p> | <p>A friend is operating an http proxy server `server:3128` and has only one gateway PC in his network that accepts incoming connections from the public internet `remote`.</p> <p>You `local` want to connect to the internet through your friend's http proxy `server:3128` to access websites blocked by your current internet service provider.</p>
+| <p>You want to work from home using [remote desktop services](http://en.wikipedia.org/wiki/Remote_Desktop_Services).</p> | <p>A friend is operating an http proxy server `server:3128` and has only one gateway PC in his network that accepts incoming connections from the public internet `remote`.</p> <p>You `local` want to connect to the internet through your friend's http proxy `server:3128` to access websites blocked by your current internet service provider.</p>
 | |
 | <pre>@home> PortFusion          ] 2000      [</pre><pre>@work> PortFusion 3389 ::1 - 2000 home [ 3389</pre> | `@remote>` <pre>PortFusion      ]        2000 [</pre> `@local>` <pre>PortFusion 3128 ] remote 2000 - server 3128</pre>
 | |
