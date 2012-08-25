@@ -31,7 +31,7 @@ with near-zero overhead.
 | |
 | <pre>@home> PortFusion          ] 2000      [</pre><pre>@work> PortFusion 3389 ::1 - 2000 home [ 3389</pre> | `@remote>` <pre>PortFusion      ]        2000 [</pre> `@local>` <pre>PortFusion 3128 ] remote 2000 - server 3128</pre>
 | |
-| <p>Connect to `home:3389`, your connection will be tunnelled and reach `work:3389` circumventing firewall(s) around `work`.</p> <p>All you need to do is make `home:2000` accessible from `work`.</p> | [<img src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/df2.png" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/df2.png)
+| <p>Connections to `home:3389` will now be tunnelled and reach `work:3389` circumventing corporate firewalls.</p> <p>All you need to do is make `home:2000` accessible from `work`.</p> | [<img src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/df2.png" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/df2.png)
 | |
 | <a name='illustrate' class='anchor' href='#illustrate' /> [<img src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/dr1.png" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/dr1.png) | <p>`local` HTTP clients that connects to the tunneled proxy `local:3128` are served via gateway `remote` by your friend's http proxy `server:3128`.</p> <p>Your friend only needs to configure the firewall on gateway `remote` for port `2000`.</p>
 | |
