@@ -99,7 +99,7 @@ instance Read AddrPort where
 
 -----------------------------------------------------------------------------------------------PEERS
 
-data Peer = Peer !Socket !Handle
+data Peer = !Socket :!: !Handle
 
 data   PeerLink =   PeerLink (Maybe SockAddr) (Maybe SockAddr)                  deriving Show
 data FusionLink = FusionLink (Maybe SockAddr) (Maybe Port    ) (Maybe SockAddr) deriving Show
@@ -152,7 +152,7 @@ h .@. p = getAddrInfo hint host port >>= \as -> e as ??? map c as
 (#@) :: Socket -> IO Handle
 (#@) s = socketToHandle s ReadWriteMode =>> (`hSetBuffering` NoBuffering)
 
-(!@)  :: Socket ->         IO Peer; (!@)  s = Peer s <$> (s #@)
+(!@)  :: Socket ->         IO Peer; (!@)  s = (:!:) s <$> (s #@)
 (!<@) :: Socket ->         IO Peer; (!<@) l = (!@)   =<< (l <@)
 (!)   :: Host   -> Port -> IO Peer; (!) h p = (!@)   =<< h .@. p
 
@@ -162,7 +162,7 @@ instance Disposable Socket  where
     try_ $! print . (Close :.:) =<< (s <@>)
     try_ $! shutdown s ShutdownBoth
     try_ $! sClose   s
-instance Disposable Peer          where (✖) (Peer s h) = do (s ✖); (h ✖)
+instance Disposable Peer          where (✖) (s :!: h) = do (s ✖); (h ✖)
 instance Disposable Handle        where (✖) = try_ . hClose
 instance Disposable (StablePtr a) where (✖) = freeStablePtr
 instance Disposable (      Ptr a) where (✖) = free
@@ -270,7 +270,7 @@ a |<>| b = do
   putMVar        ma ta; putMVar        mb tb
 
 (-✖-) :: Peer -> AddrPort -> MVar ThreadId -> IO ()
-(o@(Peer s _) -✖- rp) t = do
+(o@(s :!: _) -✖- rp) t = do
   l <- (s <@>)
   let n x = do (o ✖); (rp -✖); takeMVar t >>= (`throwTo` x)
   let f x = do maybe (n x) (const $! return ()) $! (X.fromException x :: Maybe X.AsyncException)
@@ -288,36 +288,35 @@ run ((:><:) fp) = do
    where
 
     serve :: Peer -> IO ()
-    serve o@(Peer s h) = do
+    serve o@(s :!: h) = do
       tryWith (const (o ✖)) $! do                        -- any exception disposes o
         q <- read . B.unpack <$> B.hGetLine h
         print . (:.:) (Receive q) =<< (s <@>)
         case q of
           (:-<-:)    rp -> o -<-       rp
           (:->-:) rh rp -> o ->- rh $! rp
-          (:?)          -> s <: LS build |> (o ✖)
-          Run task      -> run task      |> (o ✖)
+          (:?)          -> s <:  LS build |> (o ✖)
+          Run task      -> run   task     |> (o ✖)
 
     (-<-) :: Peer -> AddrPort -> IO ()
-    o@(Peer !l _) -<- rp = do
+    o@(!l :!: _) -<- rp = do
       initialize
       r <- (rp -@<)
       o -✖- rp |<>| \t -> do
         let f = killThread =<< takeMVar t
-        tryWith (const f) $! do
-          c <- (r !<@); f
-          l `sendAll` "+"
+        tryWith (const   f) $! do
+          c <-  (r !<@); f; l `sendAll` "+"
           o >-< c $! (rp -✖)
 
     (->-) :: Peer -> Host -> Port -> IO ()
     (o ->- rh) rp = do
-      e <- rh ! rp
+      e <-  rh ! rp
       o >-< e $! return ()                               -- any exception disposes o ^
 
 --- :: Task -> IO () - distributed reverse
 run ((lp,lh) :-<: ((fp,fh),rp)) = do
 
-  forever . tryRun $! fh ! fp `X.bracketOnError` (✖) $! \f@(Peer s _) -> do
+  forever . tryRun $! fh ! fp `X.bracketOnError` (✖) $! \f@(s :!: _) -> do
 
     let m = (:-<-:) rp
     print . (:.:) (Send m) =<< (s <@>)
@@ -326,7 +325,7 @@ run ((lp,lh) :-<: ((fp,fh),rp)) = do
 
     void . forkIO $! do
 
-      e <- lh ! lp `X.onException` (f ✖)
+      e <-  lh ! lp `X.onException` (f ✖)
       f >-< e $! return ()
 
 --- :: Task -> IO () - distributed forward
@@ -340,10 +339,10 @@ run (lp :>-: ((fh,fp),(rh,rp))) = do
 
     void . forkIO . tryWith (const (c ✖)) $! do
 
-      f@(Peer s _) <- fh ! fp
+      f@(s :!: _) <- fh ! fp
       let m = (:->-:) rh rp
       print . (:.:) (Send m) =<< (s <@>)
-      s <: m
+      s <:  m
       f >-< c $! return ()
 
 --- :: Task -> IO () - direct forward
@@ -353,20 +352,21 @@ run (lp :>=: (rh, rp)) = do
 
   forever . tryRun $! (l !<@) `X.bracketOnError` (✖) $! \c -> do
 
-    r <- rh ! rp
+    r <-  rh ! rp
     r >-< c $! return ()
 
 ----------------------------------------------------------------------------------------------SPLICE
 
+(>-)  :: Peer -> Peer -> ErrorIO () -> IO ()
+(  ( as :!: ah) >-    ( bs :!: bh)) j = 
+  void . forkIO . tryWith (const j) $! splice chunk (as, Just ah) (bs, Just bh)
+
 (>-<) :: Peer -> Peer -> ErrorIO () -> IO ()
-(a@(Peer as _) >-< b@(Peer bs _)) h = do
+(a@(!as :!: _ ) >-< b@(!bs :!: _ )) h = do
   !t <- as @>-<@ bs
   print $! Establish ::: t
   !m <- newMVar True
   let p = print $! Terminate ::: t
   let j = modifyMVar_ m $! \v -> do when v (do p; (a ✖); (b ✖); h); return False
-  a >- b $! j; b >- a $! j
-
-(>-) :: Peer -> Peer -> ErrorIO () -> IO ()
-(Peer as ah >- Peer bs bh) j = 
-  void . forkIO . tryWith (const j) $! splice chunk (as, Just ah) (bs, Just bh)
+  a >- b $! j
+  b >- a $! j
