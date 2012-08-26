@@ -98,7 +98,7 @@ please [contact us](#contact) to join our build team!
 
 ### Packages
 
-PortFusion is available and can be very easily installed from [Hackage](http://hackage.haskell.org/package/PortFusion):
+[PortFusion](http://hackage.haskell.org/package/PortFusion) is available and can be very easily installed from [Hackage](http://hackage.haskell.org/package/PortFusion):
 
 ````bash
 cabal update
@@ -109,7 +109,7 @@ cabal install PortFusion  -f llvm
 If you do not have [LLVM] installed, you can drop `-f llvm`.
 
 
-## Notice
+## Compare
 
 ```
 This is the new Haskell source code repository of the latest ]-[ayabusa version
