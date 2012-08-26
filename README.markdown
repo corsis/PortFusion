@@ -222,7 +222,7 @@ Development follows simple principles:
 
 ### Japanese Influence: ]-[ayabusa (はやぶさ) (Hayabusa)
 
-I had already spent a great deal of time contemplating on a nice and intuitive
+I had already spent a great deal of time contemplating a nice and intuitive
 syntax and it was only when I watched the Japanese movie
 [Hayabusa](http://www.dramacrazy.net/japanese-movie/hayabusa/) about [the
 same-named space probe](http://en.wikipedia.org/wiki/Hayabusa) sent to extract
@@ -253,7 +253,7 @@ all network layers, technologies and devices.
 
 ## Thanks
 
-For their support and inspiration, we extend our heart-felt thanks to:
+For their continuing support and inspiration, we extend our heart-felt thanks to:
 
 <div style='vertical-align: middle'>
 <img alt='Internet Initiative Japan'                  title='Internet Initiative Japan'                                src='http://www.iij.ad.jp/en/common/images/hd_logo01.png' />
@@ -270,5 +270,3 @@ For their support and inspiration, we extend our heart-felt thanks to:
 [fusion@corsis.eu](mailto:fusion@corsis.eu)
 
 [corsis]: http://portfusion.sourceforge.net/i/l100.png "Corsis Research"
-
-<img width="1px" src="http://fusion.corsis.eu/i/logo3.png" />
