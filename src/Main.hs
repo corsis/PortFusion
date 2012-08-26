@@ -236,7 +236,7 @@ initialize  :: IO   ();      initialize  = initialized `modifyMVar_` \initialize
     case compare n 0 of
       GT -> do                                           c |^ p $! n+1; s |. p >>= deRefStablePtr
       EQ -> do l <- (ap @<) ; s |^ p =<< newStablePtr l; c |^ p $! n+1; return l
-      LT -> error "-@< ERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR"
+      LT -> error "-@< FAULT"
 
 (-✖) :: AddrPort -> IO ()
 (-✖) ap@(_ :@: p') = do
@@ -246,7 +246,7 @@ initialize  :: IO   ();      initialize  = initialized `modifyMVar_` \initialize
     case compare n 1 of
       GT -> do c |^ p $! n-1
       EQ -> watch ap p
-      LT -> error "-x  ERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR"
+      LT -> error "-x  FAULT"
   where
   watch ap p = void . forkIO $! withMVar portVectors $! \(V _ _ !t) -> do
     tp <- t |. p
