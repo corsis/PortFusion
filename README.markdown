@@ -27,11 +27,11 @@ with near-zero overhead.
 | Distributed Reverse Proxy Mode  | Distributed Forward Proxy Mode |
 |:--------------------------------|:-------------------------------|
 | |
-| <p>Work from home using [remote desktop services](http://en.wikipedia.org/wiki/Remote_Desktop_Services) circumventing corporate firewalls.</p> | <p>A friend is operating an http proxy server `server:3128` and has only one gateway PC in his network that accepts incoming connections from the public internet `remote`.</p> <p>You `local` want to connect to the internet through your friend's http proxy `server:3128` to access websites blocked by your current internet service provider.</p>
+| <p>Work from home using [remote desktop services](http://en.wikipedia.org/wiki/Remote_Desktop_Services) circumventing corporate firewalls.</p> | <p>Connect to the internet through a http proxy via a gateway to a friend's intranet.</p>
 | |
 | <pre>@home> PortFusion                ] 2000      [</pre><pre>@work> PortFusion 3389 localhost - 2000 home [ 3389</pre> | <pre>@friend> PortFusion      ]        2000 [</pre><pre>@you...> PortFusion 3128 ] friend 2000 - server 3128</pre>
 | |
-| <p>Connections to `home:3389` will now be tunnelled and reach `work:3389`.</p> <p>All you need to do is make `home:2000` accessible from work.</p> | <p>`local` HTTP clients that connects to the tunneled proxy `local:3128` are served via gateway `remote` by your friend's http proxy `server:3128`.</p> <p>Your friend only needs to configure the firewall on gateway `remote` for port `2000`.</p>
+| <p>Connections to `home:3389` will now be tunnelled and reach `work:3389`.</p> <p>You only need to make `home:2000` accessible from work.</p> | <p>Connections to `you:3128` will now be tunnelled and reach `server:3128`.</p> <p>Your friend only needs to make `friend:2000` accessible.</p>
 | |
 | <a name='illustrate' class='anchor' href='#illustrate' /> [<img src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/dr1.png" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/dr1.png) | [<img src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/df2.png" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/df2.png)
 | |
