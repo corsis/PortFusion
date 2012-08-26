@@ -40,7 +40,7 @@ with near-zero overhead.
 
 ## Build
 
-### Requirements
+### Prerequisites
 
 You need only *one* of the following rows for compilation.
 
@@ -63,21 +63,17 @@ cabal build
 
 ### Flags
 
-Following flags can be activated with `cabal install splice -f llvm` and `cabal configure -f llvm`.
+Following flags can be activated when using `cabal configure -f <FLAG>` or `cabal install -f <FLAG>`.
 
-| Flag     | Effect                      | Default | Official Binaries  |
-|:---------|:----------------------------|:--------|:-------------------|
-|          |                             |         |
-| `llvm`   | compile via [LLVM]          | `false` | `true`
-
-These are by default not activated to make PortFusion easy to compile for everyone :).
+| Flag  | Effect             | Default | Official Binaries  |
+|:------|:-------------------|:--------|:-------------------|
+|       |                    |         |
+| `llvm`| compile via [LLVM] | `false` | `true`
 
 
 ## Download
 
-Official binaries are built and made availabe for several platforms.
-
-### Official Binaries
+### Binaries
 
 | <img height='48px' alt='CPU' title='CPU' src='http://a.fsdn.com/sd/topics/hardware_64.png' /> | ![Windows]                                                                                    | ![Linux]                                                                                      | ![OSX]                                                                                        | ![FreeBSD]                                                                                    | ![OpenBSD] | ![Solaris] | ![Other]
 | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ---------- | ---------- | --------
@@ -86,7 +82,7 @@ Official binaries are built and made availabe for several platforms.
 | ARM                                                                                           | ![B]                                                                                          | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | ![C]                                                                                          | ![C]                                                                                          | ![C]       | ![C]       | ![C]
 | Other                                                                                         |                                                                                               | ![C]                                                                                          |                                                                                               | ![C]                                                                                          | ![C]       | ![C]       | ![C]
 
-CORSIS Research <br /> <br />
+CORSIS Research <br />
 ![D] builds official binaries <br />
 ![B] will build official binaries on demand  <br />
 ![C] can cooperate with community for builds <br />
@@ -95,15 +91,14 @@ CORSIS Research <br /> <br />
 [B]: http://res2.windows.microsoft.com/resbox/en/Windows%207/main/33624ed4-7676-4be4-9f47-d77eab7ecd9c_0.gif "Build-on-Demand"
 [C]: http://res2.windows.microsoft.com/resbox/en/Windows%207/main/43fa1e85-5152-43ff-b0f7-63ae6520a88b_0.gif "Coop-on-Demand"
 
-### Community Support
+#### Support
 
 If you have access to an OS+CPU combination lacking official binaries,
 please [contact us](#contact) to join our build team!
 
-### Hackage
+### Packages
 
-PortFusion is also [available on Hackage](http://hackage.haskell.org/package/PortFusion)
-and can be easily installed using `cabal-install`:
+PortFusion is available and can be very easily installed from [Hackage](http://hackage.haskell.org/package/PortFusion):
 
 ````bash
 cabal update
