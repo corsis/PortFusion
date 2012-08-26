@@ -157,7 +157,7 @@ Availability        | SourceForge.net                 | **SourceForge.net (binar
 ### Trademark
 
 ```
-PortFusion™ is a trademark of Corsis (corsis.eu).
+PortFusion™ is a trademark of Corsis Research (corsis.eu).
 ```
 
 ### Trademark Policy
