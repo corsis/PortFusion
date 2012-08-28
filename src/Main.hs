@@ -34,7 +34,7 @@ import           Network.Socket.Splice -- corsis library: SPLICE
 
 import           System.Environment
 import           System.Timeout
-import           System.IO hiding  (hGetLine,hPutStr,hGetContents)
+import           System.IO                                    hiding (hGetLine,hPutStr,hGetContents)
 import           System.IO.Unsafe
 
 import           Foreign.Storable
@@ -43,7 +43,7 @@ import           Foreign.Marshal.Alloc
 import           Foreign.Ptr
 import           Foreign.StablePtr
 
-import           GHC.Conc (numCapabilities)
+import           GHC.Conc                    (numCapabilities)
 
 ---------------------------------------------------------------------------------------------UTILITY
 
