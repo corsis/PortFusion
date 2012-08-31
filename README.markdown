@@ -24,12 +24,14 @@ with near-zero overhead.
 
 ## Use
 
+PortFusion is a tiny command line application.
+
 | Distributed Reverse Proxy Mode  | Distributed Forward Proxy Mode |
 |:--------------------------------|:-------------------------------|
 | |
 | <p>Work from home using [remote desktop services](http://en.wikipedia.org/wiki/Remote_Desktop_Services) circumventing corporate firewalls.</p> | <p>Connect to the internet through a http proxy via a gateway to a friend's intranet.</p>
 | |
-| <pre>@home> PortFusion                ] 2000      [</pre><pre>@work> PortFusion 3389 localhost - 2000 home [ 3389</pre> | <pre>@friend> PortFusion      ]        2000 [</pre><pre>@you...> PortFusion 3128 ] friend 2000 - server 3128</pre>
+| `↓ home ↓` <pre>PortFusion                ] 2000      [</pre><pre>PortFusion 3389 localhost - 2000 home [ 3389</pre> `↑ work ↑` | `↓ friend ↓` <pre>PortFusion      ]        2000 [</pre><pre>PortFusion 3128 ] friend 2000 - server 3128</pre> `↑ you ↑`
 | |
 | <p>Connections to `home:3389` will now be tunnelled and reach `work:3389`.</p> <p>You only need to make `home:2000` accessible from work.</p> | <p>Connections to `you:3128` will now be tunnelled and reach `server:3128`.</p> <p>Your friend only needs to make `friend:2000` accessible.</p>
 | |
