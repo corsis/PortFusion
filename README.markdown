@@ -211,13 +211,12 @@ GNU General Public License for more details.
 Development follows simple principles:
 
 1. Be concise: [PortFusion is a single-file with less than 500 lines of code](https://github.com/corsis/PortFusion/blob/master/src/Main.hs)
-2. Be fearless: [refactor and prune *constantly*](https://github.com/corsis/PortFusion/compare/v1.0...master#diff-9)
-3. Be part of the open-source community
- 1. Create [fully documented reusable libraries](http://hackage.haskell.org/package/splice) that [cover common needs](http://stackoverflow.com/questions/10080670/using-gnu-linux-system-call-splice-for-zero-copy-socket-to-socket-data-transfe)
- 2. Report [bugs](http://hackage.haskell.org/trac/ghc/ticket/7134) and [work on fixes](https://github.com/haskell/network/issues/31)
+2. Be relentless: [refactor and prune *constantly*](https://github.com/corsis/PortFusion/compare/v1.0...master#diff-9)
 4. Be open: share everything
- 1. [Use the most permissive licenses possible](http://hackage.haskell.org/package/splice)
- 2. [Illustrate every concept in publication-worthy detail](#illustrate)
+ 1. Create [fully documented reusable libraries](http://hackage.haskell.org/package/splice) that [cover common needs](http://stackoverflow.com/questions/10080670/using-gnu-linux-system-call-splice-for-zero-copy-socket-to-socket-data-transfe)
+ 2. [Use the most permissive licenses possible](http://hackage.haskell.org/package/splice)
+ 3. Report [bugs in external code](http://hackage.haskell.org/trac/ghc/ticket/7134) and [work on fixes](https://github.com/haskell/network/issues/31)
+ 4. [Illustrate every concept in publication-worthy detail](#illustrate)
 5. Be friendly: [provide excellent support to users](https://sourceforge.net/p/portfusion/discussion/general/thread/7ad0cb49/)
 
 ### Japanese Influence: ]-[ayabusa (はやぶさ) (Hayabusa)
