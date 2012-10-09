@@ -10,7 +10,7 @@ a, img {
 
 .button {
   width: 200px;
-    margin: 0 auto;
+  margin: 0 auto;
 }
 
 .button a {
@@ -108,7 +108,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00b7ea', end
 
 /////////////////////////////////
 
-#box { display: none; }
+div, #box { display: none; }
 
 @media screen and (min-width: 1000px) {
     #box {
