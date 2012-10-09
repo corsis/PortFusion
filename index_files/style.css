@@ -123,7 +123,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00b7ea', end
 
 .box-img { width: 20em; }
 
-.box .box-title .box-description, li a {
+.box .box-title .box-description, a {
     display: block;
     font-size: 1.9em;
     font-family: "wf_SegoeUILight","wf_SegoeUI","Segoe UI Light","Segoe WP Light","Segoe UI","Segoe","Segoe WP","Tahoma","Verdana","Arial","sans-serif";
