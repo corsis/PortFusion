@@ -110,3 +110,31 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00b7ea', end
 
 #box { display: none; }
 
+@media screen and (min-width: 1000px) {
+    #box {
+        position: absolute;
+        width: 20em;
+        right: 2em;
+        top: 2em;
+        padding: 1.4em 25px;
+        display: block;
+    }
+
+    .box-img { width: 20em; }
+    
+    #box .box-title .box-description, a {
+        display: block;
+        font-size: 1.9em;
+        font-family: "wf_SegoeUILight","wf_SegoeUI","Segoe UI Light","Segoe WP Light","Segoe UI","Segoe","Segoe WP","Tahoma","Verdana","Arial","sans-serif";
+        text-decoration: none;
+    }
+    
+    h1, h2, h3, h4 {
+        font-family: "wf_SegoeUILight","wf_SegoeUI","Segoe UI Light","Segoe WP Light","Segoe UI","Segoe","Segoe WP","Tahoma","Verdana","Arial","sans-serif";
+        font-weight: 300;
+        font-size: 1.3em;
+        margin-top: 1em;
+        margin-bottom: 1em;
+    }
+
+}
