@@ -108,8 +108,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00b7ea', end
 
 /////////////////////////////////
 
-div, #box { display: none; }
-
 @media screen and (min-width: 1000px) {
     #box {
         position: absolute;
@@ -137,4 +135,6 @@ div, #box { display: none; }
         margin-bottom: 1em;
     }
 
+} else {
+    #box { display: none; }
 }
