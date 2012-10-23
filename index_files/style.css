@@ -32,20 +32,18 @@ h1, h2, h3, h4 {
 
 /////////////////
 
-a, img {
-    border: none;
-}
+a, img { border: none; }
+
+html, body { margin: 0; padding: 0; width: 100%; height: 100%; display: table }
+#cb { display: table-cell; text-align: center; vertical-align: middle; }
 
 #logo {
     display: block;
     width: 180px;
-    margin: 15% auto 50px auto;
+    margin: 0 auto 30px auto;
 }
 
-.button {
-  width: 200px;
-  margin: 0 auto;
-}
+.button { width: 200px; margin: 0 auto; }
 
 .button a {
   display: block;
