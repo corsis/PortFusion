@@ -16,7 +16,7 @@ h1, h2, h3, h4 {
     margin-bottom: 1em;
 }
 
-* { -webkit-transition: all 400ms; }
+* { -webkit-transition: all 400ms; transition: all 400ms; }
 
 @media screen and (min-width: 1000px) {
     #box {
