@@ -25,9 +25,9 @@ h1, h2, h3, h4 {
         right: 2em;
         top: 2em;
         padding: 1.4em 25px;
-        opacity: 1.0;
-
-    }    
+        opacity: 0.05;
+    }
+    #box:hover { opacity: 1; }
 }
 
 /////////////////
