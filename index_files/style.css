@@ -32,12 +32,13 @@ h1, h2, h3, h4 {
 
 /////////////////
 
-a, img { border: none; border-width: 0; }
+a, img { border: none; border-width: 0px; }
 
 #logo {
     display: block;
     width: 180px;
     margin: 15% auto 30px auto;
+    border-width: 0px;
 }
 
 .button {
