@@ -37,7 +37,7 @@ PortFusion is a tiny command line application.
 | |
 | <a name='illustrate' class='anchor' href='#illustrate' /> [<img src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/dr1.png" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/dr1.png) | [<img src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/df2.png" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/df2.png)
 | |
-| [<img width='100%' src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/reverse-fusion-msc-7.png" alt="DR" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/reverse-fusion-msc-7.png) | [<img width='100%' src="http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/forward-fusion-msc-7.png" alt="DF" />](http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/forward-fusion-msc-7.png)
+| [<img width='100%' src="http://portfusion.sourceforge.net/i/reverse-fusion-msc-8.png" alt="DR" />](http://portfusion.sourceforge.net/i/reverse-fusion-msc-8.png) | [<img width='100%' src="http://portfusion.sourceforge.net/i/forward-fusion-msc-8.png" alt="DF" />](http://portfusion.sourceforge.net/i/forward-fusion-msc-8.png)
 
 
 ## Build
