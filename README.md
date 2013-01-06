@@ -184,7 +184,7 @@ In addition, a "Powered by PortFusion" logo will be made available.
 
 ```
 CORSIS PortFusion ]-[ayabusa
-Copyright © 2012  Cetin Sert
+© 2011 - 2013, Cetin Sert
 ```
 
 ### License
