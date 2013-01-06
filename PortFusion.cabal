@@ -34,7 +34,7 @@ description:   PortFusion is a minimalistic, cross-platform, transport-layer
                .
                * Official @r.f.i@ binaries are bit-for-bit the same as @r.f.i.p@ builds for all @p@.
 
-copyright:     Copyright © 2012 Cetin Sert
+copyright:     Copyright © 2011 - 2013 Cetin Sert
 license:       GPL-3
 license-file:  LICENSE
 author:        Cetin Sert <fusion@corsis.eu>, Corsis Research
