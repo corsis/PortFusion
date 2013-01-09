@@ -1,7 +1,7 @@
 ![pf]
 [pf]: http://fusion.corsis.eu/i/h.png "PortFusion"
 
-### <a href='http://sourceforge.net/projects/portfusion/files/1.2.1/#files'><img src='http://fusion.corsis.eu/i/down_16.png' /> Download 1.2.1</a> <span style="font-size: small">(for Windows, Linux, Mac OS X and FreeBSD, ...)</span>
+### <a href='http://sourceforge.net/projects/portfusion/files/1.2.1/#files'><img src='http://fusion.corsis.eu/i/down_16.png' /> Download 1.2.1</a> <span style="font-size: small">(for Windows, Linux, OS X and FreeBSD, ...)</span>
 
 ---
 
@@ -82,6 +82,7 @@ Following flags can be activated when using `cabal configure -f <FLAG>` or `caba
 | x86-64                                                                                        | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | ![C]       | ![C]       | ![C]
 | x86-32                                                                                        | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> |                                                                                               | ![C]                                                                                          | ![C]       | ![C]       | ![C]
 | ARM                                                                                           | ![B]                                                                                          | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | ![C]                                                                                          | ![C]                                                                                          | ![C]       | ![C]       | ![C]
+| MIPS                                                                                          |                                                                                               | ![B]                                                                                          |                                                                                               |                                                                                               |            |            |    
 | Other                                                                                         |                                                                                               | ![C]                                                                                          |                                                                                               | ![C]                                                                                          | ![C]       | ![C]       | ![C]
 
 CORSIS Research <br />
