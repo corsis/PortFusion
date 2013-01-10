@@ -127,7 +127,7 @@ Memory at Start-up  | **~0.7 MB**                                               
 Memory at 1 Fusion  | **~1.0 MB** (constant)                                                            | ~30 MB (lots of jumps)
 Official Binaries   | ![Windows], ![Linux], ![OSX], ![FreeBSD]                                          | ![Windows]
 OS Support          | ![Windows], ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other]        | ![Windows]
-CPU Support         | `x86-64` `x86-32` [`ARM`](wiki/ARM-Builds) [`MIPS`](wiki/MIPS-Builds)                                                    | `x86`
+CPU Support         | `x86-64`, `x86-32`, [`ARM`](wiki/ARM-Builds), [`MIPS`](wiki/MIPS-Builds)          | `x86`
 Source Code Size    | **< 500 lines (1 file)**                                                          | 778 lines (multiple files)
 Language            | **[Haskell] \([GHC] / [LLVM]\)**                                                  | F# / C#
 Dependencies        | **none**                                                                          | .NET 4.0 + F# 2.0 Runtime
