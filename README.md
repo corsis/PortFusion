@@ -81,8 +81,8 @@ Following flags can be activated when using `cabal configure -f <FLAG>` or `caba
 | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ---------- | ---------- | --------
 | x86-64                                                                                        | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | ![C]       | ![C]       | ![C]
 | x86-32                                                                                        | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> |                                                                                               | ![C]                                                                                          | ![C]       | ![C]       | ![C]
-| ARM                                                                                           | ![B]                                                                                          | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | ![C]                                                                                          | ![C]                                                                                          | ![C]       | ![C]       | ![C]
-| MIPS                                                                                          |                                                                                               | <a href='https://sourceforge.net/projects/portfusion/files/1.2.1/compressed/'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> |                                                                                               |                                                                                               |            |            |    
+| [ARM]                                                                                         | ![B]                                                                                          | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | ![C]                                                                                          | ![C]                                                                                          | ![C]       | ![C]       | ![C]
+| [MIPS]                                                                                        |                                                                                               | <a href='https://sourceforge.net/projects/portfusion/files/1.2.1/compressed/'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> |                                                                                               |                                                                                               |            |            |    
 | Other                                                                                         |                                                                                               | ![C]                                                                                          |                                                                                               | ![C]                                                                                          | ![C]       | ![C]       | ![C]
 
 CORSIS Research <br />
@@ -121,26 +121,29 @@ This is the new Haskell source code repository of the latest ]-[ayabusa version
 
 ### What is new in `]-[ayabusa`?
 
-PortFusion          | 0.9.3 – old                     | 1.2.1 – \]-[ayabusa
---------------------|---------------------------------|-------------------------------
-Memory at Start-up  | ~14 MB                          | **~0.7 MB**
-Memory at 1 Fusion  | ~30 MB (lots of jumps)          | **~1.0 MB** (constant)
-OS Support          | ![Windows]                      | ![Windows], ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other]
-Official Binaries   | ![Windows]                      | ![Windows], ![Linux], ![OSX], ![FreeBSD]
-Source Code Size    | 778 lines (multiple files)      | **< 500 lines (1 file)**
-Language            | F# / C#                         | **[Haskell] \([GHC] / [LLVM]\)**
-Dependencies        | .NET 4.0 + F# 2.0 Runtime       | **none**
-Deployment          | 2 .NET 4.0 managed binaries     | **1 unified, native code binary for each platform**
-Binary Size         | **78.3 KB** (34.3 KB + 44 KB)   | 1-2 MB (~400 KB compressed)
-Concurrency Model   | 1 OS thread per connection      | **1 Haskell thread per connection**
-Distribution Technique | Windows Communication Foundation | **native sockets API and system calls of each OS**
-Distributed Proxy Modes | reverse                     | **reverse, forward**
-Local Proxy Modes   |                                 | **forward**
-Native IPv6 Support | **yes**                         | **yes**
-Interactive Mode    |                                 | [**REPL in GHCi**](https://github.com/corsis/PortFusion/wiki/PortFusion-REPL)
-License             | ![GPLv3]                        | ![GPLv3]
-Availability        | SourceForge.net                 | **SourceForge.net (binary) <br /> GitHub (source) <br /> Corsis.eu (commercial)**
+PortFusion          | 1.2.1 – \]-[ayabusa                                                               | 0.9.3 – old
+--------------------|-----------------------------------------------------------------------------------|-----------------------
+Memory at Start-up  | **~0.7 MB**                                                                       | ~14 MB
+Memory at 1 Fusion  | **~1.0 MB** (constant)                                                            | ~30 MB (lots of jumps)
+Official Binaries   | ![Windows], ![Linux], ![OSX], ![FreeBSD]                                          | ![Windows]
+OS Support          | ![Windows], ![Linux], ![OSX], ![FreeBSD], ![OpenBSD], ![Solaris], ![Other]        | ![Windows]
+CPU Support         | `x86-64` `x86-32` [`ARM`](wiki/ARM-Builds) [`MIPS`](wiki/MIPS-Builds)                                                    | `x86`
+Source Code Size    | **< 500 lines (1 file)**                                                          | 778 lines (multiple files)
+Language            | **[Haskell] \([GHC] / [LLVM]\)**                                                  | F# / C#
+Dependencies        | **none**                                                                          | .NET 4.0 + F# 2.0 Runtime
+Deployment          | **1 unified, native code binary for each platform**                               | 2 x .NET 4.0 managed binaries
+Binary Size         | 1-2 MB (~400 KB compressed)                                                       | **78.3 KB** (34.3 KB + 44 KB)
+Concurrency Model   | **1 Haskell thread per connection**                                               | 1 OS thread per connection
+Distribution Technique | **native sockets API and system calls of each OS**                             | Windows Communication Foundation
+Distributed Proxy Modes | **reverse, forward**                                                          | reverse
+Local Proxy Modes   | **forward**                                                                       |
+Native IPv6 Support | **yes**                                                                           | **yes**
+Interactive Mode    | [**REPL in GHCi**](https://github.com/corsis/PortFusion/wiki/PortFusion-REPL)     |
+License             | ![GPLv3]                                                                          | ![GPLv3]
+Availability        | **SourceForge.net (binary) <br /> GitHub (source) <br /> Corsis.eu (commercial)** | SourceForge.net
 
+[ARM]:     wiki/ARM-Builds                                                                 "ARM Builds"
+[MIPS]:    wiki/MIPS-Builds                                                                "MIPS Builds"
 [GPLv3]:   http://gplv3.fsf.org/gplv3-127x51.png                                           "GPLv3"
 [Windows]: http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_win_other.png "Windows"
 [Linux]:   http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/os_oracle.png    "Linux"
