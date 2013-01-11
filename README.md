@@ -67,10 +67,11 @@ cabal build
 
 Following flags can be activated when using `cabal configure -f <FLAG>` or `cabal install -f <FLAG>`.
 
-| Flag  | Effect             | Default | Official Binaries  |
-|:------|:-------------------|:--------|:-------------------|
-|       |                    |         |
-| `llvm`| compile via [LLVM] | `false` | `true`
+| Flag     | Effect                           | Default | Official Binaries  |
+|:---------|:---------------------------------|:--------|:-------------------|
+|          |                                  |         |
+| `llvm`   | compile via [LLVM]               | `false` | `true`
+| `static` | link system libraries statically | `false` | See [OS and CPUs](wiki/Official-Builds)
 
 
 ## Download
