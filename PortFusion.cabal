@@ -1,5 +1,5 @@
 name:          PortFusion
-version:       1.2.2
+version:       1.2.1.1
 stability:     stable on all operating systems
 synopsis:      high-performance distributed reverse / forward proxy & tunneling for TCP
 description:   PortFusion is a minimalistic, cross-platform, transport-layer
@@ -103,7 +103,7 @@ executable PortFusion
 
     if flag(static)
       ghc-options:   -static
-      ld-options:    -static
+      ld-options:    -static -pthread
 
     if flag(llvm)
       ghc-options:   -fllvm -optlo-O3
