@@ -191,7 +191,7 @@ data Request = (:-<-:)    AddrPort
 ------------------------------------------------------------------------------------------------MAIN
 
 name, copyright, build :: ByteString
-name      = "CORSIS PortFusion    ( ]-[ayabusa 1.2.1 )"
+name      = "CORSIS PortFusion    ( ]-[ayabusa 1.2.2 )"
 copyright = "(c) 2012 Cetin Sert. All rights reserved."
 build     = __OS__ <> " - " <> __ARCH__ <>  " [" <> __TIMESTAMP__ <> "]"
 
@@ -358,7 +358,7 @@ run (lp :>=: (rh, rp)) = do
 ----------------------------------------------------------------------------------------------SPLICE
 
 (>-)  :: Peer -> Peer -> ErrorIO () -> IO ()
-(  ( as :!: ah) >-    ( bs :!: bh)) j = 
+(  ( as :!: ah) >-    ( bs :!: bh)) j =
   void . forkIO . tryWith (const j) $! splice chunk (as, Just ah) (bs, Just bh)
 
 (>-<) :: Peer -> Peer -> ErrorIO () -> IO ()
