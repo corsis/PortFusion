@@ -1,8 +1,29 @@
-This is an experi-fucking-mental branch in which I entertain the freedom of rewriting (parts of) PortFusion in C.
+> ![**S&P**](http://upload.wikimedia.org/wikipedia/commons/d/d2/Standard%26Poors.svg)
+> This branch is as stable as the Greek economy!
 
-```
-This branch is as stable as the current Greek economy!
-```
+---
+
+## Warning!
+
+This is an extremely volatile experimental branch in which I entertain the freedom of rewriting (parts of)
+PortFusion in C.
+
+Motivations are twofold:
++ offer support for smaller embedded devices than one can target with today's GHC
++ seamless integration with OpenWrt's build system to be placed in OpenWrt kernel images
+
+Everything in this branch enjoys the following rights **at all times**:
++ the right to crash
++ the right to work
++ the right to be utterly broken beyond all hope
++ the right to contine its existence, be cared for and fixed
++ the right to end its existence, be forgotten and gone forever
+
+
+## Supported Network Protocols
+
++ PortFusion(/Haskell) 1.0 or above
+
 
 ## Directories & Files
 
@@ -15,6 +36,14 @@ PortFusion/src/Makefile        # PortFusion/C makefile
 PortFusion/src/README          # PortFusion/C how-to-make file
 PortFusion/src/pf.c            # PortFusion/C
 ```
+
+
+## Dependencies
+
++ OS with BSD sockets API
++ POSIX Threads library
++ Luck and/or expertise
+
 
 ## Build as part of a OpenWrt kernel image
 
@@ -31,7 +60,13 @@ make menuconfig # find and *-select: "Corsis Research" > "pfl"
 make
 ```
 
-## Build as a clumsy stand-alone library
+### Screenshots
+
+![0](http://portfusion.sourceforge.net/dev/screenshots/PortFusion-C-in-OpenWrt-menuconfig.png)
+![1](http://portfusion.sourceforge.net/dev/screenshots/PortFusion-C-built-into-vanilla-OpenWrt-from-git.png)
+
+
+## Build as a tiny stand-alone binary
 
 ```
 git clone git://github.com/corsis/PortFusion.git -b ρφμ
