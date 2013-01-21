@@ -1,6 +1,15 @@
-## CORSIS PortFusion -S[nowfall
-## Copyright © 2013  Cetin Sert
+#
+# CORSIS PortFusion -S[nowfall
+# Copyright © 2013  Cetin Sert
+#
 
+#
+# PortFusion/C Makefile
+#
+
+#############################################
+
+# Source and Binary File Names
 
 SRC     = pf.c
 BINDEF  = pfl
