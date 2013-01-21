@@ -1,1 +1,45 @@
-/home/cetin/README
+CORSIS PortFusion -S[nowfall
+Copyright © 2013  Cetin Sert
+
+
+! Work in progress
+
+
+! Use GNU make for builds
+
+
+> Make binary
+
+  make
+
+
+> CORSIS compilation flags (case-sensitive)
+
+  FLAG			DEFAULT? / DESCRIPTION
+  
+  static		- link libc statically
+  llvm			+ force clang as C compiler (default, except on MIPS)
+  gcc                   - force gcc   as C compiler (default on MIPS)
+  portable-loops	- do not use splice(2) on Linux
+  portable-threads	- do not use POSIX threads (not implemented)
+
+  > Examples
+
+    f=llvm   make
+    f=gcc    make
+    f=static make
+
+    f="static portable-loops" make
+    f="gcc    portable-loops" make
+
+    f="llvm static portable-loops portable-threads" make
+
+  # Time builds with LLVM vs GCC
+
+    time f=llvm make
+    time f=gcc  make    
+
+
+> Clean up
+
+  make clean
