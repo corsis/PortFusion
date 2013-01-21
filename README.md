@@ -16,11 +16,11 @@ Everything in this branch enjoys the following rights **at all times**:
 + the right to crash
 + the right to work
 + the right to be utterly broken beyond all hope
-+ the right to contine its existence, be cared for and fixed
-+ the right to end its existence, be forgotten and gone forever
++ the right to continue its existence, be cared for and fixed
++ the right to end its existence, be forgotten and gone
 
 
-## Supported Network Protocols
+## Network Protocols
 
 + PortFusion(/Haskell) 1.0 or above
 
