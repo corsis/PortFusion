@@ -3,6 +3,10 @@
 # Copyright © 2013  Cetin Sert
 #
 
+#
+# OpenWrt Package Makefile
+#
+
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=PortFusion
