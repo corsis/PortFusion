@@ -28,13 +28,13 @@ Everything in this branch enjoys the following rights **at all times**:
 ## Directories & Files
 
 ```
-PortFusion                     # directory to put under openwrt/package/
-PortFusion/Makefile            # OpenWrt 'make menuconfig' integration
+.                   # directory to put under openwrt/package/
+Makefile            # OpenWrt 'make menuconfig' integration
 
-PortFusion/src                 # PortFusion/C directory
-PortFusion/src/Makefile        # PortFusion/C makefile
-PortFusion/src/README          # PortFusion/C how-to-make file
-PortFusion/src/pf.c            # PortFusion/C
+src                 # PortFusion/C directory
+src/Makefile        # PortFusion/C makefile
+src/README          # PortFusion/C how-to-make file
+src/pf.c            # PortFusion/C
 ```
 
 
