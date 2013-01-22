@@ -35,11 +35,8 @@ define Build/Prepare
 	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
 
-define Build/Configure
-endef
-
 define Build/Compile
-	OS=OpenWrt ARCH=$(LINUX_KARCH) $(MAKE) -C $(PKG_BUILD_DIR) $(TARGET_CONFIGURE_OPTS)
+	OS=OpenWrt ARCH=native $(MAKE) -C $(PKG_BUILD_DIR) $(TARGET_CONFIGURE_OPTS)
 endef
 
 define Package/pf/install
