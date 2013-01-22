@@ -9,13 +9,11 @@
 
 include $(TOPDIR)/rules.mk
 
-ARCH=$(TARGET_ARCH)
 PKG_NAME:=PortFusion
-PKG_RELEASE:=2013-01-21
+PKG_RELEASE:=2013-01-22
 PKG_LICENSE:=GPLv3.0
 PKG_MAINTAINER:=Cetin Sert <fusion@corsis.eu>, Corsis Research
-
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
