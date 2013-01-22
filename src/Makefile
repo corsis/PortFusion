@@ -12,7 +12,7 @@
 # Source and Binary File Names
 
 SRC     = pf.c
-BINDEF  = pfl
+BINDEF  = pf
 
 ifeq (,$(BIN))
   BIN   = $(BINDEF)
