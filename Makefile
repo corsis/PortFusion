@@ -9,6 +9,7 @@
 
 include $(TOPDIR)/rules.mk
 
+ARCH=$(TARGET_ARCH)
 PKG_NAME:=PortFusion
 PKG_RELEASE:=2013-01-21
 PKG_LICENSE:=GPLv3.0
@@ -22,7 +23,9 @@ define Package/pf
   SECTION:=corsis
   CATEGORY:=Corsis Research
   TITLE:=CORSIS PortFusion Embedded
-  DEPENDS=+libpthread
+  URL:=http://fusion.corsis.eu
+  MAINTAINER:=Cetin Sert <fusion@corsis.eu>, Corsis Research
+  DEPENDS:=+libpthread
 endef
 
 define Package/pf/description
@@ -38,7 +41,7 @@ define Build/Configure
 endef
 
 define Build/Compile
-	$(MAKE) -C $(PKG_BUILD_DIR) $(TARGET_CONFIGURE_OPTS)
+	OS=OpenWrt ARCH=$(LINUX_KARCH) $(MAKE) -C $(PKG_BUILD_DIR) $(TARGET_CONFIGURE_OPTS)
 endef
 
 define Package/pf/install

@@ -25,8 +25,12 @@ CFLAGS += -Wall -Wextra
 
 # CORSIS Build Name Components
 
+ifndef OS
 OS     := $(shell uname -s)
+endif
+ifndef ARCH
 ARCH   := $(shell uname -m)
+endif
 CFLAGS += -D__OS__="\"$(OS)\""
 CFLAGS += -D__ARCH__="\"$(ARCH)\""
 DIST    = $(BIN)-$(OS)-$(ARCH)$(SUFFIX)
