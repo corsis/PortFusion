@@ -56,7 +56,7 @@ make package/symlinks
 cd package
 git clone git://github.com/corsis/PortFusion.git -b ρφμ
 cd ..
-make menuconfig # find and *-select: "Corsis Research" > "pfl"
+make menuconfig # find and *-select: "Corsis Research" > "pf"
 make
 ```
 
