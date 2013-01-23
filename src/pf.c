@@ -128,7 +128,7 @@ int main(int c, char* a[])
 {
   printf("\n\n%s\n"    , "CORSIS PortFusion    ( -S[nowfall 1.2.1 )");
   printf(    "%s\n"    , "(c) 2013 Cetin Sert. All rights reserved.");
-  printf("  \n%s - %s - %s\n\n\n", __OS__, __ARCH__, __TIMESTAMP__);
+  printf("  \n%s - %s - [%s]\n\n\n", __OS__, __ARCH__, __TIMESTAMP__);
   if (c > 1) { printf("(zeroCopy,%s)\n",zeroCopy); dr(a); }
   else { printf("  %s\n"    , "See usage: http://fusion.corsis.eu");
          printf("  %s\n\n\n", "Available: _ _ - _ _ [ _");           }
