@@ -24,7 +24,7 @@ ssize_t splice(int fd_in,loff_t* off_in,int fd_out,loff_t* off_out, size_t len,u
 
 //---------------------------------------------------------------------------------------------PEERS
 
-#define CHUNK (4096*8)
+#define CHUNK (4096)
 
 int sendAll(int s, void* b, size_t l) { 
   size_t i =  0; for (; i < l; i += send(s, b, l - i, 0)); return i == l ? 0 : -1;
