@@ -7,6 +7,7 @@
 #include <netdb.h>          // addrinfo
 #include <sys/socket.h>     // socket, connect, send, recv
 #include <unistd.h>         // close, sleep
+#include <signal.h>
 
 #ifdef  USE_LINUX_SPLICE
 #define zeroCopy "True"
@@ -31,11 +32,11 @@ int sendAll(int s, void* b, size_t l) {
 } //(<:)
 int snd (int s, char* m) { sendAll(s, m, strlen(m)); return sendAll(s, "\r\n", strlen("\r\n")); }
 int rcv1(int s)          { char m[1]; return recv(s, m, 1, 0); }
-int shut(int s) { shutdown(s, SHUT_RDWR); return close(s); }
+int shut(int s)     { shutdown(s, SHUT_RDWR); return close(s); }
 
 int at(char* h, char* p) // (.@.)
 {
-  int s = -1, c = -1;
+  int s = -1, c = -1, e = 0;
 
   struct addrinfo hints;
   memset(&hints, 0, sizeof(struct addrinfo));
@@ -44,15 +45,17 @@ int at(char* h, char* p) // (.@.)
 
   struct addrinfo* as;
   struct addrinfo* a;
-  int  e = getaddrinfo(h, p, &hints, &as);
-  if (!e) {
-    for (a = as; a != NULL; a = a->ai_next) {
-      s = socket(a->ai_family, a->ai_socktype, a->ai_protocol); if (s <  0) continue;
-      c = connect(s, a->ai_addr, a->ai_addrlen);                if (c == 0) break;
-      shut(s);
-    }
-    if (c == 0) printf("Open :.: PeerLink _ (%s:%s) [%i]\n", h, p, s);
-    freeaddrinfo(as);
+  switch (e = getaddrinfo(h, p, &hints, &as)) {
+    case 0:
+      for (a = as; a != NULL; a = a->ai_next) {
+        s =  socket(a->ai_family, a->ai_socktype, a->ai_protocol); if (s <  0) continue;
+        c = connect(s, a->ai_addr, a->ai_addrlen);                 if (c == 0) break;
+        shut(s);
+      }
+      freeaddrinfo(as);
+      if (c == 0) printf("Open :.: PeerLink _ (%s:%s) [%i]\n", h, p, s);
+      break;
+    default:      printf("Error !!! getaddrinfo [%i]\n", e);
   }
 
   if    (c < 0) printf("Silence [%s:%s]\n", h, p);
@@ -126,6 +129,7 @@ void dr(char* a[]) // _ _ - _ _ [ _
 
 int main(int c, char* a[])
 {
+  signal(SIGPIPE, SIG_IGN);
   printf("\n\n%s\n"    , "CORSIS PortFusion    ( -S[nowfall 1.2.1 )");
   printf(    "%s\n"    , "(c) 2013 Cetin Sert. All rights reserved.");
   printf("  \n%s - %s - [%s]\n\n\n", __OS__, __ARCH__, __TIMESTAMP__);
