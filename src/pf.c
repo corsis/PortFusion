@@ -130,12 +130,12 @@ void  flow(int len, int a, int b) /* (>-<) */
 
 typedef struct { int l; int a; char* h; char* p; } p_flow_args;
 void* p_flow(void* args) {
-  printf("^\n");
+  printf("+\n");
   p_flow_args _ = *((p_flow_args*)args);
   int b = at(_.h, _.p); if (b > -1) flow(_.l, _.a, b);
                         else        shut(     _.a   );
+  printf("-\n");
   pthread_exit(NULL);
-  printf("_\n");
 }
 int forkFlow(int len, int a, char* h, char* p) {
   pthread_t t; p_flow_args x = { len, a, h, p };
@@ -169,7 +169,10 @@ void lf(char* a[]) // _ ] - _ _
 {
   char* lp = a[1];
   char* rh = a[4]; char* rp = a[5];
-  for (;;) { int l = lis(NULL, lp); for (;;) forkFlow(CHUNK, acc(l), rh, rp); }
+  for (;;) {
+    int l = lis(NULL, lp); if (l < 0) { sleep(1); continue; }
+    for (;;) forkFlow(CHUNK, acc(l), rh, rp);
+  }
 }
 void run(char* a[]) { if (!strcmp(a[2], "]")) lf(a); else dr(a); }
 #define PRODUCT "CORSIS PortFusion    ( ]S[nowfall 1.0.0 )"
