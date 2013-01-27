@@ -25,10 +25,15 @@ ssize_t splice(int fd_in,loff_t* off_in,int fd_out,loff_t* off_out, size_t len,u
 
 //--------------------------------------------------------------------------------------------CLIENT
 
-#define CHUNK (4096)
+#ifndef CHUNK
+#define CHUNK (48*1024)
+#endif
 
 int sendAll(int s, void* b, size_t l) { 
-  size_t i =  0; for (; i < l; i += send(s, b, l - i, 0)); return i == l ? 0 : -1;
+//size_t i = 0; for (; i < l; i += send(s, b, l - i, MSG_NOSIGNAL));
+  int i = send(s, b, l, MSG_NOSIGNAL);
+  if (i != l) printf("sendAll %i = %i\n", l, i);
+  return i == l ? 0 : -1;
 } //(<:)
 int snd (int s, char* m) { sendAll(s, m, strlen(m)); return sendAll(s, "\r\n", strlen("\r\n")); }
 int rcv1(int s)          { char m[1]; return recv(s, m, 1, 0); }
@@ -67,6 +72,8 @@ int at(char* h, char* p) // (.@.)
 int lis(char* h, char* p) // (@<)
 {
   int s = -1, c = -1, e = 0;
+
+  printf("€");
 
   struct addrinfo hints;
   memset(&hints, 0, sizeof(struct addrinfo));
@@ -107,15 +114,13 @@ void to(size_t len, int s, int t) // (>-)
                   splice(rw[0], NULL, t    , NULL, bytes, SPLICE_F_MOVE);
   close(rw[0]); close(rw[1]);
 #else
-  char a[len];
-  while ((bytes = recv(s, a, len, 0)) > 0)
-               sendAll(t, a, bytes);
+  char a[len]; while ((bytes = recv(s, a, len, 0)) > 0) if (sendAll(t, a, bytes) < 0) break;
 #endif
-  shut(s); shut(t);
+  shut(t);
 }
 
 #ifdef USE_POSIX_THREADS
-void* p_to(void* args) { int* lab = (int*) args; to(lab[0], lab[1], lab[2]); pthread_exit(NULL); }
+void* p_to(void* args) { int* lab = (int*) args; to(lab[0], lab[1], lab[2]); return NULL; }
 
 void  flow(int len, int a, int b) /* (>-<) */
 {
@@ -135,7 +140,7 @@ void* p_flow(void* args) {
   int b = at(_.h, _.p); if (b > -1) flow(_.l, _.a, b);
                         else        shut(     _.a   );
   printf("-\n");
-  pthread_exit(NULL);
+  return NULL;
 }
 int forkFlow(int len, int a, char* h, char* p) {
   pthread_t t; p_flow_args x = { len, a, h, p };
@@ -171,7 +176,9 @@ void lf(char* a[]) // _ ] - _ _
   char* rh = a[4]; char* rp = a[5];
   for (;;) {
     int l = lis(NULL, lp); if (l < 0) { sleep(1); continue; }
-    for (;;) forkFlow(CHUNK, acc(l), rh, rp);
+    int n = 0;
+    while (getchar() != 13) forkFlow(CHUNK, acc(l), rh, rp);
+    break;
   }
 }
 void run(char* a[]) { if (!strcmp(a[2], "]")) lf(a); else dr(a); }
@@ -188,6 +195,7 @@ void err() { printf(">> %s", "GO"); }
 int main(int c, char* a[])
 {
   signal(SIGPIPE, err);
+  setvbuf(stdout, NULL, _IONBF, 0);
   printf("\n\n%s\n"    , PRODUCT                                    );
   printf(    "%s\n"    , "(c) 2013 Cetin Sert. All rights reserved.");
   printf("  \n%s - %s - [%s]\n\n\n", __OS__, __ARCH__, __TIMESTAMP__);
@@ -200,6 +208,6 @@ int main(int c, char* a[])
 #endif
     printf("\n\n");
   }
-  else { printf("(zeroCopy,%s)\n", zeroCopy); run(a); }
+  else { printf("(chunk,%i)\n", CHUNK); printf("(zeroCopy,%s)\n", zeroCopy); run(a); }
   return 0;
 }

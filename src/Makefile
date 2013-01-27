@@ -65,7 +65,7 @@ ifneq (,$(findstring gcc, $(f)))
 endif
 
 ifneq (,$(findstring debug, $(f)))
-  CFLAGS  += -g
+  CFLAGS  += -g -O
 else
   CFLAGS  += -O3
 endif
@@ -89,7 +89,7 @@ endif
 $(BIN): $(SRC)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 	-ls -l $@
-	-strip $@
+	#-strip $@
 	-ls -l $@
 
 $(DIST): $(BIN)
