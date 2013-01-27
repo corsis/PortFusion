@@ -30,14 +30,13 @@ ssize_t splice(int fd_in,loff_t* off_in,int fd_out,loff_t* off_out, size_t len,u
 #endif
 
 int sendAll(int s, void* b, size_t l) { 
-//size_t i = 0; for (; i < l; i += send(s, b, l - i, MSG_NOSIGNAL));
   int i = send(s, b, l, MSG_NOSIGNAL);
   if (i != l) printf("sendAll %i = %i\n", l, i);
   return i == l ? 0 : -1;
 } //(<:)
 int snd (int s, char* m) { sendAll(s, m, strlen(m)); return sendAll(s, "\r\n", strlen("\r\n")); }
 int rcv1(int s)          { char m[1]; return recv(s, m, 1, 0); }
-int shut(int s)     { shutdown(s, SHUT_RDWR); return close(s); }
+int shut(int s)     { printf("Close  :.: _ [%i]\n", s); shutdown(s, SHUT_RDWR); return close(s); }
 
 int at(char* h, char* p) // (.@.)
 {
@@ -73,8 +72,6 @@ int lis(char* h, char* p) // (@<)
 {
   int s = -1, c = -1, e = 0;
 
-  printf("€");
-
   struct addrinfo hints;
   memset(&hints, 0, sizeof(struct addrinfo));
   hints.ai_flags    = AI_PASSIVE | AI_NUMERICHOST;
@@ -100,7 +97,7 @@ int lis(char* h, char* p) // (@<)
   return c < 0 ? c : s;
 }
 
-int acc(int l) { int s = accept(l, NULL, NULL); printf("Accept :.: _ [%i]\n", s); return s; }
+int acc(int l) { int s = accept4(l, NULL, NULL, SOCK_CLOEXEC); printf("Accept :.: _ [%i]\n", s); return s; }
 #endif
 
 //--------------------------------------------------------------------------------------------SPLICE
@@ -135,14 +132,14 @@ void  flow(int len, int a, int b) /* (>-<) */
 
 typedef struct { int l; int a; char* h; char* p; } p_flow_args;
 void* p_flow(void* args) {
-  printf("+\n");
   p_flow_args _ = *((p_flow_args*)args);
+  printf("Flow2  >-< %i & %s:%s\n", _.a, _.h, _.p);
   int b = at(_.h, _.p); if (b > -1) flow(_.l, _.a, b);
                         else        shut(     _.a   );
-  printf("-\n");
   return NULL;
 }
 int forkFlow(int len, int a, char* h, char* p) {
+  printf("Flow1  >-< %i & %s:%s\n", a, h, p);
   pthread_t t; p_flow_args x = { len, a, h, p };
   int c = pthread_create(&t, NULL, p_flow, &x); pthread_detach(t); return c;
 }
@@ -176,8 +173,7 @@ void lf(char* a[]) // _ ] - _ _
   char* rh = a[4]; char* rp = a[5];
   for (;;) {
     int l = lis(NULL, lp); if (l < 0) { sleep(1); continue; }
-    int n = 0;
-    while (getchar() != 13) forkFlow(CHUNK, acc(l), rh, rp);
+    for (;;) forkFlow(CHUNK, acc(l), rh, rp);
     break;
   }
 }
