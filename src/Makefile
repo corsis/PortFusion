@@ -77,6 +77,10 @@ ifeq (,$(findstring portable-threads, $(f)))
   LDFLAGS += -pthread
 endif
 
+ifneq (,$(findstring with-server, $(f)))
+  CFLAGS  += -DBUILD_SERVER
+endif
+
 
 #############################################
 
