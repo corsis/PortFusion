@@ -58,7 +58,7 @@ int at(char* h, char* p) // (.@.)
         shut(s);
       }
       freeaddrinfo(as);
-      if (c == 0) printf("Open :.: PeerLink _ (%s:%s) [%i]\n", h, p, s);
+      if (c == 0) printf("Open   :.: PeerLink _ (%s:%s) [%i]\n", h, p, s);
       break;
     default:      printf("Error !!! getaddrinfo [%i]\n", e);
   }
@@ -174,7 +174,7 @@ void lf(char* a[]) // _ ] - _ _
   char* rh = a[4]; char* rp = a[5];
   for (;;) {
     int l = lis(NULL, lp); if (l < 0) { sleep(1); continue; }
-    for (;;) { printf("FloX\n"); forkFlow(CHUNK, acc(l), rh, rp); }
+    for (;;) forkFlow(CHUNK, acc(l), rh, rp);
   }
 }
 void run(char* a[]) { if (!strcmp(a[2], "]")) lf(a); else dr(a); }

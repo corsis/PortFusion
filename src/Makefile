@@ -9,13 +9,24 @@
 
 #############################################
 
-# Source and Binary File Names
+# Source and Binary Files
 
 SRC     = pf.c
 BINDEF  = pf
 
 ifeq (,$(BIN))
   BIN   = $(BINDEF)
+endif
+
+
+#############################################
+
+# Default Compiler Flags
+
+ifneq (,$(findstring debug, $(f)))
+  CFLAGS  += -g
+else
+  CFLAGS  += -O3
 endif
 
 CFLAGS += -Wall -Wextra
@@ -66,11 +77,6 @@ ifneq (,$(findstring gcc, $(f)))
 endif
 endif
 
-ifneq (,$(findstring debug, $(f)))
-  CFLAGS  += -g #-O
-else
-  CFLAGS  += -O3
-endif
 ifeq (,$(findstring portable-loops, $(f)))
   CFLAGS  += -DUSE_LINUX_SPLICE
 endif
