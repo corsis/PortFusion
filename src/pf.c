@@ -7,7 +7,7 @@
 #include <netdb.h>          // addrinfo
 #include <sys/socket.h>     // socket, connect, send, recv
 #include <unistd.h>         // close, sleep
-#include <signal.h>
+#include <signal.h>         // signal -- not recommended but works ok for now
 
 #ifdef  USE_LINUX_SPLICE
 #define zeroCopy "True"
@@ -177,32 +177,41 @@ void lf(const char* a[]) // _ ] - _ _
   }
 }
 void run(const char* a[]) { if (!strcmp(a[2], "]")) lf(a); else dr(a); }
-#define PRODUCT "CORSIS PortFusion    ( ]S[nowfall 1.0.0 )"
+#define PRODUCT "\x1B[1mCORSIS \x1B[31mPortFusion\x1B[0m\x1B[0m    ( ]S[nowfall 1.0.0 )"
 #else
 #define run dr
-#define PRODUCT "CORSIS PortFusion    ( -S[nowfall 1.0.0 )"
+#define PRODUCT "\x1B[1mCORSIS \x1B[31mPortFusion\x1B[0m\x1B[0m    ( -S[nowfall 1.0.0 )"
 #endif
 
 //----------------------------------------------------------------------------------------------MAIN
 
+#define KNRM  "\x1B[0m"
+#define KBLD  "\x1B[1m"
+#define KRED  "\x1B[31m"
+#define KGRN  "\x1B[32m"
+#define KBLU  "\x1B[34m"
+
 void err() { printf(">> %s", "GO"); }
+void ext() { printf("\b\bUser   @@@ Thank you for testing!\n\n\n"); printf(KNRM); _exit(0); }
 
 int main(const int c, const char* a[])
 {
-  signal(SIGPIPE, err);
   setvbuf(stdout, NULL, _IONBF, 0);
+  signal(SIGPIPE, err); signal(SIGINT , ext);
   printf("\n\n%s\n"    , PRODUCT                                    );
   printf(    "%s\n"    , "(c) 2013 Cetin Sert. All rights reserved.");
   printf("  \n%s - %s - [%s]\n\n\n", __OS__, __ARCH__, __TIMESTAMP__);
+  printf(KNRM); printf(KBLU);
   if (c < MAC + 1) {
-    printf("  %s\n"  , "See usage: http://fusion.corsis.eu");
-    printf("  %s\n\n", "Available:");
-    printf("  %s\n", "  p h - p h [ p            distributed reverse");
+    printf("%s\n"  , "See usage: http://fusion.corsis.eu");
+    printf("%s\n\n", "Available:");
+    printf("%s\n", "p h - p h [ p         distributed reverse");
 #ifdef BUILD_SERVER
-    printf("  %s\n", "    p ]     - h p          local       forward");
+    printf("%s\n", "  p ]     - h p       local       forward");
 #endif
     printf("\n\n");
   }
-  else { printf("(chunk,%i)\n", CHUNK); printf("(zeroCopy,%s)\n", zeroCopy); run(a); }
+  else { printf("(chunk,%i)\n", CHUNK); printf("(zeroCopy,%s)\n\n", zeroCopy); printf(KGRN); run(a); }
+  printf(KNRM);
   return 0;
 }
