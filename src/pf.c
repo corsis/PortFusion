@@ -36,7 +36,7 @@ int sendAll(int s, void* b, size_t l) {
 } //(<:)
 int snd (int s, char* m) { sendAll(s, m, strlen(m)); return sendAll(s, "\r\n", strlen("\r\n")); }
 int rcv1(int s)          { char m[1]; return recv(s, m, 1, 0); }
-int shut(int s)     { printf("Close  :.: _ [%i]\n", s); shutdown(s, SHUT_RDWR); return close(s); }
+int shut(int s)  { /*printf("Close  :.: _ [%i]\n", s);*/shutdown(s, SHUT_RDWR); return close(s); }
 int reuse(int s)  { int on = 1; return setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)); }
 
 int at(char* h, char* p) // (.@.)
@@ -134,13 +134,11 @@ void  flow(int len, int a, int b) /* (>-<) */
 typedef struct { int l; int a; char* h; char* p; } p_flow_args;
 void* p_flow(void* args) {
   p_flow_args _ = *((p_flow_args*)args); free(args);
-  printf("Flow2  >-< %i & %s:%s\n", _.a, _.h, _.p);
   int b = at(_.h, _.p); if (b > -1) flow(_.l, _.a, b);
                         else        shut(     _.a   );
   return NULL;
 }
 int forkFlow(int len, int a, char* h, char* p) {
-  printf("Flow1  >-< %i & %s:%s\n", a, h, p);
   pthread_t t; p_flow_args* _ = malloc(sizeof *_); _->l = len; _->a = a; _->h=h; _->p=p;
   int c = pthread_create(&t, NULL, p_flow, _); pthread_detach(t); return c;
 }
