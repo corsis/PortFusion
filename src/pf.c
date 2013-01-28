@@ -190,6 +190,7 @@ void run(const char* a[]) { if (!strcmp(a[2], "]")) lf(a); else dr(a); }
 #define KRED  "\x1B[31m"
 #define KGRN  "\x1B[32m"
 #define KBLU  "\x1B[34m"
+#define KYEL  "\x1B[33m"
 
 void err() { printf(">> %s", "GO"); }
 void ext() { printf("\b\bUser   @@@ Thank you for testing!\n\n\n"); printf(KNRM); _exit(0); }
@@ -201,7 +202,7 @@ int main(const int c, const char* a[])
   printf("\n\n%s\n"    , PRODUCT                                    );
   printf(    "%s\n"    , "(c) 2013 Cetin Sert. All rights reserved.");
   printf("  \n%s - %s - [%s]\n\n\n", __OS__, __ARCH__, __TIMESTAMP__);
-  printf(KNRM); printf(KBLU);
+  printf(KNRM); printf(KYEL);
   if (c < MAC + 1) {
     printf("%s\n"  , "See usage: http://fusion.corsis.eu");
     printf("%s\n\n", "Available:");
