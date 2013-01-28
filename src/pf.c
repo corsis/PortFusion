@@ -29,17 +29,18 @@ ssize_t splice(int fd_in,loff_t* off_in,int fd_out,loff_t* off_out, size_t len,u
 #define CHUNK (48*1024)
 #endif
 
-int sendAll(int s, void* b, size_t l) { 
-  int i = send(s, b, l, MSG_NOSIGNAL);
-  if (i != l) printf("sendAll %i = %i\n", l, i);
-  return i == l ? 0 : -1;
+int sendAll(int s, void* b, ssize_t l) {
+//  size_t i = (size_t)send(s, b, l, MSG_NOSIGNAL);
+//if (i != l) printf("sendAll %i = %i\n", (int)l, i);
+//  return i == l ? 0 : -1;
+  return send(s, b, l, MSG_NOSIGNAL) != l;
 } //(<:)
 int snd (int s, char* m) { sendAll(s, m, strlen(m)); return sendAll(s, "\r\n", strlen("\r\n")); }
 int rcv1(int s)          { char m[1]; return recv(s, m, 1, 0); }
 int shut(int s)  { /*printf("Close  :.: _ [%i]\n", s);*/shutdown(s, SHUT_RDWR); return close(s); }
 int reuse(int s)  { int on = 1; return setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)); }
 
-int at(char* h, char* p) // (.@.)
+int at(const char* h, const char* p) // (.@.)
 {
   int s = -1, c = -1, e = 0;
 
@@ -69,7 +70,7 @@ int at(char* h, char* p) // (.@.)
 
 #ifdef BUILD_SERVER
 #define MC 128
-int lis(char* h, char* p) // (@<)
+int lis(const char* h, const char* p) // (@<)
 {
   int s = -1, c = -1, e = 0;
 
@@ -131,14 +132,14 @@ void  flow(int len, int a, int b) /* (>-<) */
   printf("Terminate ::: FusionLink [%i] [%i]\n", a, b);
 }
 
-typedef struct { int l; int a; char* h; char* p; } p_flow_args;
+typedef struct { int l; int a; const char* h; const char* p; } p_flow_args;
 void* p_flow(void* args) {
   p_flow_args _ = *((p_flow_args*)args); free(args);
   int b = at(_.h, _.p); if (b > -1) flow(_.l, _.a, b);
                         else        shut(     _.a   );
   return NULL;
 }
-int forkFlow(int len, int a, char* h, char* p) {
+int forkFlow(int len, int a, const char* h, const char* p) {
   pthread_t t; p_flow_args* _ = malloc(sizeof *_); _->l = len; _->a = a; _->h=h; _->p=p;
   int c = pthread_create(&t, NULL, p_flow, _); pthread_detach(t); return c;
 }
@@ -147,14 +148,14 @@ int forkFlow(int len, int a, char* h, char* p) {
 //---------------------------------------------------------------------------------------------TASKS
 
 #define MAC (7)
-void dr(char* a[]) // _ _ - _ _ [ _
+void dr(const char* a[]) // _ _ - _ _ [ _
 {
   // lp lh - fp fh [ rp
-  char* lp = a[1]; char* lh = a[2];
-  char* fp = a[4]; char* fh = a[5];
-  char* rp = a[7];
-  char  m[64]; sprintf(m, "(:-<-:) %s", rp);
-  char* c = "Send (%s) :.: PeerLink _ _\n";
+  const char* lp = a[1]; const char* lh = a[2];
+  const char* fp = a[4]; const char* fh = a[5];
+  const char* rp = a[7];
+  const char* c  = "Send (%s) :.: PeerLink _ _\n";
+        char  m[64]; sprintf(m, "(:-<-:) %s", rp);
   for (;;) {
          int f = at(fh, fp); if (f < 0) { sleep(1); continue; };
     printf  (c, m);
@@ -166,16 +167,16 @@ void dr(char* a[]) // _ _ - _ _ [ _
 #ifdef BUILD_SERVER
 #undef  MAC
 #define MAC (5)
-void lf(char* a[]) // _ ] - _ _
+void lf(const char* a[]) // _ ] - _ _
 {
-  char* lp = a[1];
-  char* rh = a[4]; char* rp = a[5];
+  const char* lp = a[1];
+  const char* rh = a[4]; const char* rp = a[5];
   for (;;) {
     int l = lis(NULL, lp); if (l < 0) { sleep(1); continue; }
     for (;;) forkFlow(CHUNK, acc(l), rh, rp);
   }
 }
-void run(char* a[]) { if (!strcmp(a[2], "]")) lf(a); else dr(a); }
+void run(const char* a[]) { if (!strcmp(a[2], "]")) lf(a); else dr(a); }
 #define PRODUCT "CORSIS PortFusion    ( ]S[nowfall 1.0.0 )"
 #else
 #define run dr
@@ -186,7 +187,7 @@ void run(char* a[]) { if (!strcmp(a[2], "]")) lf(a); else dr(a); }
 
 void err() { printf(">> %s", "GO"); }
 
-int main(int c, char* a[])
+int main(const int c, const char* a[])
 {
   signal(SIGPIPE, err);
   setvbuf(stdout, NULL, _IONBF, 0);
