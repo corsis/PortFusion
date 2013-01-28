@@ -203,7 +203,7 @@ int main(const int c, const char* a[])
   printf(    "%s\n"    , "(c) 2013 Cetin Sert. All rights reserved.");
   printf("  \n%s - %s - [%s]\n\n\n", __OS__, __ARCH__, __TIMESTAMP__);
   printf(KNRM); printf(KYEL);
-  if (c < MAC + 1) {
+  if (c < MAC + 1) { printf(KBLU);
     printf("%s\n"  , "See usage: http://fusion.corsis.eu");
     printf("%s\n\n", "Available:");
     printf("%s\n", "p h - p h [ p         distributed reverse");
