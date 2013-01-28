@@ -133,16 +133,16 @@ void  flow(int len, int a, int b) /* (>-<) */
 
 typedef struct { int l; int a; char* h; char* p; } p_flow_args;
 void* p_flow(void* args) {
-  p_flow_args _ = *((p_flow_args*)args);
-  printf("Flow2  >-< %i & %s:%i\n", _.a, _.h, (int)_.p);
+  p_flow_args _ = *((p_flow_args*)args); free(args);
+  printf("Flow2  >-< %i & %s:%s\n", _.a, _.h, _.p);
   int b = at(_.h, _.p); if (b > -1) flow(_.l, _.a, b);
                         else        shut(     _.a   );
   return NULL;
 }
 int forkFlow(int len, int a, char* h, char* p) {
-  printf("Flow1  >-< %i & %s:%i\n", a, h, (int)p);
-  pthread_t t; p_flow_args x = { len, a, h, p };
-  int c = pthread_create(&t, NULL, p_flow, &x); pthread_detach(t); return c;
+  printf("Flow1  >-< %i & %s:%s\n", a, h, p);
+  pthread_t t; p_flow_args* _ = malloc(sizeof *_); _->l = len; _->a = a; _->h=h; _->p=p;
+  int c = pthread_create(&t, NULL, p_flow, _); pthread_detach(t); return c;
 }
 #endif
 
