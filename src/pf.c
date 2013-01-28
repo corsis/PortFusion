@@ -37,6 +37,7 @@ int sendAll(int s, void* b, size_t l) {
 int snd (int s, char* m) { sendAll(s, m, strlen(m)); return sendAll(s, "\r\n", strlen("\r\n")); }
 int rcv1(int s)          { char m[1]; return recv(s, m, 1, 0); }
 int shut(int s)     { printf("Close  :.: _ [%i]\n", s); shutdown(s, SHUT_RDWR); return close(s); }
+int reuse(int s)  { int on = 1; return setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)); }
 
 int at(char* h, char* p) // (.@.)
 {
@@ -83,21 +84,21 @@ int lis(char* h, char* p) // (@<)
   switch (e = getaddrinfo(h, p, &hints, &as)) {
     case 0:
       for (a = as; a != NULL; a = a->ai_next) {
-        s = socket(a->ai_family, a->ai_socktype, a->ai_protocol); if (s <  0) continue;
-        c =   bind(s, a->ai_addr, a->ai_addrlen) + listen(s, MC); if (c == 0) break;
+        s = socket(a->ai_family, a->ai_socktype, a->ai_protocol); if (reuse(s) < 0) continue;
+        c =   bind(s, a->ai_addr, a->ai_addrlen) + listen(s, MC); if (      c == 0) break;
         shut(s);
       }
       freeaddrinfo(as);
       if (c == 0) printf("Listen :^: (%s,%s) [%i]\n", h, p, s);
       break;
-    default:      printf("Error !!! getaddrinfo [%i]\n", e);
+    default:      printf("Error  !!! getaddrinfo [%i]\n", e);
   }
 
   if    (c < 0) printf("NoBind [%s:%s]\n", h, p);
   return c < 0 ? c : s;
 }
 
-int acc(int l) { int s = accept4(l, NULL, NULL, SOCK_CLOEXEC); printf("Accept :.: _ [%i]\n", s); return s; }
+int acc(int l) { int s = accept(l, NULL, NULL); printf("Accept :.: _ [%i]\n", s); return s; }
 #endif
 
 //--------------------------------------------------------------------------------------------SPLICE
@@ -133,13 +134,13 @@ void  flow(int len, int a, int b) /* (>-<) */
 typedef struct { int l; int a; char* h; char* p; } p_flow_args;
 void* p_flow(void* args) {
   p_flow_args _ = *((p_flow_args*)args);
-  printf("Flow2  >-< %i & %s:%s\n", _.a, _.h, _.p);
+  printf("Flow2  >-< %i & %s:%i\n", _.a, _.h, (int)_.p);
   int b = at(_.h, _.p); if (b > -1) flow(_.l, _.a, b);
                         else        shut(     _.a   );
   return NULL;
 }
 int forkFlow(int len, int a, char* h, char* p) {
-  printf("Flow1  >-< %i & %s:%s\n", a, h, p);
+  printf("Flow1  >-< %i & %s:%i\n", a, h, (int)p);
   pthread_t t; p_flow_args x = { len, a, h, p };
   int c = pthread_create(&t, NULL, p_flow, &x); pthread_detach(t); return c;
 }
@@ -173,8 +174,7 @@ void lf(char* a[]) // _ ] - _ _
   char* rh = a[4]; char* rp = a[5];
   for (;;) {
     int l = lis(NULL, lp); if (l < 0) { sleep(1); continue; }
-    for (;;) forkFlow(CHUNK, acc(l), rh, rp);
-    break;
+    for (;;) { printf("FloX\n"); forkFlow(CHUNK, acc(l), rh, rp); }
   }
 }
 void run(char* a[]) { if (!strcmp(a[2], "]")) lf(a); else dr(a); }

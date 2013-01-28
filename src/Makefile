@@ -55,6 +55,7 @@ ifneq (,$(findstring static, $(f)))
   SUFFIX  += -static
 endif
 
+ifeq  (,$(findstring scan, $(f)))
 ifneq (,$(findstring llvm, $(f)))
   CC       = clang
 else
@@ -63,9 +64,10 @@ endif
 ifneq (,$(findstring gcc, $(f)))
   CC       = gcc
 endif
+endif
 
 ifneq (,$(findstring debug, $(f)))
-  CFLAGS  += -g -O
+  CFLAGS  += -g #-O
 else
   CFLAGS  += -O3
 endif
