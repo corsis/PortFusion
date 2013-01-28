@@ -42,13 +42,12 @@ endif
 ifndef ARCH
 ARCH   := $(shell uname -m)
 endif
+ifdef CHUNK
+CFLAGS += -DCHUNK=$(CHUNK)
+endif
 CFLAGS += -D__OS__="\"$(OS)\""
 CFLAGS += -D__ARCH__="\"$(ARCH)\""
 DIST    = $(BIN)-$(OS)-$(ARCH)$(SUFFIX)
-
-ifeq (,$(findstring mips, $(ARCH)))
-  f    += llvm
-endif
 
 
 #############################################

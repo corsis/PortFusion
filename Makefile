@@ -10,8 +10,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=PortFusion
-PKG_VERSION:=2013-01-22
-PKG_RELEASE:=2013-01-22
+PKG_VERSION:=2013-01-28
+PKG_RELEASE:=2013-01-28
 PKG_LICENSE:=GPLv3
 PKG_LICENSE_FILE:=License
 PKG_MAINTAINER:=Cetin Sert <fusion@corsis.eu>, Corsis Research
@@ -72,7 +72,7 @@ define Build/Prepare
 endef
 
 define Build/Compile
-	OS=OpenWrt ARCH=native $(MAKE) -C $(PKG_BUILD_DIR) $(TARGET_CONFIGURE_OPTS)
+	f=with-server OS=OpenWrt ARCH=native CHUNK=16384 $(MAKE) -C $(PKG_BUILD_DIR) $(TARGET_CONFIGURE_OPTS)
 endef
 
 define Package/pf/install
