@@ -202,8 +202,8 @@ int main(const int c, const char* a[])
   printf("\n\n%s\n"    , PRODUCT                                    );
   printf(    "%s\n"    , "(c) 2013 Cetin Sert. All rights reserved.");
   printf("  \n%s - %s - [%s]\n\n\n", __OS__, __ARCH__, __TIMESTAMP__);
-  printf(KNRM); printf(KYEL);
-  if (c < MAC + 1) { printf(KBLU);
+  printf(KNRM); printf(KBLU);
+  if (c < MAC + 1) { printf(KYEL);
     printf("%s\n"  , "See usage: http://fusion.corsis.eu");
     printf("%s\n\n", "Available:");
     printf("%s\n", "p h - p h [ p         distributed reverse");
