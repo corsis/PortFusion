@@ -24,7 +24,10 @@ ssize_t splice(int fd_in,loff_t* off_in,int fd_out,loff_t* off_out, size_t len,u
 #include <pthread.h>
 #endif
 
-//--------------------------------------------------------------------------------------------CLIENT
+#define SERVER 0
+#define CLIENT 1
+
+//-----------------------------------------------------------------------------------------------TCP
 
 #ifndef CHUNK
 #define CHUNK (48*1024)
@@ -36,12 +39,12 @@ int sendAll(int s, void* b, ssize_t l) { return send(s, b, l, MSG_NOSIGNAL) != l
 int  snd (int s, char* m) { sendAll(s, m, strlen(m)); return sendAll(s, "\r\n", strlen("\r\n")); }
 int  rcv1(int s)          { char m[1]; return recv(s, m, 1, 0); }
 int  shut(int s) { shutdown(s, SHUT_RDWR); return close(s); }
-int reuse(int s) { int on = 1; return setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof on); }
+int reuse(int s) { int on = 1; setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof on); return s; }
+int   acc(int s) { int c = accept(s, NULL, NULL); printf("Accept  .  [%i]\n", c); return c; }
 
-#define CLIENT 0
-int tcp(const int c, const char* h, const char* p)
+int   tcp(const int c, const char* h, const char* p)
 {
-        int s = -1, e = -1;
+        int s = -1, e = -1; const char* pp = c ? "CL" : "SV";
         struct addrinfo hints; memset(&hints, 0, sizeof (struct addrinfo));
         hints.ai_socktype = SOCK_STREAM; hints.ai_protocol = IPPROTO_TCP;
 if (!c) hints.ai_flags = AI_PASSIVE | AI_NUMERICHOST;
@@ -58,60 +61,11 @@ else               e =    bind(reuse(s), a -> ai_addr, a -> ai_addrlen) + listen
           default: e = abs(e);
         }
 
-        if      (e <  0) { printf("TCP     -  (%s:%s) "      ,    h, p);      perror(NULL); }
-        else if (e  > 0)   printf("Tcp     -  (%s:%s) %s\n"  ,    h, p, gai_strerror(-e));
-        else               printf("TCP     .  [%i] (%s:%s)\n", s, h, p);
+        if      (e <  0) { printf("%s|TCP  -  (%s:%s) "      , pp,    h, p);      perror(NULL); }
+        else if (e  > 0)   printf("%s|TCP  -  (%s:%s) %s\n"  , pp,    h, p, gai_strerror(-e));
+        else               printf("%s|TCP  .  [%i] (%s:%s)\n", pp, s, h, p);
         return   e != 0 ? -abs(e) : s;
 }
-
-int at(const char* h, const char* p) // (.@.)
-{
-  int s = -1, e = -1;
-  struct addrinfo hints; memset(&hints, 0, sizeof(struct addrinfo));
-  hints.ai_socktype = SOCK_STREAM; hints.ai_protocol = IPPROTO_TCP;
-
-  struct addrinfo* as; struct addrinfo* a;
-  switch (e = getaddrinfo(h, p, &hints, &as)) {
-    case 0:
-      for (a = as; a != NULL; a = a->ai_next) {
-        s = socket(a->ai_family, a->ai_socktype, a->ai_protocol); if (s < 0) continue;
-        e = connect(s, a->ai_addr, a->ai_addrlen);     if (e < 0) shut(s); else break;
-      } freeaddrinfo(as); break;
-    default: e = abs(e);
-  }
-
-  if      (e < 0) { printf("Connec  -  (%s:%s) ", h, p); perror(NULL); }
-  else if (e > 0)   printf("Connec  -  (%s:%s) %s\n", h, p, gai_strerror(-e));
-  else              printf("Connec  .  [%i] (%s:%s)\n", s, h, p);
-  return e < 0 ? e : s;
-}
-
-#ifdef BUILD_SERVER
-int lis(const char* h, const char* p) // (@<)
-{
-  int s = -1, e = -1;
-  struct addrinfo hints; memset(&hints, 0, sizeof(struct addrinfo));
-  hints.ai_socktype = SOCK_STREAM; hints.ai_protocol = IPPROTO_TCP;
-  hints.ai_flags    = AI_PASSIVE | AI_NUMERICHOST;
-
-  struct addrinfo* as; struct addrinfo* a;
-  switch (e = getaddrinfo(h, p, &hints, &as)) {
-    case 0:
-      for (a = as; a != NULL; a = a->ai_next) {
-        s = socket(a->ai_family, a->ai_socktype, a->ai_protocol);   if (reuse(s) < 0) continue;
-        e = bind(s, a->ai_addr, a->ai_addrlen) + listen(s, _BACKLOG_); if (e < 0) shut(s); else break;
-      } freeaddrinfo(as); break;
-    default: e = abs(e);
-  }
-
-  if      (e < 0) { printf("Listen  -  (%s:%s) ", h, p); perror(NULL); }
-  else if (e > 0)   printf("Listen  -  (%s:%s) %s\n", h, p, gai_strerror(-e));
-  else              printf("Listen  ^  [%i] (%s:%s)\n", s, h, p);
-  return e < 0 ? e : s;
-}
-
-int acc(int l) { int s = accept(l, NULL, NULL); printf("Accept  .  [%i]\n", s); return s; }
-#endif
 
 //--------------------------------------------------------------------------------------------SPLICE
 
@@ -146,9 +100,8 @@ void  flow(int len, int a, int b) /* (>-<) */
 typedef struct { int l; int a; const char* h; const char* p; } p_flow_args;
 void* p_flow(void* args) {
   p_flow_args _ = *((p_flow_args*)args); free(args);
-  int b = at(_.h, _.p); if (b > -1) flow(_.l, _.a, b);
-                        else        shut(     _.a   );
-  return NULL;
+  int b = tcp(CLIENT, _.h, _.p); if (b > -1) flow(_.l, _.a, b);
+                                 else        shut(     _.a   ); return NULL;
 }
 int forkFlow(int len, int a, const char* h, const char* p) {
   pthread_t t; p_flow_args* _ = malloc(sizeof *_); _->l = len; _->a = a; _->h=h; _->p=p;
@@ -167,7 +120,7 @@ void dr(const char* a[]) // lp lh - fp fh [ rp                                  
   const char* c  = "Send    .  PeerLink _ _ <%s>\n";
         char  m[64]; sprintf(m, "(:-<-:) %s", rp);
   for (;;) {
-         int f = at(fh, fp); if (f < 0) { sleep(1); continue; };
+         int f = tcp(CLIENT, fh, fp); if (f < 0) { sleep(1); continue; };
     printf  (c, m);
     if (!snd(f, m) && rcv1(f)) { forkFlow(CHUNK, f, lh, lp); }
     else                             shut(       f        );
@@ -182,7 +135,7 @@ void lf(const char* a[]) // lp ] - rh rp                                        
   const char* lp = a[1];
   const char* rh = a[4]; const char* rp = a[5];
   for (;;) {
-    int l = lis(NULL, lp); if (l < 0) { sleep(1); continue; }
+    int l = tcp(SERVER, NULL, lp); if (l < 0) { sleep(1); continue; }
     for (;;) forkFlow(CHUNK, acc(l), rh, rp);
   }
 }
