@@ -30,11 +30,39 @@ ssize_t splice(int fd_in,loff_t* off_in,int fd_out,loff_t* off_out, size_t len,u
 #define CHUNK (48*1024)
 #endif
 
+#define _BACKLOG_ 128
+
 int sendAll(int s, void* b, ssize_t l) { return send(s, b, l, MSG_NOSIGNAL) != l; } 
-int snd (int s, char* m) { sendAll(s, m, strlen(m)); return sendAll(s, "\r\n", strlen("\r\n")); }
-int rcv1(int s)          { char m[1]; return recv(s, m, 1, 0); }
-int shut(int s)  { /*printf("Close  :.: _ [%i]\n", s);*/shutdown(s, SHUT_RDWR); return close(s); }
-int reuse(int s)  { int on = 1; return setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)); }
+int  snd (int s, char* m) { sendAll(s, m, strlen(m)); return sendAll(s, "\r\n", strlen("\r\n")); }
+int  rcv1(int s)          { char m[1]; return recv(s, m, 1, 0); }
+int  shut(int s) { shutdown(s, SHUT_RDWR); return close(s); }
+int reuse(int s) { int on = 1; return setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof on); }
+
+#define CLIENT 0
+int tcp(const int c, const char* h, const char* p)
+{
+        int s = -1, e = -1;
+        struct addrinfo hints; memset(&hints, 0, sizeof (struct addrinfo));
+        hints.ai_socktype = SOCK_STREAM; hints.ai_protocol = IPPROTO_TCP;
+if (!c) hints.ai_flags = AI_PASSIVE | AI_NUMERICHOST;
+
+        struct addrinfo* as; struct addrinfo* a;
+        switch (e = getaddrinfo(h, p, &hints, &as)) {
+          case 0:
+            for (a = as; a != NULL; a = a -> ai_next) {
+              if ((s = socket(a -> ai_family, a -> ai_socktype, a -> ai_protocol)) < 0) continue;
+if ( c)            e = connect(      s , a -> ai_addr, a -> ai_addrlen);
+else               e =    bind(reuse(s), a -> ai_addr, a -> ai_addrlen) + listen(s, _BACKLOG_);
+              if  (e < 0) shut(s); else break;
+            } freeaddrinfo(as);         break;
+          default: e = abs(e);
+        }
+
+        if      (e <  0) { printf("TCP     -  (%s:%s) "      ,    h, p);      perror(NULL); }
+        else if (e  > 0)   printf("Tcp     -  (%s:%s) %s\n"  ,    h, p, gai_strerror(-e));
+        else               printf("TCP     .  [%i] (%s:%s)\n", s, h, p);
+        return   e != 0 ? -abs(e) : s;
+}
 
 int at(const char* h, const char* p) // (.@.)
 {
@@ -59,7 +87,6 @@ int at(const char* h, const char* p) // (.@.)
 }
 
 #ifdef BUILD_SERVER
-#define MC 128
 int lis(const char* h, const char* p) // (@<)
 {
   int s = -1, e = -1;
@@ -72,7 +99,7 @@ int lis(const char* h, const char* p) // (@<)
     case 0:
       for (a = as; a != NULL; a = a->ai_next) {
         s = socket(a->ai_family, a->ai_socktype, a->ai_protocol);   if (reuse(s) < 0) continue;
-        e = bind(s, a->ai_addr, a->ai_addrlen) + listen(s, MC); if (e < 0) shut(s); else break;
+        e = bind(s, a->ai_addr, a->ai_addrlen) + listen(s, _BACKLOG_); if (e < 0) shut(s); else break;
       } freeaddrinfo(as); break;
     default: e = abs(e);
   }
