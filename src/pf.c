@@ -8,6 +8,7 @@
 #include <sys/socket.h>     // socket, connect, send, recv
 #include <unistd.h>         // close, sleep
 #include <signal.h>         // signal -- not recommended but works ok for now
+#include <errno.h>          // errno
 
 #ifdef  USE_LINUX_SPLICE
 #define zeroCopy "True"
@@ -42,7 +43,7 @@ int reuse(int s)  { int on = 1; return setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &
 
 int at(const char* h, const char* p) // (.@.)
 {
-  int s = -1, c = -1, e = 0;
+  int s = -1, e = -1;
 
   struct addrinfo hints;
   memset(&hints, 0, sizeof(struct addrinfo));
@@ -55,24 +56,24 @@ int at(const char* h, const char* p) // (.@.)
     case 0:
       for (a = as; a != NULL; a = a->ai_next) {
         s =  socket(a->ai_family, a->ai_socktype, a->ai_protocol); if (s <  0) continue;
-        c = connect(s, a->ai_addr, a->ai_addrlen);                 if (c == 0) break;
+        e = connect(s, a->ai_addr, a->ai_addrlen);                 if (e == 0) break;
         shut(s);
       }
       freeaddrinfo(as);
-      if (c == 0) printf("Open   :.: PeerLink _ (%s:%s) [%i]\n", h, p, s);
       break;
-    default:      printf("Error !!! getaddrinfo [%i]\n", e);
+    default: errno = EADDRNOTAVAIL;
   }
 
-  if    (c < 0) printf("Silence [%s:%s]\n", h, p);
-  return c < 0 ? c : s;
+  if    (e < 0) { printf("NoComm --- [%s:%s] ", h, p); perror(NULL); }
+  else            printf("Open   :.: PeerLink _ (%s:%s) [%i]\n", h, p, s);
+  return e < 0 ? e : s;
 }
 
 #ifdef BUILD_SERVER
 #define MC 128
 int lis(const char* h, const char* p) // (@<)
 {
-  int s = -1, c = -1, e = 0;
+  int s = -1, e = -1;
 
   struct addrinfo hints;
   memset(&hints, 0, sizeof(struct addrinfo));
@@ -86,17 +87,17 @@ int lis(const char* h, const char* p) // (@<)
     case 0:
       for (a = as; a != NULL; a = a->ai_next) {
         s = socket(a->ai_family, a->ai_socktype, a->ai_protocol); if (reuse(s) < 0) continue;
-        c =   bind(s, a->ai_addr, a->ai_addrlen) + listen(s, MC); if (      c == 0) break;
+        e =   bind(s, a->ai_addr, a->ai_addrlen) + listen(s, MC); if (      e == 0) break;
         shut(s);
       }
       freeaddrinfo(as);
-      if (c == 0) printf("Listen :^: (%s,%s) [%i]\n", h, p, s);
       break;
-    default:      printf("Error  !!! getaddrinfo [%i]\n", e);
+    default: errno = EADDRNOTAVAIL;
   }
 
-  if    (c < 0) printf("NoBind [%s:%s]\n", h, p);
-  return c < 0 ? c : s;
+  if    (e < 0) { printf("NoBind --- [%s:%s] ", h, p); perror(NULL); }
+  else            printf("Listen :^: (%s,%s) [%i]\n", h, p, s);
+  return e < 0 ? e : s;
 }
 
 int acc(int l) { int s = accept(l, NULL, NULL); printf("Accept :.: _ [%i]\n", s); return s; }
@@ -193,7 +194,7 @@ void run(const char* a[]) { if (!strcmp(a[2], "]")) lf(a); else dr(a); }
 #define KYEL  "\x1B[33m"
 
 void err() { printf(">> %s", "GO"); }
-void ext() { printf("\b\bUser   @@@ Thank you for testing!\n\n\n"); printf(KNRM); _exit(0); }
+void ext() { printf("\b\bUser   @@@ Thank you for testing :)!\n\n\n"); printf(KNRM); _exit(0); }
 
 int main(const int c, const char* a[])
 {
