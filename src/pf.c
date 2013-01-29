@@ -39,7 +39,8 @@ int sendAll(int s, void* b, ssize_t l) { return send(s, b, l, MSG_NOSIGNAL) != l
 int  snd (int s, char* m) { sendAll(s, m, strlen(m)); return sendAll(s, "\r\n", strlen("\r\n")); }
 int  rcv1(int s)          { char m[1]; return recv(s, m, 1, 0); }
 int  shut(int s) { shutdown(s, SHUT_RDWR); return close(s); }
-int reuse(int s) { int on = 1; setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof on); return s; }
+int ipv64(int s) { int on = 0; setsockopt(s, IPPROTO_IPV6, IPV6_V6ONLY , &on, sizeof on); return s; }
+int reuse(int s) { int on = 1; setsockopt(s, SOL_SOCKET  , SO_REUSEADDR, &on, sizeof on); return s; }
 int   acc(int s) { int c = accept(s, NULL, NULL); printf("Accept  .  [%i]\n", c); return c; }
 
 int   tcp(const int c, const char* h, const char* p)
@@ -54,8 +55,8 @@ if (!c) hints.ai_flags = AI_PASSIVE | AI_NUMERICHOST;
           case 0:
             for (a = as; a != NULL; a = a -> ai_next) {
               if ((s = socket(a -> ai_family, a -> ai_socktype, a -> ai_protocol)) < 0) continue;
-if ( c)            e = connect(      s , a -> ai_addr, a -> ai_addrlen);
-else               e =    bind(reuse(s), a -> ai_addr, a -> ai_addrlen) + listen(s, _BACKLOG_);
+if ( c)            e = connect(            s  , a -> ai_addr, a -> ai_addrlen);
+else               e =    bind(ipv64(reuse(s)), a -> ai_addr, a -> ai_addrlen) + listen(s, _BACKLOG_);
               if  (e < 0) shut(s); else break;
             } freeaddrinfo(as);         break;
           default: e = abs(e);

@@ -72,7 +72,7 @@ define Build/Prepare
 endef
 
 define Build/Compile
-	f=with-server OS=OpenWrt ARCH=native CHUNK=16384 $(MAKE) -C $(PKG_BUILD_DIR) $(TARGET_CONFIGURE_OPTS)
+	OS=OpenWrt ARCH=native CHUNK=16384 $(MAKE) -C $(PKG_BUILD_DIR) $(TARGET_CONFIGURE_OPTS)
 endef
 
 define Package/pf/install
