@@ -54,7 +54,7 @@ if (!c) hints.ai_flags = AI_PASSIVE | AI_NUMERICHOST;
         switch (e = getaddrinfo(h, p, &hints, &as)) {
           case 0:
             for (a = as; a != NULL; a = a -> ai_next) {
-              if ((s = socket(a -> ai_family, a -> ai_socktype, a -> ai_protocol)) < 0) continue;
+              if ((e = (s = socket(a -> ai_family, a -> ai_socktype, a -> ai_protocol))) < 0) continue;
 if ( c)            e = connect(            s  , a -> ai_addr, a -> ai_addrlen);
 else               e =    bind(ipv64(reuse(s)), a -> ai_addr, a -> ai_addrlen) + listen(s, _BACKLOG_);
               if  (e < 0) shut(s); else break;
@@ -118,11 +118,11 @@ void dr(const char* a[]) // lp lh - fp fh [ rp                                  
   const char* lp = a[1]; const char* lh = a[2];
   const char* fp = a[4]; const char* fh = a[5];
   const char* rp = a[7];
-  const char* c  = "Send    .  PeerLink _ _ <%s>\n";
+  const char* c  = "Send    .  [%i] %s\n";
         char  m[64]; sprintf(m, "(:-<-:) %s", rp);
   for (;;) {
          int f = tcp(CLIENT, fh, fp); if (f < 0) { sleep(1); continue; };
-    printf  (c, m);
+    printf  (c, f, m);
     if (!snd(f, m) && rcv1(f)) { forkFlow(CHUNK, f, lh, lp); }
     else                             shut(       f        );
   }
