@@ -2,8 +2,8 @@
 // Copyright © 2013  Cetin Sert
 
 #include <stdio.h>          // printf
-#include <string.h>         // memset, strlen
-#include <stdlib.h>         // atoi
+#include <string.h>         // memset, strlen, strcpy, strtok
+#include <stdlib.h>         // abs, free
 #include <netdb.h>          // addrinfo
 #include <sys/socket.h>     // socket, connect, send, recv
 #include <unistd.h>         // close, sleep
@@ -136,7 +136,8 @@ void lf(const char* a[]) // lp ] - rh rp                                        
   const char* lp = a[1];
   const char* rh = a[4]; const char* rp = a[5];
   for (;;) {
-    int l = tcp(SERVER, NULL, lp); if (l < 0) { sleep(1); continue; }
+           int l = tcp(SERVER, "::"     , lp);
+    if (l < 0) l = tcp(SERVER, "0.0.0.0", lp); if (l < 0) { sleep(1); continue; }
     for (;;) forkFlow(CHUNK, acc(l), rh, rp);
   }
 }
