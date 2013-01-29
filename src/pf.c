@@ -39,23 +39,16 @@ int reuse(int s)  { int on = 1; return setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &
 int at(const char* h, const char* p) // (.@.)
 {
   int s = -1, e = -1;
+  struct addrinfo hints; memset(&hints, 0, sizeof(struct addrinfo));
+  hints.ai_socktype = SOCK_STREAM; hints.ai_protocol = IPPROTO_TCP;
 
-  struct addrinfo hints;
-  memset(&hints, 0, sizeof(struct addrinfo));
-  hints.ai_socktype = SOCK_STREAM;
-  hints.ai_protocol = IPPROTO_TCP;
-
-  struct addrinfo* as;
-  struct addrinfo* a;
+  struct addrinfo* as; struct addrinfo* a;
   switch (e = getaddrinfo(h, p, &hints, &as)) {
     case 0:
       for (a = as; a != NULL; a = a->ai_next) {
-        s =  socket(a->ai_family, a->ai_socktype, a->ai_protocol); if (s <  0) continue;
-        e = connect(s, a->ai_addr, a->ai_addrlen);                 if (e == 0) break;
-        shut(s);
-      }
-      freeaddrinfo(as);
-      break;
+        s = socket(a->ai_family, a->ai_socktype, a->ai_protocol); if (s < 0) continue;
+        e = connect(s, a->ai_addr, a->ai_addrlen);     if (e < 0) shut(s); else break;
+      } freeaddrinfo(as); break;
     default: errno = EADDRNOTAVAIL;
   }
 
@@ -69,24 +62,18 @@ int at(const char* h, const char* p) // (.@.)
 int lis(const char* h, const char* p) // (@<)
 {
   int s = -1, e = -1;
-
-  struct addrinfo hints;
-  memset(&hints, 0, sizeof(struct addrinfo));
+  struct addrinfo hints; memset(&hints, 0, sizeof(struct addrinfo));
+  hints.ai_socktype = SOCK_STREAM; hints.ai_protocol = IPPROTO_TCP;
   hints.ai_flags    = AI_PASSIVE | AI_NUMERICHOST;
-  hints.ai_socktype = SOCK_STREAM;
-  hints.ai_protocol = IPPROTO_TCP;
 
-  struct addrinfo* as;
-  struct addrinfo* a;
+  struct addrinfo* as; struct addrinfo* a;
   switch (e = getaddrinfo(h, p, &hints, &as)) {
     case 0:
       for (a = as; a != NULL; a = a->ai_next) {
         s = socket(a->ai_family, a->ai_socktype, a->ai_protocol); if (reuse(s) < 0) continue;
         e =   bind(s, a->ai_addr, a->ai_addrlen) + listen(s, MC); if (      e == 0) break;
         shut(s);
-      }
-      freeaddrinfo(as);
-      break;
+      } freeaddrinfo(as); break;
     default: errno = EADDRNOTAVAIL;
   }
 
@@ -144,9 +131,8 @@ int forkFlow(int len, int a, const char* h, const char* p) {
 //---------------------------------------------------------------------------------------------TASKS
 
 #define MAC (7)
-void dr(const char* a[]) // _ _ - _ _ [ _
+void dr(const char* a[]) // lp lh - fp fh [ rp                                         _ _ - _ _ [ _
 {
-  // lp lh - fp fh [ rp
   const char* lp = a[1]; const char* lh = a[2];
   const char* fp = a[4]; const char* fh = a[5];
   const char* rp = a[7];
@@ -163,7 +149,7 @@ void dr(const char* a[]) // _ _ - _ _ [ _
 #ifdef BUILD_SERVER
 #undef  MAC
 #define MAC (5)
-void lf(const char* a[]) // _ ] - _ _
+void lf(const char* a[]) // lp ] - rh rp                                                   _ ] - _ _
 {
   const char* lp = a[1];
   const char* rh = a[4]; const char* rp = a[5];
@@ -188,7 +174,7 @@ void run(const char* a[]) { if (!strcmp(a[2], "]")) lf(a); else dr(a); }
 #define KBLU  "\x1B[34m"
 #define KYEL  "\x1B[33m"
 
-void err() { printf(">> %s", "GO"); }
+void err() { printf("Interr  !  SIGPIPE\n"); }
 void ext() { printf("\b\bInterr  !  Thank you for testing!\n\n\n"); printf(KNRM); _exit(0); }
 
 int main(const int c, const char* a[])
