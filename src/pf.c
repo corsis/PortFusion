@@ -49,11 +49,12 @@ int at(const char* h, const char* p) // (.@.)
         s = socket(a->ai_family, a->ai_socktype, a->ai_protocol); if (s < 0) continue;
         e = connect(s, a->ai_addr, a->ai_addrlen);     if (e < 0) shut(s); else break;
       } freeaddrinfo(as); break;
-    default: errno = EADDRNOTAVAIL;
+    default: e = abs(e);
   }
 
-  if    (e < 0) { printf("Connec  -  (%s:%s) ", h, p); perror(NULL); }
-  else            printf("Connec  .  [%i] (%s:%s)\n", s, h, p);
+  if      (e < 0) { printf("Connec  -  (%s:%s) ", h, p); perror(NULL); }
+  else if (e > 0)   printf("Connec  -  (%s:%s) %s\n", h, p, gai_strerror(-e));
+  else              printf("Connec  .  [%i] (%s:%s)\n", s, h, p);
   return e < 0 ? e : s;
 }
 
@@ -70,15 +71,15 @@ int lis(const char* h, const char* p) // (@<)
   switch (e = getaddrinfo(h, p, &hints, &as)) {
     case 0:
       for (a = as; a != NULL; a = a->ai_next) {
-        s = socket(a->ai_family, a->ai_socktype, a->ai_protocol); if (reuse(s) < 0) continue;
-        e =   bind(s, a->ai_addr, a->ai_addrlen) + listen(s, MC); if (      e == 0) break;
-        shut(s);
+        s = socket(a->ai_family, a->ai_socktype, a->ai_protocol);   if (reuse(s) < 0) continue;
+        e = bind(s, a->ai_addr, a->ai_addrlen) + listen(s, MC); if (e < 0) shut(s); else break;
       } freeaddrinfo(as); break;
-    default: errno = EADDRNOTAVAIL;
+    default: e = abs(e);
   }
 
-  if    (e < 0) { printf("Listen  -  (%s:%s) ", h, p); perror(NULL); }
-  else            printf("Listen  ^  [%i] (%s:%s)\n", s, h, p);
+  if      (e < 0) { printf("Listen  -  (%s:%s) ", h, p); perror(NULL); }
+  else if (e > 0)   printf("Listen  -  (%s:%s) %s\n", h, p, gai_strerror(-e));
+  else              printf("Listen  ^  [%i] (%s:%s)\n", s, h, p);
   return e < 0 ? e : s;
 }
 
@@ -170,23 +171,25 @@ void run(const char* a[]) { if (!strcmp(a[2], "]")) lf(a); else dr(a); }
 #define KNRM  "\x1B[0m"
 #define KBLD  "\x1B[1m"
 #define KRED  "\x1B[31m"
-#define KGRN  "\x1B[32m"
 #define KBLU  "\x1B[34m"
 #define KYEL  "\x1B[33m"
 
-void err() { printf("Interr  !  SIGPIPE\n"); }
-void ext() { printf("\b\bInterr  !  Thank you for testing!\n\n\n"); printf(KNRM); _exit(0); }
+#define KERR KRED
+#define KRUN KYEL
+#define KINF KBLU
+
+void err() { printf(KERR "Interr  !  SIGPIPE\n" KRUN); }
+void ext() { printf(KERR "\b\bInterr  !  Thank you for testing!\n\n\n" KNRM); _exit(0); }
 
 int main(const int c, const char* a[])
 {
   setvbuf(stdout, NULL, _IONBF, 0);
-  signal(SIGPIPE, err); signal(SIGINT , ext);
-  printf("\n\n%s\n"    , PRODUCT                                    );
-  printf(    "%s\n"    , "(c) 2013 Cetin Sert. All rights reserved.");
-  printf("  \n%s - %s - [%s]\n\n\n", __OS__, __ARCH__, __TIMESTAMP__);
-  printf(KNRM); printf(KBLU);
-  if (c < MAC + 1) { printf(KYEL);
-    printf("%s\n"  , "See usage: http://fusion.corsis.eu");
+  signal(SIGPIPE, err); signal(SIGINT, ext);
+  printf("\n\n%s\n", PRODUCT                                         );
+  printf(    "%s\n", "(c) 2013 Cetin Sert. All rights reserved." KINF);
+  printf("  \n%s - %s - [%s]\n\n", __OS__, __ARCH__, __TIMESTAMP__);
+  if (c < MAC + 1) {
+    printf(KNRM "%s\n"  , "See usage: http://fusion.corsis.eu");
     printf("%s\n\n", "Available:");
     printf("%s\n", "p h - p h [ p         distributed reverse");
 #ifdef BUILD_SERVER
@@ -194,7 +197,7 @@ int main(const int c, const char* a[])
 #endif
     printf("\n\n");
   }
-  else { printf("(chunk,%i)\n", CHUNK); printf("(zeroCopy,%s)\n\n", zeroCopy); printf(KGRN); run(a); }
+  else { printf("(chunk,%i)\n", CHUNK); printf("(zeroCopy,%s)\n\n", zeroCopy); printf(KRUN); run(a); }
   printf(KNRM);
   return 0;
 }
