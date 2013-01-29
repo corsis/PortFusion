@@ -30,12 +30,7 @@ ssize_t splice(int fd_in,loff_t* off_in,int fd_out,loff_t* off_out, size_t len,u
 #define CHUNK (48*1024)
 #endif
 
-int sendAll(int s, void* b, ssize_t l) {
-//  size_t i = (size_t)send(s, b, l, MSG_NOSIGNAL);
-//if (i != l) printf("sendAll %i = %i\n", (int)l, i);
-//  return i == l ? 0 : -1;
-  return send(s, b, l, MSG_NOSIGNAL) != l;
-} //(<:)
+int sendAll(int s, void* b, ssize_t l) { return send(s, b, l, MSG_NOSIGNAL) != l; } 
 int snd (int s, char* m) { sendAll(s, m, strlen(m)); return sendAll(s, "\r\n", strlen("\r\n")); }
 int rcv1(int s)          { char m[1]; return recv(s, m, 1, 0); }
 int shut(int s)  { /*printf("Close  :.: _ [%i]\n", s);*/shutdown(s, SHUT_RDWR); return close(s); }
@@ -64,8 +59,8 @@ int at(const char* h, const char* p) // (.@.)
     default: errno = EADDRNOTAVAIL;
   }
 
-  if    (e < 0) { printf("NoComm --- [%s:%s] ", h, p); perror(NULL); }
-  else            printf("Open   :.: PeerLink _ (%s:%s) [%i]\n", h, p, s);
+  if    (e < 0) { printf("Connec  -  (%s:%s) ", h, p); perror(NULL); }
+  else            printf("Connec  .  [%i] (%s:%s)\n", s, h, p);
   return e < 0 ? e : s;
 }
 
@@ -95,12 +90,12 @@ int lis(const char* h, const char* p) // (@<)
     default: errno = EADDRNOTAVAIL;
   }
 
-  if    (e < 0) { printf("NoBind --- [%s:%s] ", h, p); perror(NULL); }
-  else            printf("Listen :^: (%s,%s) [%i]\n", h, p, s);
+  if    (e < 0) { printf("Listen  -  (%s:%s) ", h, p); perror(NULL); }
+  else            printf("Listen  ^  [%i] (%s:%s)\n", s, h, p);
   return e < 0 ? e : s;
 }
 
-int acc(int l) { int s = accept(l, NULL, NULL); printf("Accept :.: _ [%i]\n", s); return s; }
+int acc(int l) { int s = accept(l, NULL, NULL); printf("Accept  .  [%i]\n", s); return s; }
 #endif
 
 //--------------------------------------------------------------------------------------------SPLICE
@@ -124,13 +119,13 @@ void* p_to(void* args) { int* lab = (int*) args; to(lab[0], lab[1], lab[2]); ret
 
 void  flow(int len, int a, int b) /* (>-<) */
 {
-  printf("Establish ::: FusionLink [%i] [%i]\n", a, b);
+  printf("Establ  :  [%i] [%i]\n", a, b);
   int lab[3]; lab[0] = len; lab[1] = a; lab[2] = b;
   int lba[3]; lba[0] = len; lba[1] = b; lba[2] = a;
   pthread_t ab, ba;
   pthread_create(&ab, NULL, p_to, (void*) lab); pthread_create(&ba, NULL, p_to, (void*) lba);
   pthread_join  ( ab, NULL                   ); pthread_join  ( ba, NULL                   );
-  printf("Terminate ::: FusionLink [%i] [%i]\n", a, b);
+  printf("Termin  :  [%i] [%i]\n", a, b);
 }
 
 typedef struct { int l; int a; const char* h; const char* p; } p_flow_args;
@@ -155,7 +150,7 @@ void dr(const char* a[]) // _ _ - _ _ [ _
   const char* lp = a[1]; const char* lh = a[2];
   const char* fp = a[4]; const char* fh = a[5];
   const char* rp = a[7];
-  const char* c  = "Send (%s) :.: PeerLink _ _\n";
+  const char* c  = "Send    .  PeerLink _ _ <%s>\n";
         char  m[64]; sprintf(m, "(:-<-:) %s", rp);
   for (;;) {
          int f = at(fh, fp); if (f < 0) { sleep(1); continue; };
@@ -194,7 +189,7 @@ void run(const char* a[]) { if (!strcmp(a[2], "]")) lf(a); else dr(a); }
 #define KYEL  "\x1B[33m"
 
 void err() { printf(">> %s", "GO"); }
-void ext() { printf("\b\bUser   @@@ Thank you for testing :)!\n\n\n"); printf(KNRM); _exit(0); }
+void ext() { printf("\b\bInterr  !  Thank you for testing!\n\n\n"); printf(KNRM); _exit(0); }
 
 int main(const int c, const char* a[])
 {
