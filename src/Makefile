@@ -96,7 +96,7 @@ endif
 $(BIN): $(SRC)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 	-ls -l $@
-	#-strip $@
+	-strip $@
 	-ls -l $@
 
 $(DIST): $(BIN)

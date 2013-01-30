@@ -27,6 +27,15 @@ ssize_t splice(int fd_in,loff_t* off_in,int fd_out,loff_t* off_out, size_t len,u
 #define SERVER 0
 #define CLIENT 1
 
+//--------------------------------------------------------------------------------------------STRING
+
+void addrPort(char* ap[2], char* rap) {
+  char* lc = rindex(rap, ':');
+  if (!lc) { ap[1] = rap; return; }
+  if (lc > rap)     { ap[0] = rap; *lc = '\0'; }
+  if (*(lc+1) > '\0') ap[1] =       lc + 1;
+}
+
 //-----------------------------------------------------------------------------------------------TCP
 
 #ifndef CHUNK
@@ -113,7 +122,7 @@ int forkFlow(int len, int a, const char* h, const char* p) {
 //---------------------------------------------------------------------------------------------TASKS
 
 #define MAC (7)
-void dr(const char* a[]) // lp lh - fp fh [ rp                                         _ _ - _ _ [ _
+void dr(char* a[]) // lp lh - fp fh [ rp                                         _ _ - _ _ [ _
 {
   const char* lp = a[1]; const char* lh = a[2];
   const char* fp = a[4]; const char* fh = a[5];
@@ -131,17 +140,16 @@ void dr(const char* a[]) // lp lh - fp fh [ rp                                  
 #ifdef BUILD_SERVER
 #undef  MAC
 #define MAC (5)
-void lf(const char* a[]) // lp ] - rh rp                                                   _ ] - _ _
+void lf(char* a[]) // ap ] - rh rp                                                   _ ] - _ _
 {
-  const char* lp = a[1];
+  char* ap[2] = { "::", NULL }; addrPort(ap, a[1]);
   const char* rh = a[4]; const char* rp = a[5];
-  for (;;) {
-           int l = tcp(SERVER, "::"     , lp);
-    if (l < 0) l = tcp(SERVER, "0.0.0.0", lp); if (l < 0) { sleep(1); continue; }
+  for (;;) {    
+    int l = tcp(SERVER, ap[0], ap[1]); if (l < 0) { sleep(1); continue; }
     for (;;) forkFlow(CHUNK, acc(l), rh, rp);
   }
 }
-void run(const char* a[]) { if (!strcmp(a[2], "]")) lf(a); else dr(a); }
+void run(char* a[]) { if (!strcmp(a[2], "]")) lf(a); else dr(a); }
 #define PRODUCT "\x1B[1mCORSIS \x1B[31mPortFusion\x1B[0m\x1B[0m    ( ]S[nowfall 1.0.0 )"
 #else
 #define run dr
@@ -163,7 +171,7 @@ void run(const char* a[]) { if (!strcmp(a[2], "]")) lf(a); else dr(a); }
 void err() { printf(KERR "Interr  !  SIGPIPE\n" KRUN); }
 void ext() { printf(KERR "\b\bInterr  !  Thank you for testing!\n\n\n" KNRM); _exit(0); }
 
-int main(const int c, const char* a[])
+int main(const int c, char* a[])
 {
   setvbuf(stdout, NULL, _IONBF, 0);
   signal(SIGPIPE, err); signal(SIGINT, ext);
@@ -172,10 +180,11 @@ int main(const int c, const char* a[])
   printf("  \n%s - %s - [%s]\n\n", __OS__, __ARCH__, __TIMESTAMP__);
   if (c < MAC + 1) {
     printf(KNRM "%s\n"  , "See usage: http://fusion.corsis.eu");
+    printf("%s\n"  , "Protocols: PortFusion 1");
     printf("%s\n\n", "Available:");
-    printf("%s\n", "p h - p h [ p         distributed reverse");
+    printf("%s\n", "  \x1B[31mp h\x1B[0m - \x1B[33mp h\x1B[0m [   \x1B[32mp\x1B[0m     \x1B[2mDistributed Reverse\x1B[0m");
 #ifdef BUILD_SERVER
-    printf("%s\n", "  p ]     - h p       local       forward");
+    printf("%s\n", "  \x1B[32mp\x1B[0m   ]     - \x1B[31mh p\x1B[0m     \x1B[2mLocal       Forward\x1B[0m");
 #endif
     printf("\n\n");
   }
