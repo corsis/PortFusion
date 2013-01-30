@@ -31,9 +31,9 @@ ssize_t splice(int fd_in,loff_t* off_in,int fd_out,loff_t* off_out, size_t len,u
 
 void addrPort(char* ap[2], char* rap) {
   char* lc = rindex(rap, ':');
-  if (!lc) { ap[1] = rap; return; }
-  if (lc > rap)     { ap[0] = rap; *lc = '\0'; }
-  if (*(lc+1) > '\0') ap[1] =       lc + 1;
+  if ( !lc) { ap[1] = rap; return; }
+  if (  lc > rap)    { ap[0] = rap; *lc = '\0'; }
+  if (*(lc+1) > '\0')  ap[1] =       lc + 1;
 }
 
 //-----------------------------------------------------------------------------------------------TCP
@@ -42,14 +42,16 @@ void addrPort(char* ap[2], char* rap) {
 #define CHUNK (48*1024)
 #endif
 
+int chunk = CHUNK;
+
 #define _BACKLOG_ 128
 
 int sendAll(int s, void* b, ssize_t l) { return send(s, b, l, MSG_NOSIGNAL) != l; } 
 int  snd (int s, char* m) { sendAll(s, m, strlen(m)); return sendAll(s, "\r\n", strlen("\r\n")); }
 int  rcv1(int s)          { char m[1]; return recv(s, m, 1, 0); }
 int  shut(int s) { shutdown(s, SHUT_RDWR); return close(s); }
-int ipv64(int s) { int on = 0; setsockopt(s, IPPROTO_IPV6, IPV6_V6ONLY , &on, sizeof on); return s; }
-int reuse(int s) { int on = 1; setsockopt(s, SOL_SOCKET  , SO_REUSEADDR, &on, sizeof on); return s; }
+int ipv64(int s) { int v = 0; setsockopt(s, IPPROTO_IPV6, IPV6_V6ONLY , &v, sizeof v); return s; }
+int reuse(int s) { int v = 1; setsockopt(s, SOL_SOCKET  , SO_REUSEADDR, &v, sizeof v); return s; }
 int   acc(int s) { int c = accept(s, NULL, NULL); printf("Accept  .  [%i]\n", c); return c; }
 
 int   tcp(const int c, const char* h, const char* p)
@@ -122,7 +124,7 @@ int forkFlow(int len, int a, const char* h, const char* p) {
 //---------------------------------------------------------------------------------------------TASKS
 
 #define MAC (7)
-void dr(char* a[]) // lp lh - fp fh [ rp                                         _ _ - _ _ [ _
+void dr(char* a[]) // lp lh - fp fh [ ap                                               _ _ - _ _ [ _
 {
   const char* lp = a[1]; const char* lh = a[2];
   const char* fp = a[4]; const char* fh = a[5];
@@ -132,7 +134,7 @@ void dr(char* a[]) // lp lh - fp fh [ rp                                        
   for (;;) {
          int f = tcp(CLIENT, fh, fp); if (f < 0) { sleep(1); continue; };
     printf  (c, f, m);
-    if (!snd(f, m) && rcv1(f)) { forkFlow(CHUNK, f, lh, lp); }
+    if (!snd(f, m) && rcv1(f)) { forkFlow(chunk, f, lh, lp); }
     else                             shut(       f        );
   }
 }
@@ -140,13 +142,13 @@ void dr(char* a[]) // lp lh - fp fh [ rp                                        
 #ifdef BUILD_SERVER
 #undef  MAC
 #define MAC (5)
-void lf(char* a[]) // ap ] - rh rp                                                   _ ] - _ _
+void lf(char* a[]) // ap ] - rh rp                                                         _ ] - _ _
 {
   char* ap[2] = { "::", NULL }; addrPort(ap, a[1]);
   const char* rh = a[4]; const char* rp = a[5];
   for (;;) {    
     int l = tcp(SERVER, ap[0], ap[1]); if (l < 0) { sleep(1); continue; }
-    for (;;) forkFlow(CHUNK, acc(l), rh, rp);
+    for (;;) forkFlow(chunk, acc(l), rh, rp);
   }
 }
 void run(char* a[]) { if (!strcmp(a[2], "]")) lf(a); else dr(a); }
@@ -174,6 +176,7 @@ void ext() { printf(KERR "\b\bInterr  !  Thank you for testing!\n\n\n" KNRM); _e
 int main(const int c, char* a[])
 {
   setvbuf(stdout, NULL, _IONBF, 0);
+  if (!getenv("chunk") || !(chunk = atoi(getenv("chunk")))) chunk = CHUNK;
   signal(SIGPIPE, err); signal(SIGINT, ext);
   printf("\n\n%s\n", PRODUCT                                         );
   printf(    "%s\n", "(c) 2013 Cetin Sert. All rights reserved." KINF);
@@ -188,7 +191,7 @@ int main(const int c, char* a[])
 #endif
     printf("\n\n");
   }
-  else { printf("(chunk,%i)\n", CHUNK); printf("(zeroCopy,%s)\n\n", zeroCopy); printf(KRUN); run(a); }
+  else { printf("(chunk,%i)\n", chunk); printf("(zeroCopy,%s)\n\n", zeroCopy); printf(KRUN); run(a); }
   printf(KNRM);
   return 0;
 }
