@@ -144,7 +144,7 @@ void dr(char* a[]) // lp lh - fp fh [ ap                                        
 #define MAC (5)
 int tcp2SERVER(const char* h, const char* p) {
                             int l = tcp(SERVER, h        , p);
-  return (h != "::" || l > 0) ? l : tcp(SERVER, "0.0.0.0", p);
+  return (strcmp(h, "::") || l > 0) ? l : tcp(SERVER, "0.0.0.0", p);
 }
 
 void lf(char* a[]) // ap ] - rh rp                                                         _ ] - _ _
@@ -187,9 +187,9 @@ int main(const int c, char* a[])
   printf(    "%s\n", "(c) 2013 Cetin Sert. All rights reserved." KINF);
   printf("  \n%s - %s - [%s]\n\n", __OS__, __ARCH__, __TIMESTAMP__);
   if (c < MAC + 1) {
-    printf(KNRM "%s\n"  , "See usage: http://fusion.corsis.eu");
-    printf("%s\n"  , "Protocols: PortFusion 1");
-    printf("%s\n\n", "Available:");
+    printf(KNRM "  %s\n"  , "See usage: http://fusion.corsis.eu");
+    printf("  %s\n"  , "Protocols: PortFusion 1");
+    printf("  %s\n\n", "Available:");
     printf("%s\n", "  \x1B[31mp h\x1B[0m - \x1B[33mp h\x1B[0m [   \x1B[32mp\x1B[0m     \x1B[2mDistributed Reverse\x1B[0m");
 #ifdef BUILD_SERVER
     printf("%s\n", "  \x1B[32mp\x1B[0m   ]     - \x1B[31mh p\x1B[0m     \x1B[2mLocal       Forward\x1B[0m");
