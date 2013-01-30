@@ -142,12 +142,17 @@ void dr(char* a[]) // lp lh - fp fh [ ap                                        
 #ifdef BUILD_SERVER
 #undef  MAC
 #define MAC (5)
+int tcp2SERVER(const char* h, const char* p) {
+                            int l = tcp(SERVER, h        , p);
+  return (h != "::" || l > 0) ? l : tcp(SERVER, "0.0.0.0", p);
+}
+
 void lf(char* a[]) // ap ] - rh rp                                                         _ ] - _ _
 {
   char* ap[2] = { "::", NULL }; addrPort(ap, a[1]);
   const char* rh = a[4]; const char* rp = a[5];
   for (;;) {    
-    int l = tcp(SERVER, ap[0], ap[1]); if (l < 0) { sleep(1); continue; }
+    int l = tcp2SERVER(ap[0], ap[1]); if (l < 0) { sleep(1); continue; }
     for (;;) forkFlow(chunk, acc(l), rh, rp);
   }
 }
