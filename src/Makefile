@@ -23,8 +23,11 @@ endif
 
 # Default Compiler Flags
 
+STRIP = True
+
 ifneq (,$(findstring debug, $(f)))
   CFLAGS  += -g
+  STRIP    =
 else
   CFLAGS  += -O3
 endif
@@ -37,14 +40,15 @@ CFLAGS += -Wall -Wextra
 # CORSIS Build Name Components
 
 ifndef OS
-OS     := $(shell uname -s)
+  OS     := $(shell uname -s)
 endif
 ifndef ARCH
-ARCH   := $(shell uname -m)
+  ARCH   := $(shell uname -m)
 endif
 ifdef CHUNK
-CFLAGS += -DCHUNK=$(CHUNK)
+  CFLAGS += -DCHUNK=$(CHUNK)
 endif
+
 CFLAGS += -D__OS__="\"$(OS)\""
 CFLAGS += -D__ARCH__="\"$(ARCH)\""
 DIST    = $(BIN)-$(OS)-$(ARCH)$(SUFFIX)
@@ -96,8 +100,10 @@ endif
 $(BIN): $(SRC)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 	-ls -l $@
+ifdef STRIP
 	-strip $@
 	-ls -l $@
+endif
 
 $(DIST): $(BIN)
 	cp $< $@

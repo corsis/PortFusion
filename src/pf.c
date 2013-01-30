@@ -151,7 +151,7 @@ void lf(char* a[]) // ap ] - rh rp                                              
 {
   char* ap[2] = { "::", NULL }; addrPort(ap, a[1]);
   const char* rh = a[4]; const char* rp = a[5];
-  for (;;) {    
+  for (;;) {
     int l = tcp2SERVER(ap[0], ap[1]); if (l < 0) { sleep(1); continue; }
     for (;;) forkFlow(chunk, acc(l), rh, rp);
   }
