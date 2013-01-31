@@ -156,6 +156,7 @@ void lf(char* a[]) // ap ] - rh rp                                              
     for (;;) forkFlow(chunk, acc(l), rh, rp);
   }
 }
+
 void run(char* a[]) { if (!strcmp(a[2], "]")) lf(a); else dr(a); }
 #define PRODUCT "\x1B[1mCORSIS \x1B[31mPortFusion\x1B[0m\x1B[0m    ( ]S[nowfall 1.0.0 )"
 #else

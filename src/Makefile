@@ -45,9 +45,6 @@ endif
 ifndef ARCH
   ARCH   := $(shell uname -m)
 endif
-ifdef CHUNK
-  CFLAGS += -DCHUNK=$(CHUNK)
-endif
 
 CFLAGS += -D__OS__="\"$(OS)\""
 CFLAGS += -D__ARCH__="\"$(ARCH)\""
@@ -90,6 +87,15 @@ endif
 
 ifneq (,$(findstring with-server, $(f)))
   CFLAGS  += -DBUILD_SERVER
+endif
+
+
+#############################################
+
+# Static Recommendations
+
+ifdef CHUNK
+  CFLAGS += -DCHUNK=$(CHUNK)
 endif
 
 
