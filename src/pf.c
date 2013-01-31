@@ -143,7 +143,7 @@ void dr(char* a[]) // lp lh - fp fh [ ap                                        
 #undef  MAC
 #define MAC (5)
 int tcp2SERVER(const char* h, const char* p) {
-                            int l = tcp(SERVER, h        , p);
+                                  int l = tcp(SERVER, h        , p);
   return (strcmp(h, "::") || l > 0) ? l : tcp(SERVER, "0.0.0.0", p);
 }
 
