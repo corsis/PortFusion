@@ -59,7 +59,7 @@ menu "pf"
 	config PF_THREADS_POSIX
 		bool "POSIX threads"
 	config PF_THREADS_PROTO
-		bool "Protothreads"
+		bool "EPOLL"
 		help
 		  Not implemented.
 	endchoice
@@ -72,7 +72,7 @@ define Build/Prepare
 endef
 
 define Build/Compile
-	f=with-server OS=OpenWrt ARCH=NA CHUNK=4096 $(MAKE) -C $(PKG_BUILD_DIR) $(TARGET_CONFIGURE_OPTS)
+	f=with-server OS=OpenWrt ARCH=NA chunk=4096 $(MAKE) -C $(PKG_BUILD_DIR) $(TARGET_CONFIGURE_OPTS)
 endef
 
 define Package/pf/install

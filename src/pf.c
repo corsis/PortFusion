@@ -1,4 +1,5 @@
-// CORSIS PortFusion -S[nowfall
+
+// CORSIS PortFusion ]S[nowfall                                                                                                                      // CORSIS PortFusion -S[nowfall
 // Copyright © 2013  Cetin Sert
 
 #include <stdio.h>          // printf
@@ -41,10 +42,7 @@ void addrPort(char* ap[2], char* rap) {
 #ifndef CHUNK
 #define CHUNK (48*1024)
 #endif
-
 int chunk = CHUNK;
-
-#define _BACKLOG_ 128
 
 int sendAll(int s, void* b, ssize_t l) { return send(s, b, l, MSG_NOSIGNAL) != l; } 
 int  snd (int s, char* m) { sendAll(s, m, strlen(m)); return sendAll(s, "\r\n", strlen("\r\n")); }
@@ -52,10 +50,9 @@ int  rcv1(int s)          { char m[1]; return recv(s, m, 1, 0); }
 int  shut(int s) { shutdown(s, SHUT_RDWR); return close(s); }
 int ipv64(int s) { int v = 0; setsockopt(s, IPPROTO_IPV6, IPV6_V6ONLY , &v, sizeof v); return s; }
 int reuse(int s) { int v = 1; setsockopt(s, SOL_SOCKET  , SO_REUSEADDR, &v, sizeof v); return s; }
-int   acc(int s) { int c = accept(s, NULL, NULL); printf("Accept  .  [%i]\n", c); return c; }
+int   acc(int s) { int c = accept(s, NULL, NULL); if (c>-1) printf("Accept  .  [%i]\n", c); return c; }
 
-int   tcp(const int c, const char* h, const char* p)
-{
+int   tcp(const int c, const char* h, const char* p) {
         int s = -1, e = -1; const char* pp = c ? "CL" : "SV";
         struct addrinfo hints; memset(&hints, 0, sizeof (struct addrinfo));
         hints.ai_socktype = SOCK_STREAM; hints.ai_protocol = IPPROTO_TCP;
@@ -67,7 +64,7 @@ if (!c) hints.ai_flags = AI_PASSIVE | AI_NUMERICHOST;
             for (a = as; a != NULL; a = a -> ai_next) {
               if ((e = (s = socket(a -> ai_family, a -> ai_socktype, a -> ai_protocol))) < 0) continue;
 if ( c)            e = connect(            s  , a -> ai_addr, a -> ai_addrlen);
-else               e =    bind(ipv64(reuse(s)), a -> ai_addr, a -> ai_addrlen) + listen(s, _BACKLOG_);
+else               e =    bind(ipv64(reuse(s)), a -> ai_addr, a -> ai_addrlen);// + listen(s, SOMAXCONN);
               if  (e < 0) shut(s); else break;
             } freeaddrinfo(as);         break;
           default: e = abs(e);
@@ -81,8 +78,7 @@ else               e =    bind(ipv64(reuse(s)), a -> ai_addr, a -> ai_addrlen) +
 
 //--------------------------------------------------------------------------------------------SPLICE
 
-void to(size_t len, int s, int t) // (>-)
-{
+void to(size_t len, int s, int t) /* (>-) */ {
   int bytes;
 #ifdef USE_LINUX_SPLICE
   int rw[2]; if (pipe(rw)) return;
@@ -98,8 +94,7 @@ void to(size_t len, int s, int t) // (>-)
 #ifdef USE_POSIX_THREADS
 void* p_to(void* args) { int* lab = (int*) args; to(lab[0], lab[1], lab[2]); return NULL; }
 
-void  flow(int len, int a, int b) /* (>-<) */
-{
+void  flow(int len, int a, int b) /* (>-<) */ {
   printf("Establ  :  [%i] [%i]\n", a, b);
   int lab[3]; lab[0] = len; lab[1] = a; lab[2] = b;
   int lba[3]; lba[0] = len; lba[1] = b; lba[2] = a;
@@ -152,10 +147,59 @@ void lf(char* a[]) // ap ] - rh rp                                              
   char* ap[2] = { "::", NULL }; addrPort(ap, a[1]);
   const char* rh = a[4]; const char* rp = a[5];
   for (;;) {
-    int l = tcp2SERVER(ap[0], ap[1]); if (l < 0) { sleep(1); continue; }
+    int l = tcp2SERVER(ap[0], ap[1]); if (l + listen(l, SOMAXCONN) < 0) { sleep(1); continue; }
     for (;;) forkFlow(chunk, acc(l), rh, rp);
   }
 }
+
+#ifdef USE_LINUX_EPOLL
+#include <sys/epoll.h>
+#define MAXEVENTS 64
+int nonblocking(int s) { fcntl(s, F_SETFL, fcntl(s, F_GETFL, 0) | O_NONBLOCK); return s; }
+
+void
+lf_epoll(char* a[])
+{
+  char* ap[2] = { "::", NULL }; addrPort(ap, a[1]);
+
+  int l = nonblocking(tcp2SERVER(ap[0], ap[1])); listen(l, SOMAXCONN);
+
+  struct epoll_event  e; e.data.fd = l; e.events = EPOLLIN | EPOLLET;
+  struct epoll_event* es = calloc(MAXEVENTS, sizeof e);
+
+  int ep = epoll_create1(0); epoll_ctl(ep, EPOLL_CTL_ADD, l, &e);
+
+  while (1)
+  {
+    int n, i; n = epoll_wait(ep, es, MAXEVENTS, -1);
+
+    for (i = 0; i < n; i++)
+    {
+      struct epoll_event ei = es[i]; int eis = ei.data.fd;
+
+      // close error-ed sockets
+      if ((ei.events & EPOLLERR) || (ei.events & EPOLLHUP) || (ei.events & EPOLLIN)) {
+        printf("epoll error [%i]\n", eis); close(eis); continue;
+      }
+
+      // accept new connections
+      if (l == eis) {
+        while (1)
+        {
+          int c = acc(l);
+          if (c < 0) if   (errno == EAGAIN || errno == EWOULDBLOCK) break;
+                     else { perror("190");                          break; }
+          c = nonblocking(c);
+          e.data.fd = c; epoll_ctl(ep, EPOLL_CTL_ADD, c, &e);
+        }
+        continue;
+      }      
+    }
+  }
+
+  free(es);
+}
+#endif
 
 void run(char* a[]) { if (!strcmp(a[2], "]")) lf(a); else dr(a); }
 #define PRODUCT "\x1B[1mCORSIS \x1B[31mPortFusion\x1B[0m\x1B[0m    ( ]S[nowfall 1.0.0 )"
@@ -179,8 +223,7 @@ void run(char* a[]) { if (!strcmp(a[2], "]")) lf(a); else dr(a); }
 void err() { printf(KERR "Interr  !  SIGPIPE\n" KRUN); }
 void ext() { printf(KERR "\b\bInterr  !  Thank you for testing!\n\n\n" KNRM); _exit(0); }
 
-int main(const int c, char* a[])
-{
+int main(const int c, char* a[]) {
   setvbuf(stdout, NULL, _IONBF, 0);
   if (!getenv("chunk") || !(chunk = atoi(getenv("chunk")))) chunk = CHUNK;
   signal(SIGPIPE, err); signal(SIGINT, ext);
