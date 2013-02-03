@@ -157,6 +157,8 @@ void lf(char* a[]) // ap ] - rh rp                                              
 #define MAXEVENTS 64
 int nonblocking(int s) { fcntl(s, F_SETFL, fcntl(s, F_GETFL, 0) | O_NONBLOCK); return s; }
 
+#define EB (errno == EAGAIN || errno == EWOULDBLOCK)
+
 void
 lf_epoll(char* a[])
 {
@@ -169,42 +171,34 @@ lf_epoll(char* a[])
 
   int ep = epoll_create1(0); epoll_ctl(ep, EPOLL_CTL_ADD, l, &e);
 
+  char a[chunk]; int r, c;
+
   while (1)
   {
-    printf("epoll_wait\n");
-    int n, i; n = epoll_wait(ep, es, MAXEVENTS, -1);
+    int n = epoll_wait(ep, es, MAXEVENTS, -1);
 
-    for (i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
     {
       struct epoll_event ei = es[i]; int eis = ei.data.fd;
-      printf("epoll[%i]\n", eis);
 
       // close error-ed sockets
       if ((ei.events & EPOLLERR) || (ei.events & EPOLLHUP) || !(ei.events & EPOLLIN)) {
-        printf("epoll error [%i]\n", eis); close(eis); continue;
+        printf("ERRRRRRRRRR [%i]\n", eis); close(eis); continue;
       }
 
       // accept new connections
-      if (l == eis) { while (1) {
-          int c = acc(l);
-          if (c < 0) { if   (errno == EAGAIN || errno == EWOULDBLOCK) break;
-                       else { perror("191");                          break; } }
-          c = nonblocking(c); e.data.fd = c; epoll_ctl(ep, EPOLL_CTL_ADD, c, &e);
+      if (l == eis) {
+        while (1)
+        {
+          if ((c = acc(l)) < 0) { if (!EB) perror("191"); break; }
+          e.data.fd = c; epoll_ctl(ep, EPOLL_CTL_ADD, nonblocking(c), &e);
         }
         continue;
       }
 
       // handle clients
-      //while (1) 
-      //{
-        char a[chunk]; int r;
-        switch (r = recv(eis, a, chunk, 0))
-        {
-          case EAGAIN: break;
-          case 0     : break;
-          default    : sendAll(eis, a, r); close(eis); break;
-        }
-      //}
+      if ((r = recv(eis, a, chunk, 0)) < 0) { if (!EB) perror("199"); break; }
+      sendAll(eis, a, r); shut(eis);
     }
   }
 
