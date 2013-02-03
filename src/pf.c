@@ -171,7 +171,7 @@ lf_epoll(char* a[])
 
   int ep = epoll_create1(0); epoll_ctl(ep, EPOLL_CTL_ADD, l, &e);
 
-  char a[chunk]; int r, c;
+  char d[chunk]; int r, c;
 
   while (1)
   {
@@ -186,7 +186,7 @@ lf_epoll(char* a[])
         printf("ERRRRRRRRRR [%i]\n", eis); close(eis); continue;
       }
 
-      // accept new connections
+      // accept new connections, aggressively
       if (l == eis) {
         while (1)
         {
@@ -197,8 +197,8 @@ lf_epoll(char* a[])
       }
 
       // handle clients
-      if ((r = recv(eis, a, chunk, 0)) < 0) { if (!EB) perror("199"); break; }
-      sendAll(eis, a, r); shut(eis);
+      if ((r = recv(eis, d, chunk, 0)) < 0) { if (!EB) perror("199"); break; }
+      sendAll(eis, d, r); shut(eis);
     }
   }
 
