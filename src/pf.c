@@ -171,14 +171,16 @@ lf_epoll(char* a[])
 
   while (1)
   {
+    printf("epoll_wait\n");
     int n, i; n = epoll_wait(ep, es, MAXEVENTS, -1);
 
     for (i = 0; i < n; i++)
     {
       struct epoll_event ei = es[i]; int eis = ei.data.fd;
+      printf("epoll[%i]\n", eis);
 
       // close error-ed sockets
-      if ((ei.events & EPOLLERR) || (ei.events & EPOLLHUP) || (ei.events & EPOLLIN)) {
+      if ((ei.events & EPOLLERR) || (ei.events & EPOLLHUP) || !(ei.events & EPOLLIN)) {
         printf("epoll error [%i]\n", eis); close(eis); continue;
       }
 
@@ -188,12 +190,25 @@ lf_epoll(char* a[])
         {
           int c = acc(l);
           if (c < 0) if   (errno == EAGAIN || errno == EWOULDBLOCK) break;
-                     else { perror("190");                          break; }
-          c = nonblocking(c);
-          e.data.fd = c; epoll_ctl(ep, EPOLL_CTL_ADD, c, &e);
+                     else { perror("191");                          break; }
+          c = nonblocking(c); e.data.fd = c; epoll_ctl(ep, EPOLL_CTL_ADD, c, &e);
         }
         continue;
-      }      
+      }
+
+      // handle clients
+      int done = 0;
+      while (1)
+      {
+        char a[chunk]; int t; int r = recv(eis, a, chunk, 0);
+        switch (r)
+        {
+          case EAGAIN: done = 1; break;
+          case 0     : done = 1; break;
+          default    : t = sendAll(eis, a, r); done = 1; break;
+        }
+        if (done) { close(eis); break; }
+      }
     }
   }
 
@@ -201,7 +216,7 @@ lf_epoll(char* a[])
 }
 #endif
 
-void run(char* a[]) { if (!strcmp(a[2], "]")) lf(a); else dr(a); }
+void run(char* a[]) { if (!strcmp(a[2], "]")) lf_epoll(a); else dr(a); }
 #define PRODUCT "\x1B[1mCORSIS \x1B[31mPortFusion\x1B[0m\x1B[0m    ( ]S[nowfall 1.0.0 )"
 #else
 #define run dr

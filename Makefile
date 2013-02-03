@@ -36,8 +36,8 @@ define Package/pf/config
 menu "pf"
 	choice
 		prompt "Data transfer"
-		default PF_LOOPS_SPLICE
-	config PF_LOOPS_SPLICE
+		default PF_LOOPS_LINUX_SPLICE
+	config PF_LOOPS_LINUX_SPLICE
 		bool "Zero-copy in kernel space; pipe/splice"
 		help
 		  Open a pipe in kernel space and run for maximum
@@ -53,15 +53,19 @@ menu "pf"
 
 	choice
 		prompt "Concurrency"
-		default PF_THREADS_POSIX
+		default PF_CONCURRENCY_POSIX_THREADS
 		help
 		  PortFusion supports 2 modes for concurrency.
-	config PF_THREADS_POSIX
-		bool "POSIX threads"
-	config PF_THREADS_PROTO
-		bool "EPOLL"
+	config PF_CONCURRENCY_POSIX_THREADS
+		bool "POSIX threads with blocking sockets"
 		help
-		  Not implemented.
+		  Use two POSIX threads per connection.
+		  Low scalability; very-low latency.
+	config PF_CONCURRENCY_LINUX_EPOLL
+		bool "EPOLL with non-blocking sockets"
+		help
+		  Use EPOLL kernel API and non-blocking sockets.
+		  High scalability; very-low memory usage.
 	endchoice
 endmenu
 endef
