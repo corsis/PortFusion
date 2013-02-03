@@ -171,7 +171,7 @@ lf_epoll(char* a[])
 
   int ep = epoll_create1(0); epoll_ctl(ep, EPOLL_CTL_ADD, l, &e);
 
-  char d[chunk]; int r, c, eis; struct epoll_event ei;
+  char d[chunk]; int r, c, eis, eit; struct epoll_event ei;
 
   while (1)
   {
@@ -179,19 +179,24 @@ lf_epoll(char* a[])
 
     for (int i = 0; i < n; i++)
     {
-      ei = es[i]; eis = ei.data.fd;
+      ei = es[i]; eis = ei.data.fd; eit = (int)ei.data.ptr;
+
 
       if ((ei.events & EPOLLERR) || (ei.events & EPOLLHUP) || !(ei.events & EPOLLIN)) {
         printf("ERRRRRRRRRR [%i]\n", eis); close(eis); continue;
       } // close error-ed sockets
 
+
       if (l == eis) { while (1) { if ((c = acc(l)) < 0) { if (!EB) perror("191"); break; }
-                                  e.data.fd = c; epoll_ctl(ep, EPOLL_CTL_ADD, nonblocking(c), &e); }
+                                  e.data.fd = c; e.data.ptr = (void*)c;                                  
+                                  epoll_ctl(ep, EPOLL_CTL_ADD, nonblocking(c), &e); }
                       continue; } // accept new connections, aggressively
+
 
       // handle clients
       if ((r = recv(eis, d, chunk, 0)) < 0) { if (!EB) perror("199"); break; }
-      sendAll(eis, d, r); shut(eis);
+            sendAll(eit, d, r       );
+            shut(eis);
     }
   }
 
