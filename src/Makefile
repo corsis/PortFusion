@@ -84,6 +84,9 @@ ifeq (,$(findstring portable-threads, $(f)))
   CFLAGS  += -DUSE_POSIX_THREADS
   LDFLAGS += -pthread
 endif
+ifneq (,$(findstring linux-epoll, $(f)))
+  CFLAGS  += -DUSE_LINUX_EPOLL
+endif
 
 ifneq (,$(findstring with-server, $(f)))
   CFLAGS  += -DBUILD_SERVER

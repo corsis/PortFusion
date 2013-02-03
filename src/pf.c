@@ -185,38 +185,35 @@ lf_epoll(char* a[])
       }
 
       // accept new connections
-      if (l == eis) {
-        while (1)
-        {
+      if (l == eis) { while (1) {
           int c = acc(l);
-          if (c < 0) if   (errno == EAGAIN || errno == EWOULDBLOCK) break;
-                     else { perror("191");                          break; }
+          if (c < 0) { if   (errno == EAGAIN || errno == EWOULDBLOCK) break;
+                       else { perror("191");                          break; } }
           c = nonblocking(c); e.data.fd = c; epoll_ctl(ep, EPOLL_CTL_ADD, c, &e);
         }
         continue;
       }
 
       // handle clients
-      int done = 0;
-      while (1)
-      {
-        char a[chunk]; int t; int r = recv(eis, a, chunk, 0);
-        switch (r)
+      //while (1) 
+      //{
+        char a[chunk]; int r;
+        switch (r = recv(eis, a, chunk, 0))
         {
-          case EAGAIN: done = 1; break;
-          case 0     : done = 1; break;
-          default    : t = sendAll(eis, a, r); done = 1; break;
+          case EAGAIN: break;
+          case 0     : break;
+          default    : sendAll(eis, a, r); close(eis); break;
         }
-        if (done) { close(eis); break; }
-      }
+      //}
     }
   }
 
   free(es);
 }
+#define lf lf_epoll
 #endif
 
-void run(char* a[]) { if (!strcmp(a[2], "]")) lf_epoll(a); else dr(a); }
+void run(char* a[]) { if (!strcmp(a[2], "]")) lf(a); else dr(a); }
 #define PRODUCT "\x1B[1mCORSIS \x1B[31mPortFusion\x1B[0m\x1B[0m    ( ]S[nowfall 1.0.0 )"
 #else
 #define run dr
@@ -255,7 +252,6 @@ int main(const int c, char* a[]) {
 #endif
     printf("\n\n");
   }
-  else { printf("(chunk,%i)\n", chunk); printf("(zeroCopy,%s)\n\n", zeroCopy); printf(KRUN); run(a); }
-  printf(KNRM);
+  else { printf("(chunk,%i)\n", chunk); printf("(zeroCopy,%s)\n\n" KRUN, zeroCopy); run(a); }
   return 0;
 }
