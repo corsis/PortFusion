@@ -193,13 +193,21 @@ lf_epoll(char* a[])
         PL;
         if (l == eis) {
 
-          PL; if ((c = acc(l)) < 0) if (!EB) { perror("ACC"); break; }
-          e.data.fd = c;
+          PL;
+          if ((c = acc(l)) < 0) if (!EB) { perror("ACC"); continue; }
+          e.data.fd  = c;
+//          e.data.u64 = tcp(CLIENT, rh, rp);
+//          printf("||||||%i<->%lu\n", c, e.data.u64);
+
           epoll_ctl(ep, EPOLL_CTL_ADD, nonblocking(c), &e);
+          //                             e.data.fd  = nonblocking(s);
+          //                             e.data.ptr =      (void*)c; printf("||||||%i<->%i=%i\n", s, c, (int)e.data.ptr);
+          //                             epoll_ctl(ep, EPOLL_CTL_ADD, s, &e);
 
         } else {
 
-          PL; if ((r = recv(eis, d, chunk, 0)) < 1 && !EB) { PL; shut(eis); continue; }
+          PL;
+          if ((r = recv(eis, d, chunk, 0)) < 1 && !EB) { PL; shut(eis); continue; }
           sendAll(eis, d, r);
 
         }
