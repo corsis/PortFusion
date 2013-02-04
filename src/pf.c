@@ -44,7 +44,12 @@ void addrPort(char* ap[2], char* rap) {
 #endif
 int chunk = CHUNK;
 
-int sendAll(int s, void* b, ssize_t l) { return send(s, b, l, MSG_NOSIGNAL) != l; } 
+//int sendAll(int s, void* b, ssize_t l) { return send(s, b, l, MSG_NOSIGNAL) != l; }
+int sendAll(int s, void* b, size_t l) { 
+  int i = send(s, b, l, MSG_NOSIGNAL);
+  if (i != l) printf("sendAll %i = %i\n", l, i);
+  return i == l ? 0 : -1;
+}
 int  snd (int s, char* m) { sendAll(s, m, strlen(m)); return sendAll(s, "\r\n", strlen("\r\n")); }
 int  rcv1(int s)          { char m[1]; return recv(s, m, 1, 0); }
 int  shut(int s) { shutdown(s, SHUT_RDWR); return close(s); }
@@ -160,6 +165,8 @@ int nonblocking(int s) { fcntl(s, F_SETFL, fcntl(s, F_GETFL, 0) | O_NONBLOCK); r
 #define EB (errno == EAGAIN || errno == EWOULDBLOCK)
 #define PL  printf("PL: %i\n", __LINE__)
 #define PLI printf("PL: %i\t", __LINE__)
+#define PLD(v) printf("PL: %i\t%i\n", __LINE__, (v))
+int pld(int v) { PLD(v); return v; }
 
 typedef struct { int s; int t; } pair;
 void* pair_n(int s, int t) { pair* _ = malloc(sizeof *_); _->s = s; _->t = t; return (void*)_; }
@@ -186,8 +193,7 @@ lf_epoll(char* a[])
 
   while (1)
   {
-    PL;
-    int i, n = epoll_wait(ep, es, MAXEVENTS, -1);
+    PL; int i, n = epoll_wait(ep, es, MAXEVENTS, -1);
 
     for (i = 0; i < n; i++)
     {
@@ -203,8 +209,7 @@ lf_epoll(char* a[])
       {
         if (l == eis) {
 
-          PL;
-          if (((c = acc(l)) < 0) && !EB) { perror("ACC"); continue; }
+          PL; if (((c = acc(l)) < 0) && !EB) { perror("ACC"); continue; }
 
           int s = nonblocking(c), t = nonblocking(tcp(CLIENT, rh, rp));
 
@@ -213,9 +218,8 @@ lf_epoll(char* a[])
 
         } else {
 
-          PL;
-          if ((r = recv(eis, d, chunk, 0)) < 1 && !EB) { PL; shut(eis); shut(eit); continue; }
-                sendAll(eit, d, r);
+          PL; if ((r = pld(recv(eis, d, chunk, 0))) < 1) { PLD(r); shut(eis); shut(eit); continue; }
+          PLD(send(eit, d, r, MSG_NOSIGNAL));
 
         }
       }
