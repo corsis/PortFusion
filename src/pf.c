@@ -158,7 +158,13 @@ void lf(char* a[]) // ap ] - rh rp                                              
 int nonblocking(int s) { fcntl(s, F_SETFL, fcntl(s, F_GETFL, 0) | O_NONBLOCK); return s; }
 
 #define EB (errno == EAGAIN || errno == EWOULDBLOCK)
-#define PL printf("PL: %i\n", __LINE__)
+#define PL  printf("PL: %i\n", __LINE__)
+#define PLI printf("PL: %i\t", __LINE__)
+
+typedef struct { int s; int t; } pair;
+void* pair_n(int s, int t) { pair* _ = malloc(sizeof *_); _->s = s; _->t = t; return (void*)_; }
+int pair_s(void* p) { return ((pair*)p)->s; }
+int pair_t(void* p) { return ((pair*)p)->t; }
 
 void
 lf_epoll(char* a[])
@@ -168,12 +174,15 @@ lf_epoll(char* a[])
 
   int l = nonblocking(tcp2SERVER(ap[0], ap[1])); listen(l, SOMAXCONN);
 
-  struct epoll_event  e; e.events = EPOLLIN; e.data.fd = l;
+  struct epoll_event  e; e.events = EPOLLIN;
   struct epoll_event* es = calloc(MAXEVENTS, sizeof e);
 
-  int ep = epoll_create1(0); epoll_ctl(ep, EPOLL_CTL_ADD, l, &e);
+  int ep = epoll_create1(0);
 
   char d[chunk]; int r, c, eis, eit; struct epoll_event ei;
+
+  e.data.ptr = pair_n(l, 0);
+  epoll_ctl(ep, EPOLL_CTL_ADD, l, &e);
 
   while (1)
   {
@@ -183,32 +192,30 @@ lf_epoll(char* a[])
     for (i = 0; i < n; i++)
     {
 
-      ei = es[i]; eis = ei.data.fd; eit = (int)ei.data.ptr; printf("######%i<->%i\n", eis, eit);
+      ei = es[i]; eis = pair_s(ei.data.ptr); eit = pair_t(ei.data.ptr);
+      PLI; printf("%i < %i\n", i  , n  );
+      PLI; printf("%i<->%i\n", eis, eit);
 
       // close error-ed sockets
       if (!(ei.events & EPOLLIN)) { PL; printf("ERR [%i]\n", eis); shut(eis); continue; }
 
       if (ei.events & EPOLLIN)
       {
-        PL;
         if (l == eis) {
 
           PL;
-          if ((c = acc(l)) < 0) if (!EB) { perror("ACC"); continue; }
-          e.data.fd  = c;
-//          e.data.u64 = tcp(CLIENT, rh, rp);
-//          printf("||||||%i<->%lu\n", c, e.data.u64);
+          if (((c = acc(l)) < 0) && !EB) { perror("ACC"); continue; }
 
-          epoll_ctl(ep, EPOLL_CTL_ADD, nonblocking(c), &e);
-          //                             e.data.fd  = nonblocking(s);
-          //                             e.data.ptr =      (void*)c; printf("||||||%i<->%i=%i\n", s, c, (int)e.data.ptr);
-          //                             epoll_ctl(ep, EPOLL_CTL_ADD, s, &e);
+          int s = nonblocking(c), t = nonblocking(tcp(CLIENT, rh, rp));
+
+          e.data.ptr = pair_n(s, t); epoll_ctl(ep, EPOLL_CTL_ADD, s, &e); PLI; printf("%i-->%i\n", s, t);
+          e.data.ptr = pair_n(t, s); epoll_ctl(ep, EPOLL_CTL_ADD, t, &e); PLI; printf("%i<--%i\n", t, s);
 
         } else {
 
           PL;
-          if ((r = recv(eis, d, chunk, 0)) < 1 && !EB) { PL; shut(eis); continue; }
-          sendAll(eis, d, r);
+          if ((r = recv(eis, d, chunk, 0)) < 1 && !EB) { PL; shut(eis); shut(eit); continue; }
+                sendAll(eit, d, r);
 
         }
       }
