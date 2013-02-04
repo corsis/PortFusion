@@ -158,15 +158,17 @@ void lf(char* a[]) // ap ] - rh rp                                              
 int nonblocking(int s) { fcntl(s, F_SETFL, fcntl(s, F_GETFL, 0) | O_NONBLOCK); return s; }
 
 #define EB (errno == EAGAIN || errno == EWOULDBLOCK)
+#define PL printf("PL: %i\n", __LINE__)
 
 void
 lf_epoll(char* a[])
 {
   char* ap[2] = { "::", NULL }; addrPort(ap, a[1]);
+  const char* rh = a[4]; const char* rp = a[5];
 
   int l = nonblocking(tcp2SERVER(ap[0], ap[1])); listen(l, SOMAXCONN);
 
-  struct epoll_event  e; e.data.fd = l; e.events = EPOLLIN | EPOLLET;
+  struct epoll_event  e; e.events = EPOLLIN; e.data.fd = l;
   struct epoll_event* es = calloc(MAXEVENTS, sizeof e);
 
   int ep = epoll_create1(0); epoll_ctl(ep, EPOLL_CTL_ADD, l, &e);
@@ -175,28 +177,33 @@ lf_epoll(char* a[])
 
   while (1)
   {
-    int n = epoll_wait(ep, es, MAXEVENTS, -1);
+    PL;
+    int i, n = epoll_wait(ep, es, MAXEVENTS, -1);
 
-    for (int i = 0; i < n; i++)
+    for (i = 0; i < n; i++)
     {
-      ei = es[i]; eis = ei.data.fd; eit = (int)ei.data.ptr;
 
+      ei = es[i]; eis = ei.data.fd; eit = (int)ei.data.ptr; printf("######%i<->%i\n", eis, eit);
 
-      if ((ei.events & EPOLLERR) || (ei.events & EPOLLHUP) || !(ei.events & EPOLLIN)) {
-        printf("ERRRRRRRRRR [%i]\n", eis); close(eis); continue;
-      } // close error-ed sockets
+      // close error-ed sockets
+      if (!(ei.events & EPOLLIN)) { PL; printf("ERR [%i]\n", eis); shut(eis); continue; }
 
+      if (ei.events & EPOLLIN)
+      {
+        PL;
+        if (l == eis) {
 
-      if (l == eis) { while (1) { if ((c = acc(l)) < 0) { if (!EB) perror("191"); break; }
-                                  e.data.fd = c; e.data.ptr = (void*)c;                                  
-                                  epoll_ctl(ep, EPOLL_CTL_ADD, nonblocking(c), &e); }
-                      continue; } // accept new connections, aggressively
+          PL; if ((c = acc(l)) < 0) if (!EB) { perror("ACC"); break; }
+          e.data.fd = c;
+          epoll_ctl(ep, EPOLL_CTL_ADD, nonblocking(c), &e);
 
+        } else {
 
-      // handle clients
-      if ((r = recv(eis, d, chunk, 0)) < 0) { if (!EB) perror("199"); break; }
-            sendAll(eit, d, r       );
-            shut(eis);
+          PL; if ((r = recv(eis, d, chunk, 0)) < 1 && !EB) { PL; shut(eis); continue; }
+          sendAll(eis, d, r);
+
+        }
+      }
     }
   }
 
