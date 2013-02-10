@@ -188,8 +188,13 @@ lf_epoll(char* a[])
   e.data.ptr = pair_n(l, 0);
   epoll_ctl(ep, EPOLL_CTL_ADD, l, &e);
 
+  int totalR = 0, totalS = 0;
+
   while (1)
   {
+    PLI; PV(totalR);
+    PLI; PV(totalS);
+
     PLI; int i, n = pv(epoll_wait(ep, es, MAXEVENTS, -1));
 
     for (i = 0; i < n; i++)
@@ -216,8 +221,8 @@ lf_epoll(char* a[])
         } else {
 
           r = recv(eis, d, chunk, 0);
-          if (r == -1 && EB) continue;
-     snd: if (send(eit, d, r, MSG_NOSIGNAL) < 0 && EB) goto snd;
+          if (r == -1 && EB) continue; totalR += r;
+     snd: if (sendAll(eit, d, r) < 0 && EB) goto snd; totalS += r;
           if (r ==  0) { shut(eit); close(eis); }
 
         }
