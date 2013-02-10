@@ -207,6 +207,8 @@ lf_epoll(char* a[])
                     (ei.events & EPOLLHUP) ? "EPOLLHUP " : "",
                     (ei.events & EPOLLERR) ? "EPOLLERR " : "");
 
+      if (ei.events & EPOLLERR) { perror("POE"); shut(eis); continue; }
+
       if (ei.events & EPOLLIN)
       {
         if (l == eis) {
@@ -220,8 +222,8 @@ lf_epoll(char* a[])
 
         } else {
 
-          r = recv(eis, d, chunk, 0);
-          if (r == -1 && EB) continue; totalR += r;
+          r = recv(eis, d, chunk, 0); PLI; PV(eis);
+          if (r == -1 && EB) continue; totalR += r; PLI; PV(eit);
      snd: if (sendAll(eit, d, r) < 0 && EB) goto snd; totalS += r;
           if (r ==  0) { shut(eit); close(eis); }
 
