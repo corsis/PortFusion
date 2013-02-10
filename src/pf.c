@@ -46,13 +46,10 @@ int chunk = CHUNK;
 
 //int sendAll(int s, void* b, ssize_t l) { return send(s, b, l, MSG_NOSIGNAL) != l; }
 int sendAll(int s, void* b, size_t l) { 
-  int i = send(s, b, l, MSG_NOSIGNAL);
-  if (i != l) printf("sendAll %i = %i\n", l, i);
-  return i == l ? 0 : -1;
-}
+  size_t i = 0; for (; i < l; i += send(s, b, l - i, MSG_NOSIGNAL)); return i == l ? 0 : -1; }
 int  snd (int s, char* m) { sendAll(s, m, strlen(m)); return sendAll(s, "\r\n", strlen("\r\n")); }
 int  rcv1(int s)          { char m[1]; return recv(s, m, 1, 0); }
-int  shut(int s) { shutdown(s, SHUT_RDWR); return close(s); }
+int  shut(int s) { printf("c[%i]\n", s); shutdown(s, SHUT_RDWR); return close(s); }
 int ipv64(int s) { int v = 0; setsockopt(s, IPPROTO_IPV6, IPV6_V6ONLY , &v, sizeof v); return s; }
 int reuse(int s) { int v = 1; setsockopt(s, SOL_SOCKET  , SO_REUSEADDR, &v, sizeof v); return s; }
 int   acc(int s) { int c = accept(s, NULL, NULL); if (c>-1) printf("Accept  .  [%i]\n", c); return c; }
@@ -165,13 +162,13 @@ int nonblocking(int s) { fcntl(s, F_SETFL, fcntl(s, F_GETFL, 0) | O_NONBLOCK); r
 #define EB (errno == EAGAIN || errno == EWOULDBLOCK)
 #define PL  printf("PL: %i\n", __LINE__)
 #define PLI printf("PL: %i\t", __LINE__)
-#define PLD(v) printf("PL: %i\t%i\n", __LINE__, (v))
-int pld(int v) { PLD(v); return v; }
+#define PV(v) printf("%i\n", (v))
+int pv(int v) { PV(v); return v; }
 
 typedef struct { int s; int t; } pair;
 void* pair_n(int s, int t) { pair* _ = malloc(sizeof *_); _->s = s; _->t = t; return (void*)_; }
-int pair_s(void* p) { return ((pair*)p)->s; }
-int pair_t(void* p) { return ((pair*)p)->t; }
+int   pair_s(void* p) { return ((pair*)p)->s; }
+int   pair_t(void* p) { return ((pair*)p)->t; }
 
 void
 lf_epoll(char* a[])
@@ -181,7 +178,7 @@ lf_epoll(char* a[])
 
   int l = nonblocking(tcp2SERVER(ap[0], ap[1])); listen(l, SOMAXCONN);
 
-  struct epoll_event  e; e.events = EPOLLIN;
+  struct epoll_event  e; e.events = EPOLLIN | EPOLLERR | EPOLLHUP | EPOLLRDHUP;
   struct epoll_event* es = calloc(MAXEVENTS, sizeof e);
 
   int ep = epoll_create1(0);
@@ -193,17 +190,17 @@ lf_epoll(char* a[])
 
   while (1)
   {
-    PL; int i, n = epoll_wait(ep, es, MAXEVENTS, -1);
+    PLI; int i, n = pv(epoll_wait(ep, es, MAXEVENTS, -1));
 
     for (i = 0; i < n; i++)
     {
 
       ei = es[i]; eis = pair_s(ei.data.ptr); eit = pair_t(ei.data.ptr);
-      PLI; printf("%i < %i\n", i  , n  );
-      PLI; printf("%i<->%i\n", eis, eit);
 
-      // close error-ed sockets
-      if (!(ei.events & EPOLLIN)) { PL; printf("ERR [%i]\n", eis); shut(eis); continue; }
+      PLI; printf("fd=%d; events: %s%s%s\n", eis,
+                    (ei.events & EPOLLIN)  ? "EPOLLIN "  : "",
+                    (ei.events & EPOLLHUP) ? "EPOLLHUP " : "",
+                    (ei.events & EPOLLERR) ? "EPOLLERR " : "");
 
       if (ei.events & EPOLLIN)
       {
@@ -218,11 +215,14 @@ lf_epoll(char* a[])
 
         } else {
 
-          PL; if ((r = pld(recv(eis, d, chunk, 0))) < 1) { PLD(r); shut(eis); shut(eit); continue; }
-          PLD(send(eit, d, r, MSG_NOSIGNAL));
+          r = recv(eis, d, chunk, 0);
+          if (r == -1 && EB) continue;
+     snd: if (send(eit, d, r, MSG_NOSIGNAL) < 0 && EB) goto snd;
+          if (r ==  0) { shut(eit); close(eis); }
 
         }
       }
+        
     }
   }
 
