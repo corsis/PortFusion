@@ -82,7 +82,7 @@ void to(size_t len, int s, int t) /* (>-) */ {
   int bytes;
 #ifdef USE_LINUX_SPLICE
   int rw[2]; if (pipe(rw)) return;
-  while ((bytes = splice(s    , NULL, rw[1], NULL, len  , SPLICE_F_MOVE)) > 0)
+  while ((bytes = splice( s   , NULL, rw[1], NULL, len  , SPLICE_F_MOVE)) > 0)
                   splice(rw[0], NULL, t    , NULL, bytes, SPLICE_F_MOVE);
   close(rw[0]); close(rw[1]);
 #else
@@ -155,6 +155,9 @@ void lf(char* a[]) // ap ] - rh rp                                              
 #ifdef USE_LINUX_EPOLL
 #include <fcntl.h>
 #include <sys/epoll.h>
+#ifdef USE_LINUX_SPLICE
+#define SPLICE_F_NONBLOCK (0x02)
+#endif
 #define MAXEVENTS 64
 int nonblocking(int s) { fcntl(s, F_SETFL, fcntl(s, F_GETFL, 0) | O_NONBLOCK); return s; }
 
@@ -172,6 +175,16 @@ int   pair_t(void* p) { return ((pair*)p)->t; }
 void
 lf_epoll(char* a[])
 {
+#ifdef USE_LINUX_SPLICE
+  int         rw[2] ; if (pipe(rw)) return;
+  PLI; PV(rw[0]);
+  PLI; PV(rw[1]);
+  nonblocking(rw[0]);
+  nonblocking(rw[1]);
+#else
+  char d[chunk];
+#endif
+
   char* ap[2] = { "::", NULL }; addrPort(ap, a[1]);
   const char* rh = a[4]; const char* rp = a[5];
 
@@ -181,8 +194,8 @@ lf_epoll(char* a[])
   struct epoll_event* es = calloc(MAXEVENTS, sizeof e);
 
   int ep = epoll_create1(0);
-
-  char d[chunk]; int r, c, eis, eit; struct epoll_event ei;
+  
+  int r, c, eis, eit; struct epoll_event ei;
 
   e.data.ptr = pair_n(l, 0);
   epoll_ctl(ep, EPOLL_CTL_ADD, l, &e);
@@ -221,10 +234,17 @@ lf_epoll(char* a[])
 
         } else {
 
+#ifdef USE_LINUX_SPLICE
+          r = splice(eis  , NULL, rw[1], NULL, chunk, SPLICE_F_MOVE | SPLICE_F_NONBLOCK); PLI; PV(eis);
+          if (r == -1 && EB) continue; totalR += r; PLI; PV(eit);
+     snd: if (splice(rw[0], NULL, eit  , NULL, r, SPLICE_F_MOVE | SPLICE_F_NONBLOCK) < 0 && EB) goto snd; totalS += r;
+          if (r ==  0) { shut(eit); shut(eis); close(rw[0]); close(rw[1]); }
+#else
           r = recv(eis, d, chunk, 0); PLI; PV(eis);
           if (r == -1 && EB) continue; totalR += r; PLI; PV(eit);
      snd: if (sendAll(eit, d, r) < 0 && EB) goto snd; totalS += r;
-          if (r ==  0) { shut(eit); close(eis); }
+          if (r ==  0) { shut(eit); shut(eis); }
+#endif
 
         }
       }
