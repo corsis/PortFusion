@@ -77,12 +77,12 @@ ifneq (,$(findstring gcc, $(f)))
 endif
 endif
 
-ifeq (,$(findstring portable-loops, $(f)))
-  CFLAGS  += -DUSE_LINUX_SPLICE
-endif
 ifeq (,$(findstring portable-threads, $(f)))
   CFLAGS  += -DUSE_POSIX_THREADS
   LDFLAGS += -pthread
+endif
+ifeq (,$(findstring portable-loops, $(f)))
+  CFLAGS  += -DUSE_LINUX_SPLICE
 endif
 ifneq (,$(findstring linux-epoll, $(f)))
   CFLAGS  += -DUSE_LINUX_EPOLL

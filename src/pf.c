@@ -14,7 +14,6 @@
 #ifdef  USE_LINUX_SPLICE
 #define zeroCopy "True"
 #define _GNU_SOURCE
-#include <fcntl.h>
 #define SPLICE_F_MOVE (0x01)
 ssize_t splice(int fd_in,loff_t* off_in,int fd_out,loff_t* off_out, size_t len,unsigned int flags);
 #else
@@ -44,7 +43,6 @@ void addrPort(char* ap[2], char* rap) {
 #endif
 int chunk = CHUNK;
 
-//int sendAll(int s, void* b, ssize_t l) { return send(s, b, l, MSG_NOSIGNAL) != l; }
 int sendAll(int s, void* b, size_t l) { 
   size_t i = 0; for (; i < l; i += send(s, b, l - i, MSG_NOSIGNAL)); return i == l ? 0 : -1; }
 int  snd (int s, char* m) { sendAll(s, m, strlen(m)); return sendAll(s, "\r\n", strlen("\r\n")); }
@@ -155,6 +153,7 @@ void lf(char* a[]) // ap ] - rh rp                                              
 }
 
 #ifdef USE_LINUX_EPOLL
+#include <fcntl.h>
 #include <sys/epoll.h>
 #define MAXEVENTS 64
 int nonblocking(int s) { fcntl(s, F_SETFL, fcntl(s, F_GETFL, 0) | O_NONBLOCK); return s; }
@@ -178,7 +177,7 @@ lf_epoll(char* a[])
 
   int l = nonblocking(tcp2SERVER(ap[0], ap[1])); listen(l, SOMAXCONN);
 
-  struct epoll_event  e; e.events = EPOLLIN | EPOLLERR | EPOLLHUP | EPOLLRDHUP;
+  struct epoll_event  e; e.events = EPOLLIN; //| EPOLLERR | EPOLLHUP | EPOLLRDHUP;
   struct epoll_event* es = calloc(MAXEVENTS, sizeof e);
 
   int ep = epoll_create1(0);
@@ -207,7 +206,7 @@ lf_epoll(char* a[])
                     (ei.events & EPOLLHUP) ? "EPOLLHUP " : "",
                     (ei.events & EPOLLERR) ? "EPOLLERR " : "");
 
-      if (ei.events & EPOLLERR) { perror("POE"); shut(eis); continue; }
+      if (ei.events & EPOLLERR) { perror("POE"); /*shut(eis);*/ continue; }
 
       if (ei.events & EPOLLIN)
       {
