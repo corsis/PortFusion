@@ -37,13 +37,13 @@ menu "pf"
 	choice
 		prompt "Data transfer"
 		default PF_LOOPS_LINUX_SPLICE
-	config PF_LOOPS_LINUX_SPLICE
+	config PF_TRANSFER_LINUX_SPLICE
 		bool "Zero-copy in kernel space; pipe/splice"
 		help
 		  Open a pipe in kernel space and run for maximum
 		  possible throughput; utilize Linux system calls
 		  pipe(2) and splice(2).
-	config PF_LOOPS_PORTABLE
+	config PF_TRANSFER_PORTABLE
 		bool "Buffered in user space; recv/send"
 		help
 		  Allocate a buffer on the stack and run for maximum
@@ -76,7 +76,7 @@ define Build/Prepare
 endef
 
 define Build/Compile
-	f=with-server OS=OpenWrt ARCH=NA chunk=4096 $(MAKE) -C $(PKG_BUILD_DIR) $(TARGET_CONFIGURE_OPTS)
+	f="component-server concurrency-linux-epoll concurrency-posix-threads" OS=OpenWrt ARCH=NA chunk=4096 $(MAKE) -C $(PKG_BUILD_DIR) $(TARGET_CONFIGURE_OPTS)
 endef
 
 define Package/pf/install
