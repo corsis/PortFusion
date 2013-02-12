@@ -58,7 +58,7 @@ DIST    = $(BIN)-$(OS)-$(ARCH)$(SUFFIX)
 f += $(F)
 
 ifeq (,$(findstring mips, $(ARCH)))
-  f       += llvm
+  f       += clang
 endif
 
 ifneq (,$(findstring static, $(f)))
@@ -67,7 +67,7 @@ ifneq (,$(findstring static, $(f)))
 endif
 
 ifeq  (,$(findstring scan, $(f)))
-ifneq (,$(findstring llvm, $(f)))
+ifneq (,$(findstring clang, $(f)))
   CC       = clang
 else
   CC       = gcc
@@ -75,21 +75,26 @@ endif
 ifneq (,$(findstring gcc, $(f)))
   CC       = gcc
 endif
+ifneq (,$(findstring icc, $(f)))
+  CC       = icc
+endif
 endif
 
-ifeq (,$(findstring portable-threads, $(f)))
-  CFLAGS  += -DUSE_POSIX_THREADS
+ifneq (,$(findstring component-server, $(f)))
+  CFLAGS  += -DCOMPONENT_SERVER
+endif
+
+ifneq (,$(findstring transfer-linux-splice, $(f)))
+  CFLAGS  += -DTRANSFER_LINUX_SPLICE
+endif
+
+ifneq (,$(findstring concurrency-linux-epoll, $(f)))
+  CFLAGS  += -DCONCURRENCY_LINUX_EPOLL
+endif
+
+ifneq (,$(findstring concurrency-posix-threads, $(f)))
+  CFLAGS  += -DCONCURRENCY_POSIX_THREADS
   LDFLAGS += -pthread
-endif
-ifeq (,$(findstring portable-loops, $(f)))
-  CFLAGS  += -DUSE_LINUX_SPLICE
-endif
-ifneq (,$(findstring linux-epoll, $(f)))
-  CFLAGS  += -DUSE_LINUX_EPOLL
-endif
-
-ifneq (,$(findstring with-server, $(f)))
-  CFLAGS  += -DBUILD_SERVER
 endif
 
 
