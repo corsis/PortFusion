@@ -11,16 +11,21 @@
 #include <signal.h>         // signal -- not recommended but works ok for now
 #include <errno.h>          // errno
 
-#ifdef  USE_LINUX_SPLICE
+#ifdef TRANSFER_LINUX_SPLICE
 #define zeroCopy "True"
 #define _GNU_SOURCE
 #define SPLICE_F_MOVE (0x01)
-ssize_t splice(int fd_in,loff_t* off_in,int fd_out,loff_t* off_out, size_t len,unsigned int flags);
+ssize_t splice(int i, loff_t* io, int o, loff_t* oo, size_t l, unsigned int flags);
+int  spliceAll(int i, loff_t* io, int o, loff_t* oo, size_t l, unsigned int flags) {
+  size_t t =  0; int n = 0;
+  while (t <  l && (n = splice(i, io, o, oo, l - t, flags)) > -1) t += n;
+  return t == l ? 0 : -1;
+}
 #else
 #define zeroCopy "False"
 #endif
 
-#ifdef  USE_POSIX_THREADS
+#ifdef CONCURRENCY_POSIX_THREADS
 #include <pthread.h>
 #endif
 
@@ -43,8 +48,11 @@ void addrPort(char* ap[2], char* rap) {
 #endif
 int chunk = CHUNK;
 
-int sendAll(int s, void* b, size_t l) { 
-  size_t i = 0; for (; i < l; i += send(s, b, l - i, MSG_NOSIGNAL)); return i == l ? 0 : -1; }
+int sendAll(int s, void* b, size_t l) {
+  size_t t =  0; int n = 0;
+  while (t <  l && (n = send(s, b + t, l - t, MSG_NOSIGNAL)) > -1) t += n;
+  return t == l ? 0 : -1;
+}
 int  snd (int s, char* m) { sendAll(s, m, strlen(m)); return sendAll(s, "\r\n", strlen("\r\n")); }
 int  rcv1(int s)          { char m[1]; return recv(s, m, 1, 0); }
 int  shut(int s) { printf("c[%i]\n", s); shutdown(s, SHUT_RDWR); return close(s); }
@@ -53,7 +61,7 @@ int reuse(int s) { int v = 1; setsockopt(s, SOL_SOCKET  , SO_REUSEADDR, &v, size
 int   acc(int s) { int c = accept(s, NULL, NULL); if (c>-1) printf("Accept  .  [%i]\n", c); return c; }
 
 int   tcp(const int c, const char* h, const char* p) {
-        int s = -1, e = -1; const char* pp = c ? "CL" : "SV";
+        int s = -1, e; const char* pp = c ? "CL" : "SV";
         struct addrinfo hints; memset(&hints, 0, sizeof (struct addrinfo));
         hints.ai_socktype = SOCK_STREAM; hints.ai_protocol = IPPROTO_TCP;
 if (!c) hints.ai_flags = AI_PASSIVE | AI_NUMERICHOST;
@@ -80,7 +88,7 @@ else               e =    bind(ipv64(reuse(s)), a -> ai_addr, a -> ai_addrlen);/
 
 void to(size_t len, int s, int t) /* (>-) */ {
   int bytes;
-#ifdef USE_LINUX_SPLICE
+#ifdef TRANSFER_LINUX_SPLICE
   int rw[2]; if (pipe(rw)) return;
   while ((bytes = splice( s   , NULL, rw[1], NULL, len  , SPLICE_F_MOVE)) > 0)
                   splice(rw[0], NULL, t    , NULL, bytes, SPLICE_F_MOVE);
@@ -91,7 +99,7 @@ void to(size_t len, int s, int t) /* (>-) */ {
   shut(t);
 }
 
-#ifdef USE_POSIX_THREADS
+#ifdef CONCURRENCY_POSIX_THREADS
 void* p_to(void* args) { int* lab = (int*) args; to(lab[0], lab[1], lab[2]); return NULL; }
 
 void  flow(int len, int a, int b) /* (>-<) */ {
@@ -134,7 +142,7 @@ void dr(char* a[]) // lp lh - fp fh [ ap                                        
   }
 }
 
-#ifdef BUILD_SERVER
+#ifdef COMPONENT_SERVER
 #undef  MAC
 #define MAC (5)
 int tcp2SERVER(const char* h, const char* p) {
@@ -152,10 +160,10 @@ void lf(char* a[]) // ap ] - rh rp                                              
   }
 }
 
-#ifdef USE_LINUX_EPOLL
+#ifdef CONCURRENCY_LINUX_EPOLL
 #include <fcntl.h>
 #include <sys/epoll.h>
-#ifdef USE_LINUX_SPLICE
+#ifdef TRANSFER_LINUX_SPLICE
 #define SPLICE_F_NONBLOCK (0x02)
 #endif
 #define MAXEVENTS 64
@@ -175,12 +183,10 @@ int   pair_t(void* p) { return ((pair*)p)->t; }
 void
 lf_epoll(char* a[])
 {
-#ifdef USE_LINUX_SPLICE
-  int         rw[2] ; if (pipe(rw)) return;
-  PLI; PV(rw[0]);
-  PLI; PV(rw[1]);
-  nonblocking(rw[0]);
-  nonblocking(rw[1]);
+#ifdef TRANSFER_LINUX_SPLICE
+  int rw[2]; if (pipe(rw)) return;
+  PLI; PV(nonblocking(rw[0]));
+  PLI; PV(nonblocking(rw[1]));
 #else
   char d[chunk];
 #endif
@@ -190,7 +196,7 @@ lf_epoll(char* a[])
 
   int l = nonblocking(tcp2SERVER(ap[0], ap[1])); listen(l, SOMAXCONN);
 
-  struct epoll_event  e; e.events = EPOLLIN; //| EPOLLERR | EPOLLHUP | EPOLLRDHUP;
+  struct epoll_event  e; e.events = EPOLLIN | EPOLLERR; //| EPOLLHUP | EPOLLRDHUP;
   struct epoll_event* es = calloc(MAXEVENTS, sizeof e);
 
   int ep = epoll_create1(0);
@@ -200,13 +206,8 @@ lf_epoll(char* a[])
   e.data.ptr = pair_n(l, 0);
   epoll_ctl(ep, EPOLL_CTL_ADD, l, &e);
 
-  int totalR = 0, totalS = 0;
-
   while (1)
   {
-    PLI; PV(totalR);
-    PLI; PV(totalS);
-
     PLI; int i, n = pv(epoll_wait(ep, es, MAXEVENTS, -1));
 
     for (i = 0; i < n; i++)
@@ -219,7 +220,7 @@ lf_epoll(char* a[])
                     (ei.events & EPOLLHUP) ? "EPOLLHUP " : "",
                     (ei.events & EPOLLERR) ? "EPOLLERR " : "");
 
-      if (ei.events & EPOLLERR) { perror("POE"); /*shut(eis);*/ continue; }
+      if (ei.events & EPOLLERR) { perror("POE"); shut(eis); continue; }
 
       if (ei.events & EPOLLIN)
       {
@@ -234,17 +235,19 @@ lf_epoll(char* a[])
 
         } else {
 
-#ifdef USE_LINUX_SPLICE
-          r = splice(eis  , NULL, rw[1], NULL, chunk, SPLICE_F_MOVE | SPLICE_F_NONBLOCK); PLI; PV(eis);
-          if (r == -1 && EB) continue; totalR += r; PLI; PV(eit);
-     snd: if (splice(rw[0], NULL, eit  , NULL, r, SPLICE_F_MOVE | SPLICE_F_NONBLOCK) < 0 && EB) goto snd; totalS += r;
-          if (r ==  0) { shut(eit); shut(eis); close(rw[0]); close(rw[1]); }
+          PLI; PV(eis); PLI; PV(eit);
+
+#ifdef TRANSFER_LINUX_SPLICE
+#warning "BROKEN CODE PATH: (concurrency-linux-epoll + transfer-linux-splice) is known to hang when transferring large volumes of data"
+              r = splice(eis  , NULL, rw[1], NULL, chunk, SPLICE_F_MOVE | SPLICE_F_NONBLOCK); PV(r);
+          if (r == -1 && EB) continue; PLI; PV(r);
+ snd: PL; if ( spliceAll(rw[0], NULL, eit  , NULL, r    , SPLICE_F_MOVE | SPLICE_F_NONBLOCK) < 0 && EB) goto snd;
 #else
-          r = recv(eis, d, chunk, 0); PLI; PV(eis);
-          if (r == -1 && EB) continue; totalR += r; PLI; PV(eit);
-     snd: if (sendAll(eit, d, r) < 0 && EB) goto snd; totalS += r;
-          if (r ==  0) { shut(eit); shut(eis); }
+              r = recv(eis, d, chunk, 0);
+          if (r == -1 && EB) continue; PLI; PV(r);
+     snd: if ( sendAll(eit, d, r) < 0 && EB) goto snd;
 #endif
+          if (r ==  0) { shut(eit); shut(eis); }
 
         }
       }
@@ -291,7 +294,7 @@ int main(const int c, char* a[]) {
     printf("  %s\n"  , "Protocols: PortFusion 1");
     printf("  %s\n\n", "Available:");
     printf("%s\n", "  \x1B[31mp h\x1B[0m - \x1B[33mp h\x1B[0m [   \x1B[32mp\x1B[0m     \x1B[2mDistributed Reverse\x1B[0m");
-#ifdef BUILD_SERVER
+#ifdef COMPONENT_SERVER
     printf("%s\n", "  \x1B[32mp\x1B[0m   ]     - \x1B[31mh p\x1B[0m     \x1B[2mLocal       Forward\x1B[0m");
 #endif
     printf("\n\n");
