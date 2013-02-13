@@ -224,7 +224,7 @@ lf_epoll(char* a[])
 
       if (ei.events & EPOLLERR) {
         socklen_t rl = sizeof(errno); getsockopt(eis, SOL_SOCKET, SO_ERROR, &errno, &rl);
-        printf("%s|TCP  -  [%i] ", "??", eis); perror(NULL);
+        printf("##|TCP  -  [%i] ", eis); perror(NULL);
         close(eis); shut(eit);
         continue;
       }
@@ -295,7 +295,7 @@ int main(const int c, char* a[]) {
   signal(SIGPIPE, err); signal(SIGINT, ext);
   printf("\n\n%s\n", PRODUCT                                         );
   printf(    "%s\n", "(c) 2013 Cetin Sert. All rights reserved." KINF);
-  printf("  \n%s - %s - [%s]\n\n", __OS__, __ARCH__, __TIMESTAMP__);
+  printf("  \n%s - %s [%s]\n\n", __OS__, __ARCH__, __TIMESTAMP__);
   if (c < MAC + 1) {
     printf(KNRM "  %s\n"  , "See usage: http://fusion.corsis.eu");
     printf("  %s\n"  , "Protocols: PortFusion 1");
