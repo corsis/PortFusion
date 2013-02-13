@@ -76,7 +76,7 @@ define Build/Prepare
 endef
 
 define Build/Compile
-	f="component-server concurrency-linux-epoll concurrency-posix-threads" OS=OpenWrt ARCH=NA chunk=4096 $(MAKE) -C $(PKG_BUILD_DIR) $(TARGET_CONFIGURE_OPTS)
+	f="component-server concurrency-linux-epolx concurrency-posix-threads" OS=OpenWrt ARCH=NA $(MAKE) -C $(PKG_BUILD_DIR) $(TARGET_CONFIGURE_OPTS)
 endef
 
 define Package/pf/install

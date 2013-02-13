@@ -60,7 +60,7 @@ int ipv64(int s) { int v = 0; setsockopt(s, IPPROTO_IPV6, IPV6_V6ONLY , &v, size
 int reuse(int s) { int v = 1; setsockopt(s, SOL_SOCKET  , SO_REUSEADDR, &v, sizeof v); return s; }
 int   acc(int s) { int c = accept(s, NULL, NULL); if (c>-1) printf("Accept  .  [%i]\n", c); return c; }
 
-int   tcp(const int c, const char* h, const char* p) {
+int   tcp(const int c, const char* h, const char* p, int (*f) (int)) {
         int s = -1, e; const char* pp = c ? "CL" : "SV";
         struct addrinfo hints; memset(&hints, 0, sizeof (struct addrinfo));
         hints.ai_socktype = SOCK_STREAM; hints.ai_protocol = IPPROTO_TCP;
@@ -71,18 +71,20 @@ if (!c) hints.ai_flags = AI_PASSIVE | AI_NUMERICHOST;
           case 0:
             for (a = as; a != NULL; a = a -> ai_next) {
               if ((e = (s = socket(a -> ai_family, a -> ai_socktype, a -> ai_protocol))) < 0) continue;
-if ( c)            e = connect(            s  , a -> ai_addr, a -> ai_addrlen);
-else               e =    bind(ipv64(reuse(s)), a -> ai_addr, a -> ai_addrlen);// + listen(s, SOMAXCONN);
-              if  (e < 0) shut(s); else break;
-            } freeaddrinfo(as);         break;
+if ( c)            e = connect(            f(s)  , a -> ai_addr, a -> ai_addrlen);
+else               e =    bind(ipv64(reuse(f(s))), a -> ai_addr, a -> ai_addrlen);
+              if  (e < 0 && errno != EINPROGRESS) close(s); else break;
+            } freeaddrinfo(as);          break;
           default: e = abs(e);
         }
 
-        if      (e <  0) { printf("%s|TCP  -  (%s:%s) "      , pp,    h, p);      perror(NULL); }
+        if      (e <  0 && errno == EINPROGRESS) return s;
+        if      (e <  0) { printf("%s|TCP  -  (%s:%s) "      , pp,    h, p); perror(NULL); }
         else if (e  > 0)   printf("%s|TCP  -  (%s:%s) %s\n"  , pp,    h, p, gai_strerror(-e));
         else               printf("%s|TCP  .  [%i] (%s:%s)\n", pp, s, h, p);
         return   e != 0 ? -abs(e) : s;
 }
+int blocking(int s) { return s; }
 
 //--------------------------------------------------------------------------------------------SPLICE
 
@@ -115,8 +117,8 @@ void  flow(int len, int a, int b) /* (>-<) */ {
 typedef struct { int l; int a; const char* h; const char* p; } p_flow_args;
 void* p_flow(void* args) {
   p_flow_args _ = *((p_flow_args*)args); free(args);
-  int b = tcp(CLIENT, _.h, _.p); if (b > -1) flow(_.l, _.a, b);
-                                 else        shut(     _.a   ); return NULL;
+  int b = tcp(CLIENT, _.h, _.p, blocking); if (b > -1) flow(_.l, _.a, b);
+                                           else        shut(     _.a   ); return NULL;
 }
 int forkFlow(int len, int a, const char* h, const char* p) {
   pthread_t t; p_flow_args* _ = malloc(sizeof *_); _->l = len; _->a = a; _->h=h; _->p=p;
@@ -135,7 +137,7 @@ void dr(char* a[]) // lp lh - fp fh [ ap                                        
   const char* c  = "Send    .  [%i] %s\n";
         char  m[64]; sprintf(m, "(:-<-:) %s", rp);
   for (;;) {
-         int f = tcp(CLIENT, fh, fp); if (f < 0) { sleep(1); continue; };
+         int f = tcp(CLIENT, fh, fp, blocking); if (f < 0) { sleep(1); continue; };
     printf  (c, f, m);
     if (!snd(f, m) && rcv1(f)) { forkFlow(chunk, f, lh, lp); }
     else                             shut(       f        );
@@ -145,9 +147,9 @@ void dr(char* a[]) // lp lh - fp fh [ ap                                        
 #ifdef COMPONENT_SERVER
 #undef  MAC
 #define MAC (5)
-int tcp2SERVER(const char* h, const char* p) {
-                                  int l = tcp(SERVER, h        , p);
-  return (strcmp(h, "::") || l > 0) ? l : tcp(SERVER, "0.0.0.0", p);
+int tcp2SERVER(const char* h, const char* p, int (*f)(int)) {
+                                  int l = tcp(SERVER, h        , p, f);
+  return (strcmp(h, "::") || l > 0) ? l : tcp(SERVER, "0.0.0.0", p, f);
 }
 
 void lf(char* a[]) // ap ] - rh rp                                                         _ ] - _ _
@@ -155,7 +157,7 @@ void lf(char* a[]) // ap ] - rh rp                                              
   char* ap[2] = { "::", NULL }; addrPort(ap, a[1]);
   const char* rh = a[4]; const char* rp = a[5];
   for (;;) {
-    int l = tcp2SERVER(ap[0], ap[1]); if (l + listen(l, SOMAXCONN) < 0) { sleep(1); continue; }
+    int l = tcp2SERVER(ap[0], ap[1], blocking); if (l + listen(l, SOMAXCONN) < 0) { sleep(1); continue; }
     for (;;) forkFlow(chunk, acc(l), rh, rp);
   }
 }
@@ -194,7 +196,7 @@ lf_epoll(char* a[])
   char* ap[2] = { "::", NULL }; addrPort(ap, a[1]);
   const char* rh = a[4]; const char* rp = a[5];
 
-  int l = nonblocking(tcp2SERVER(ap[0], ap[1])); listen(l, SOMAXCONN);
+  int l = tcp2SERVER(ap[0], ap[1], nonblocking); listen(l, SOMAXCONN);
 
   struct epoll_event  e; e.events = EPOLLIN | EPOLLERR; //| EPOLLHUP | EPOLLRDHUP;
   struct epoll_event* es = calloc(MAXEVENTS, sizeof e);
@@ -220,6 +222,7 @@ lf_epoll(char* a[])
                     (ei.events & EPOLLHUP) ? "EPOLLHUP " : "",
                     (ei.events & EPOLLERR) ? "EPOLLERR " : "");
 
+      if (ei.events & EPOLLOUT) { printf("connected [%i]\n", eis); continue; }
       if (ei.events & EPOLLERR) { perror("POE"); shut(eis); continue; }
 
       if (ei.events & EPOLLIN)
@@ -228,7 +231,7 @@ lf_epoll(char* a[])
 
           PL; if (((c = acc(l)) < 0) && !EB) { perror("ACC"); continue; }
 
-          int s = nonblocking(c), t = nonblocking(tcp(CLIENT, rh, rp));
+          int s = nonblocking(c), t = tcp(CLIENT, rh, rp, nonblocking);
 
           e.data.ptr = pair_n(s, t); epoll_ctl(ep, EPOLL_CTL_ADD, s, &e); PLI; printf("%i-->%i\n", s, t);
           e.data.ptr = pair_n(t, s); epoll_ctl(ep, EPOLL_CTL_ADD, t, &e); PLI; printf("%i<--%i\n", t, s);
