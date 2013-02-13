@@ -236,7 +236,7 @@ err:
 
           PL; if (((c = nonblocking(acc(l))) < 0) && !EB) { perror("ACC"); continue; }
 
-          int r = tcp(CLIENT, rh, rp, nonblocking); if (r < 0) { eit = 0; goto err; }
+          int r = tcp(CLIENT, rh, rp, nonblocking); if (r < 0) { eis = c; eit = 0; goto err; }
 
           e.data.ptr = pair_n(c, r); epoll_ctl(ep, EPOLL_CTL_ADD, c, &e); PLI; printf("%i-->%i\n", c, r);
           e.data.ptr = pair_n(r, c); epoll_ctl(ep, EPOLL_CTL_ADD, r, &e); PLI; printf("%i<--%i\n", r, c);
