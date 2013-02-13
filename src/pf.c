@@ -224,7 +224,6 @@ lf_epoll(char* a[])
 
       if (ei.events & EPOLLERR) {
         socklen_t rl = sizeof(errno); getsockopt(eis, SOL_SOCKET, SO_ERROR, &errno, &rl);
-err:
         printf("%s|TCP  -  [%i] ", "??", eis); perror(NULL);
         close(eis); shut(eit);
         continue;
@@ -236,7 +235,7 @@ err:
 
           PL; if (((c = nonblocking(acc(l))) < 0) && !EB) { perror("ACC"); continue; }
 
-          int r = tcp(CLIENT, rh, rp, nonblocking); if (r < 0) { eis = c; eit = 0; goto err; }
+          int r = tcp(CLIENT, rh, rp, nonblocking); if (r < 0) { close(c); continue; }
 
           e.data.ptr = pair_n(c, r); epoll_ctl(ep, EPOLL_CTL_ADD, c, &e); PLI; printf("%i-->%i\n", c, r);
           e.data.ptr = pair_n(r, c); epoll_ctl(ep, EPOLL_CTL_ADD, r, &e); PLI; printf("%i<--%i\n", r, c);
