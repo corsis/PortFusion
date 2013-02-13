@@ -222,19 +222,24 @@ lf_epoll(char* a[])
                     (ei.events & EPOLLHUP) ? "EPOLLHUP " : "",
                     (ei.events & EPOLLERR) ? "EPOLLERR " : "");
 
-      if (ei.events & EPOLLOUT) { printf("connected [%i]\n", eis); continue; }
-      if (ei.events & EPOLLERR) { perror("POE"); shut(eis); continue; }
+      if (ei.events & EPOLLERR) {
+        socklen_t rl = sizeof(errno); getsockopt(eis, SOL_SOCKET, SO_ERROR, &errno, &rl);
+err:
+        printf("%s|TCP  -  [%i] ", "??", eis); perror(NULL);
+        close(eis); shut(eit);
+        continue;
+      }
 
       if (ei.events & EPOLLIN)
       {
         if (l == eis) {
 
-          PL; if (((c = acc(l)) < 0) && !EB) { perror("ACC"); continue; }
+          PL; if (((c = nonblocking(acc(l))) < 0) && !EB) { perror("ACC"); continue; }
 
-          int s = nonblocking(c), t = tcp(CLIENT, rh, rp, nonblocking);
+          int r = tcp(CLIENT, rh, rp, nonblocking); if (r < 0) { eit = 0; goto err; }
 
-          e.data.ptr = pair_n(s, t); epoll_ctl(ep, EPOLL_CTL_ADD, s, &e); PLI; printf("%i-->%i\n", s, t);
-          e.data.ptr = pair_n(t, s); epoll_ctl(ep, EPOLL_CTL_ADD, t, &e); PLI; printf("%i<--%i\n", t, s);
+          e.data.ptr = pair_n(c, r); epoll_ctl(ep, EPOLL_CTL_ADD, c, &e); PLI; printf("%i-->%i\n", c, r);
+          e.data.ptr = pair_n(r, c); epoll_ctl(ep, EPOLL_CTL_ADD, r, &e); PLI; printf("%i<--%i\n", r, c);
 
         } else {
 
