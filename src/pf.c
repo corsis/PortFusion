@@ -88,6 +88,7 @@ int blocking(int s) { return s; }
 
 //--------------------------------------------------------------------------------------------SPLICE
 
+#ifdef CONCURRENCY_POSIX_THREADS
 void to(size_t len, int s, int t) /* (>-) */ {
   int bytes;
 #ifdef TRANSFER_LINUX_SPLICE
@@ -101,7 +102,6 @@ void to(size_t len, int s, int t) /* (>-) */ {
   shut(t);
 }
 
-#ifdef CONCURRENCY_POSIX_THREADS
 void* p_to(void* args) { int* lab = (int*) args; to(lab[0], lab[1], lab[2]); return NULL; }
 
 void  flow(int len, int a, int b) /* (>-<) */ {
@@ -124,9 +124,11 @@ int forkFlow(int len, int a, const char* h, const char* p) {
   pthread_t t; p_flow_args* _ = malloc(sizeof *_); _->l = len; _->a = a; _->h=h; _->p=p;
   int c = pthread_create(&t, NULL, p_flow, _); pthread_detach(t); return c;
 }
-#endif
 
-//---------------------------------------------------------------------------------------------TASKS
+int tcp2SERVER(const char* h, const char* p, int (*f)(int)) {
+                                  int l = tcp(SERVER, h        , p, f);
+  return (strcmp(h, "::") || l > 0) ? l : tcp(SERVER, "0.0.0.0", p, f);
+}
 
 #define MAC (7)
 void dr(char* a[]) // lp lh - fp fh [ ap                                               _ _ - _ _ [ _
@@ -147,11 +149,6 @@ void dr(char* a[]) // lp lh - fp fh [ ap                                        
 #ifdef COMPONENT_SERVER
 #undef  MAC
 #define MAC (5)
-int tcp2SERVER(const char* h, const char* p, int (*f)(int)) {
-                                  int l = tcp(SERVER, h        , p, f);
-  return (strcmp(h, "::") || l > 0) ? l : tcp(SERVER, "0.0.0.0", p, f);
-}
-
 void lf(char* a[]) // ap ] - rh rp                                                         _ ] - _ _
 {
   char* ap[2] = { "::", NULL }; addrPort(ap, a[1]);
@@ -161,6 +158,11 @@ void lf(char* a[]) // ap ] - rh rp                                              
     for (;;) forkFlow(chunk, acc(l), rh, rp);
   }
 }
+#endif
+#endif
+
+//---------------------------------------------------------------------------------------------TASKS
+
 
 #ifdef CONCURRENCY_LINUX_EPOLL
 #include <fcntl.h>
@@ -182,8 +184,13 @@ void* pair_n(int s, int t) { pair* _ = malloc(sizeof *_); _->s = s; _->t = t; re
 int   pair_s(void* p) { return ((pair*)p)->s; }
 int   pair_t(void* p) { return ((pair*)p)->t; }
 
-void
-lf_epoll(char* a[])
+#define MAC (7)
+void dr(char* a[]) { printf("NOT IMPLEMENTED"); }
+
+#ifdef COMPONENT_SERVER
+#undef  MAC
+#define MAC (5)
+void lf(char* a[])
 {
 #ifdef TRANSFER_LINUX_SPLICE
   int rw[2]; if (pipe(rw)) return;
@@ -265,9 +272,10 @@ lf_epoll(char* a[])
 
   free(es);
 }
-#define lf lf_epoll
+#endif
 #endif
 
+#ifdef COMPONENT_SERVER
 void run(char* a[]) { if (!strcmp(a[2], "]")) lf(a); else dr(a); }
 #define PRODUCT "\x1B[1mCORSIS \x1B[31mPortFusion\x1B[0m\x1B[0m    ( ]S[nowfall 1.0.0 )"
 #else
@@ -278,14 +286,10 @@ void run(char* a[]) { if (!strcmp(a[2], "]")) lf(a); else dr(a); }
 //----------------------------------------------------------------------------------------------MAIN
 
 #define KNRM  "\x1B[0m"
-#define KBLD  "\x1B[1m"
-#define KRED  "\x1B[31m"
-#define KBLU  "\x1B[34m"
-#define KYEL  "\x1B[33m"
 
-#define KERR KRED
-#define KRUN KYEL
-#define KINF KBLU
+#define KERR "\x1B[31m" // RED
+#define KRUN "\x1B[33m" // YELLOW
+#define KINF "\x1B[34m" // BLUE
 
 void err() { printf(KERR "Interr  !  SIGPIPE\n" KRUN); }
 void ext() { printf(KERR "\b\bInterr  !  Thank you for testing!\n\n\n" KNRM); _exit(0); }
