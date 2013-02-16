@@ -234,8 +234,9 @@ lf_epoll(char* a[])
         if (l == eis) {
 
           PL; if (((c = nonblocking(acc(l))) < 0) && !EB) { perror("ACC"); continue; }
+                    r = tcp(CLIENT, rh, rp, nonblocking);
 
-          int r = tcp(CLIENT, rh, rp, nonblocking); if (r < 0) { close(c); continue; }
+//          int r = nonblocking(tcp(CLIENT, rh, rp, blocking)); if (r < 0) { close(c); continue; }
 
           e.data.ptr = pair_n(c, r); epoll_ctl(ep, EPOLL_CTL_ADD, c, &e); PLI; printf("%i-->%i\n", c, r);
           e.data.ptr = pair_n(r, c); epoll_ctl(ep, EPOLL_CTL_ADD, r, &e); PLI; printf("%i<--%i\n", r, c);
@@ -252,7 +253,7 @@ lf_epoll(char* a[])
 #else
               r = recv(eis, d, chunk, 0);
           if (r == -1 && EB) continue; PLI; PV(r);
-     snd: if ( sendAll(eit, d, r) < 0 && EB) goto snd;
+     snd: if ( sendAll(pv(eit), d, r) < 0 && EB) { printf("NOT-READY\n"); goto snd; }
 #endif
           if (r ==  0) { shut(eit); shut(eis); }
 
