@@ -80,10 +80,10 @@ Following flags can be activated when using `cabal configure -f <FLAG>` or `caba
 
 | <img height='48px' alt='CPU' title='CPU' src='http://a.fsdn.com/sd/topics/hardware_64.png' /> | ![Windows]                                                                                    | ![Linux]                                                                                      | ![OSX]                                                                                        | ![FreeBSD]                                                                                    | ![OpenBSD] | ![Solaris] | ![Other]
 | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ---------- | ---------- | --------
-| x86-64                                                                                        | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | ![C]       | ![C]       | ![C]
-| x86-32                                                                                        | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> |                                                                                               | ![C]                                                                                          | ![C]       | ![C]       | ![C]
-| [ARM]                                                                                         | ![B]                                                                                          | <a href='http://fusion.corsis.eu'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> | ![C]                                                                                          | ![C]                                                                                          | ![C]       | ![C]       | ![C]
-| [MIPS]                                                                                        |                                                                                               | <a href='https://sourceforge.net/projects/portfusion/files/1.2.1/compressed/'><img src='http://fusion.corsis.eu/i/down_16.png' /> Get</a> |                                                                                               |                                                                                               |            |            |    
+| x86-64                                                                                        | <a href='http://fusion.corsis.tech'><img src='http://fusion.corsis.tech/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.tech'><img src='http://fusion.corsis.tech/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.tech'><img src='http://fusion.corsis.tech/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.tech'><img src='http://fusion.corsis.tech/i/down_16.png' /> Get</a> | ![C]       | ![C]       | ![C]
+| x86-32                                                                                        | <a href='http://fusion.corsis.tech'><img src='http://fusion.corsis.tech/i/down_16.png' /> Get</a> | <a href='http://fusion.corsis.tech'><img src='http://fusion.corsis.tech/i/down_16.png' /> Get</a> |                                                                                               | ![C]                                                                                          | ![C]       | ![C]       | ![C]
+| [ARM]                                                                                         | ![B]                                                                                          | <a href='http://fusion.corsis.tech'><img src='http://fusion.corsis.tech/i/down_16.png' /> Get</a> | ![C]                                                                                          | ![C]                                                                                          | ![C]       | ![C]       | ![C]
+| [MIPS]                                                                                        |                                                                                               | <a href='https://sourceforge.net/projects/portfusion/files/1.2.1/compressed/'><img src='http://fusion.corsis.tech/i/down_16.png' /> Get</a> |                                                                                               |                                                                                               |            |            |    
 | Other                                                                                         |                                                                                               | ![C]                                                                                          |                                                                                               | ![C]                                                                                          | ![C]       | ![C]       | ![C]
 
 CORSIS Research <br />
@@ -91,7 +91,7 @@ CORSIS Research <br />
 ![B] will build official binaries on demand  <br />
 ![C] can cooperate with community for builds <br />
 
-[D]: http://fusion.corsis.eu/i/down_16.png "Download"
+[D]: http://fusion.corsis.tech/i/down_16.png "Download"
 [B]: http://res2.windows.microsoft.com/resbox/en/Windows%207/main/33624ed4-7676-4be4-9f47-d77eab7ecd9c_0.gif "Build-on-Demand"
 [C]: http://res2.windows.microsoft.com/resbox/en/Windows%207/main/43fa1e85-5152-43ff-b0f7-63ae6520a88b_0.gif "Coop-on-Demand"
 
@@ -141,7 +141,7 @@ Local Proxy Modes   | **forward**                                               
 Native IPv6 Support | **yes**                                                                           | **yes**
 Interactive Mode    | [**REPL in GHCi**](https://github.com/corsis/PortFusion/wiki/PortFusion-REPL)     |
 License             | ![GPLv3]                                                                          | ![GPLv3]
-Availability        | **SourceForge.net (binary) <br /> GitHub (source) <br /> Corsis.eu (commercial)** | SourceForge.net
+Availability        | **SourceForge.net (binary) <br /> GitHub (source) <br /> corsis.tech (commercial)** | SourceForge.net
 
 [ARM]:     wiki/ARM-Builds                                                                 "ARM Builds"
 [MIPS]:    wiki/MIPS-Builds                                                                "MIPS Builds"
@@ -164,7 +164,7 @@ Availability        | **SourceForge.net (binary) <br /> GitHub (source) <br /> C
 ### Trademark
 
 ```
-PortFusion™ is a trademark of Corsis Research (corsis.eu).
+PortFusion™ is a trademark of Corsis Research (corsis.tech).
 ```
 
 ### Trademark Policy
@@ -194,7 +194,7 @@ CORSIS PortFusion ]-[ayabusa
 
 ### License
 
-[![GPLv3]](http://beta.corsis.eu/license/)
+[![GPLv3]](http://beta.corsis.tech/license/)
 
 ```
 This program is free software: you can redistribute it and/or modify
@@ -271,6 +271,6 @@ For their continuing support and inspiration, we extend our heart-felt thanks to
 
 [![corsis]](https://github.com/corsis/)
 
-[fusion@corsis.eu](mailto:fusion@corsis.eu)
+[fusion@corsis.tech](mailto:fusion@corsis.tech)
 
 [corsis]: http://portfusion.sourceforge.net/i/l100.png "Corsis Research"
