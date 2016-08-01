@@ -262,7 +262,7 @@ For their continuing support and inspiration, we extend our heart-felt thanks to
 <div style='vertical-align: middle'>
 <img alt='Internet Initiative Japan'                  title='Internet Initiative Japan'                                src='http://www.iij.ad.jp/en/common/images/hd_logo01.png' />
 <img alt='Commercial Users of Functional Programming' title='Commercial Users of Functional Programming' height='96px' src='http://portfusion.sourceforge.net/w/wp-content/uploads/2012/05/cufp.png' />
-<img alt='Japan Aerospace Exploration Agency'         title='Japan Aerospace Exploration Agency'                       src='http://upload.wikimedia.org/wikipedia/en/thumb/8/85/Jaxa_logo.svg/160px-Jaxa_logo.svg.png' />
+<img alt='Japan Aerospace Exploration Agency'         title='Japan Aerospace Exploration Agency'                       src='https://upload.wikimedia.org/wikipedia/commons/8/85/Jaxa_logo.svg' />
 </div>
 
 ----
